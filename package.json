@@ -1,0 +1,28 @@
+{
+  "name": "linkstash",
+  "version": "0.0.1",
+  "description": "Linkstash",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ahmadfarhan1981/linkstash.git"
+  },
+  "author": "Ahmad Farhan Bin Jaafar",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ahmadfarhan1981/linkstash/issues"
+  },
+  "homepage": "https://github.com/ahmadfarhan1981/linkstash#readme",
+  "dependencies": {
+    "@feathersjs/feathers": "^5.0.12"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^18.4.3",
+    "@commitlint/config-conventional": "^18.4.3",
+    "husky": "^8.0.3"
+  }
+}
