@@ -1,13 +1,14 @@
 'useClient'
 
-import LoginForm from "../ui/LoginForm/LoginForm.jsx"
-import Header from "../ui/Header/Header.jsx"
-const handleLogin = () =>{}
+import AuthenticatedSection from '@/components/AuthenticatedSection/AuthenticatedSection'
+import LoginForm from '@/components/LoginForm/LoginForm'
+
 export default function Home() {
     return (
-        <>
-        <Header />
-        <LoginForm />
-        </>
+        
+        <AuthenticatedSection>
+            <div>Logged In</div>
+        </AuthenticatedSection>
+        
     )
 }

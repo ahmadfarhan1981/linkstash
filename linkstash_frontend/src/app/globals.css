@@ -1,70 +1,72 @@
-@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap'); */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-
-
 :root {
-  --primary-color: purple;
+  --primary-color: #800080;
   --text-on-primary: white;
+
+  --loader-width: 50px;
+  --loader-animation-duration: 700ms;
+  box-sizing: inherit;
 }
 
 body {
+  
   line-height: 1.7;
+  font-size: 0.9rem;
   margin: 0;
-  font-family: "Open Sans";
-  font-weight: normal;
-  /* font-family: "Lato"; */
-  /* font-family:  "Roboto", "Segoe UI", "Helvetica", sans-serif; */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  
 }
 
 h1{
   color: theme('colors.linkstashPurple');
 }
-/* p{
-  font-family: "Lato";
-}
 
-a{
-  font-family: "Roboto";
-} */
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
 
-.login_form{
-  align-items: center;
-  align-content: center;
-  align-self: center;
-  margin: auto;
-  width: 100%;
-  max-width: fit-content;
+
+@layer components{
+  .screen{
+    @apply  m-auto max-w-[975px] w-screen grid p-3;
+    grid-template-columns: 2fr 96fr 2fr;
+    
+  }
+  .span-width{
+    @apply border-0 col-span-3
+  }
+
+  .content{
+    @apply   border-0 text-wrap overflow-clip overflow-y-auto
+  }
+
+  .left-spacer, .right-spacer{
+    @apply  text-white
+  }
+
+  a:hover{
+    @apply underline
+  }
+  
+  .form-input{
+    @apply placeholder:italic placeholder:text-slate-300 drop-shadow text-black disabled:text-slate-400 disabled:shadow-none disabled:bg-slate-200 disabled:border-slate-200
+  }
+
+  .form-label{
+    @apply text-slate-400 focus:text-black  has-[:focus]:text-black transition-all ease-in duration-300
+  } 
+
+  .submit-button{
+    @apply bg-linkstashPurple text-white py-1 px-3 w-24 rounded
+  } 
+
+  .content{
+    @apply flex flex-col items-center justify-between
+  }
 }
-
-.login_form * {
-  display: block;
-}
-
-.login_form .form-input{
-  border: .05rem solid #bcc3ce;
-  width: 350px;
-}
-
-.login_form .btn {
-  margin-top: 0.5rem;
-  padding-inline: 1.5rem;
-  padding-block: 0.25rem;
-   background-color:var(--primary-color) ;
-   border-color: var(--primary-color);
-   color: var(--text-on-primary);
-
-   
-}
-/* .form-group, .form-label, .content-area-header{
-  display: block;
-} */
-

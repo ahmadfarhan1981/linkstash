@@ -1,0 +1,16 @@
+.login-form * {
+  display: block;
+}
+
+.login-form{
+  align-items: center;
+  align-content: center;
+  align-self: center;
+  margin: auto;
+  width: 100%;
+  max-width: fit-content;
+}
+
+.submit-button{
+  @apply bg-linkstashPurple text-white py-1 px-3 w-24 rounded
+} 

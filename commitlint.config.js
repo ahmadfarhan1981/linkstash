@@ -14,5 +14,11 @@ module.exports = {
             'style',
             'test'
           ]],
-    }
+          
+    },
+    ignores: [
+        (commit) =>{ commit.includes('WIP') },
+        (commit) =>{ commit === 'WIP' },
+    ],
+    defaultIgnores: true,
 }

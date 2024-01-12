@@ -1,5 +1,8 @@
 {
     "recommendations": [
-        "rangav.vscode-thunder-client"
+        "rangav.vscode-thunder-client",
+        "bradlc.vscode-tailwindcss",
+        "usernamehw.errorlens",
+        "dbaeumer.vscode-eslint"
     ]
 }

@@ -1,0 +1,18 @@
+
+
+  .login-form * {
+    display: block;
+  }
+
+  .form-input{
+    border: .05rem solid #bcc3ce;
+    width: 250px;
+  }
+
+  .form-label{
+    @apply text-slate-400 focus:text-black  has-[:focus]:text-black transition-all ease-in duration-300
+  }
+
+  .submit-button{
+    @apply bg-linkstashPurple text-white py-1 px-3 w-24 rounded
+  }

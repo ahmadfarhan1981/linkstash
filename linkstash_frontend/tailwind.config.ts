@@ -9,7 +9,7 @@ const config: Config = {
   theme: {
     extend: {
       colors:{
-        linkstashPurple : 'purple'
+        linkstashPurple : "#C400B3"
       }
     },
   },

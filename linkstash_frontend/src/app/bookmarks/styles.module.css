@@ -1,0 +1,13 @@
+.bookmarks-page {
+  @apply grid gap-x-3;
+  grid-template-columns: 7fr 3fr;
+  width: 100%;
+}
+
+/* .tag-cloud{
+    @apply border-2 invisible md:max-2xl:visible 
+} */
+
+.bookmark-list {
+  @apply overflow-hidden col-span-2 md:col-span-1;
+}

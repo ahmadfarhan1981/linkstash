@@ -34,7 +34,7 @@ export const bookmarks = (app: Application) => {
   app.service(bookmarksPath).hooks({
     around: {
       all: [
-        authenticate('jwt'),
+        authenticate('jwt', 'local'),
         schemaHooks.resolveExternal(bookmarksExternalResolver),
         schemaHooks.resolveResult(bookmarksResolver)
       ]

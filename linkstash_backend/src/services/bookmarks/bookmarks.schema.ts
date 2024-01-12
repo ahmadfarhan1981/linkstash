@@ -13,8 +13,10 @@ export const bookmarksSchema = Type.Object(
   {
     id: Type.Number(),
     url: Type.String(),
+    title: Type.String(),
     description: Type.String(),
     created: Type.Number(),
+    
   },
   { $id: 'Bookmarks', additionalProperties: false }
 )
@@ -25,7 +27,7 @@ export const bookmarksResolver =  resolve<Bookmarks, HookContext<BookmarksServic
 export const bookmarksExternalResolver = resolve<Bookmarks, HookContext<BookmarksService>>({})
 
 // Schema for creating new entries
-export const bookmarksDataSchema = Type.Pick(bookmarksSchema, ['url','description'], {
+export const bookmarksDataSchema = Type.Pick(bookmarksSchema, ['url','description', 'title'], {
   $id: 'BookmarksData'
 })
 export type BookmarksData = Static<typeof bookmarksDataSchema>
