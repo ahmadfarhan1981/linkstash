@@ -11,6 +11,7 @@ export default function AuthenticatedSection({
 }): ReactNode {
     const AuthenticationContext = useContext(Authentication)
     const {AuthenticationState} = AuthenticationContext
+    // TODO add a cookie check for the token
     return (
         
         <>

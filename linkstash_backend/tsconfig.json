@@ -1,21 +1,9 @@
 {
-  "ts-node": {
-    "files": true
-  },
+  "$schema": "http://json.schemastore.org/tsconfig",
+  "extends": "@loopback/build/config/tsconfig.common.json",
   "compilerOptions": {
-    "target": "es2020",
-    "module": "commonjs",
-    "outDir": "./lib",
-    "rootDir": "./src",
-    "declaration": true,
-    "strict": true,
-    "esModuleInterop": true,
-    "sourceMap": true
+    "outDir": "dist",
+    "rootDir": "src"
   },
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "test"
-  ]
+  "include": ["src"]
 }
