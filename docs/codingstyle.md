@@ -1,3 +1,5 @@
+Naming
+- acronyms should be camel case e.g. ```makeApiCall()``` not ```makeAPICall()```
 css styling
 - use ```kebab-case``` for css class naming
   - dont use BEM naming, with the use of css modules at component level, you should be able to get meaningful names without clashing.
@@ -10,3 +12,4 @@ css styling
   - add a style class and use ```@apply``` to apply tailwind uitility class
   - in the component file import the style and refer to them using ```{styles['css-class']}``` 
     - you have to use the square bracket notation instead of the dot notation because of the dash in the classname
+    - 

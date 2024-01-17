@@ -1,7 +1,7 @@
 "use client";
 
-import axios, { AxiosRequestConfig } from "axios";
-import { createContext, useCallback, useMemo, useState } from "react";
+import { ApiCallOptions, getTokenCookieName, makeApiCall } from "@/scripts";
+import { createContext, useEffect, useState } from "react";
 
 import Cookies from "universal-cookie";
 
@@ -22,7 +22,8 @@ export const Authentication = createContext<useAuthenticationReturnValue>(
 
 export function useAuthentication(): useAuthenticationReturnValue {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isPending, setIsPending] = useState(false);
+  const [isPending, setIsPending] = useState(true);
+  const [cookieTokenName, setCookieTokenName] = useState("");
   const [token, setToken] = useState("");
   const AuthenticationState = {
     isLoggedIn,
@@ -30,49 +31,83 @@ export function useAuthentication(): useAuthenticationReturnValue {
     token,
   } as AuthenticationState;
 
-  //   const cookies = new Cookies();
+  
+  
 
-  //   if (cookies.get("Authorization")) {
-  //   headers.append("Authorization", cookies.get("Authorization"))
-  //     const cookieToken = cookies.get("Authorization");
-  //     setToken(cookieToken.slice("Bearer ".length));
-  //   }
+  const login = async (username: string, password: string): Promise<void> => {
+    const success = async (response: any) => {
+      const { token } = response.data;
+      setIsLoggedIn(true);
+      setToken(token);
+      const cookies = new Cookies();
+      cookies.set(await getTokenCookieName(), token);
+    };
 
-  const login = (username: string, password: string): void => {
+    const failure = (error: any) => {
+      // TODO handle error
+      console.log(error);
+    };
+
+    const finallyFunction = () => {
+      // always executed
+      setIsPending(false);
+    };
+    setIsPending(true);
+
     const body = JSON.stringify({
       strategy: "local",
       email: username,
       password: password,
     });
-    const headers = new Headers();
-    headers.append("Content-Type", "application/json");
-    const url = "http://localhost:3030/authentication/";
-    const config: AxiosRequestConfig = {
-      method: "post",
-      url: url,
-      data: body,
-      timeout: 3000,
+    const options: ApiCallOptions = {
+      endpoint: "/users/login/",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
+        UserAgent: "react",
       },
+      body: body,
+      successCallback: success,
+      failureCallback: failure,
+      finallyCallback: finallyFunction,
     };
-
-    setIsPending(true);
-    axios(config)
-      .then(function (response) {
-        setIsLoggedIn(true);
-        const { accessToken } = response.data;
-        setToken(accessToken);
-      })
-      .catch(function (error) {
-        // TODO handle error
-        console.log(error);
-      })
-      .finally(function () {
-        // always executed
-        setIsPending(false);
-      });
+    await makeApiCall(options);
   };
+
+  useEffect(() => {
+    const verifyLogin = async () => {
+      const cookies = new Cookies();
+      //if( !cookieTokenName) setCookieTokenName(await getTokenCookieName());
+      
+      //TODO figure out server actions and setting via env var
+      const cookieTokenName = "linkstash-token";
+      if (isLoggedIn) return;
+  
+      setIsPending(true);
+      if (cookies.get(cookieTokenName)) {
+        const cookieToken = cookies.get(cookieTokenName);
+  
+        makeApiCall({
+          method: "GET",
+          endpoint: "/whoAmI",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer ".concat(cookieToken),
+          },
+          body: {},
+          successCallback: (response: any) => {
+            setIsLoggedIn(true);
+            setToken(cookieToken);
+          },
+          failureCallback: (error: any) => {},
+          finallyCallback: () => {
+            setIsPending(false);
+          },
+        });
+      }
+    };
+    verifyLogin();
+  }, [isLoggedIn]);
 
   return {
     AuthenticationState,

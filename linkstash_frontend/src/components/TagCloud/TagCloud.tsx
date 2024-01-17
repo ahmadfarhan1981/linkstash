@@ -1,3 +1,4 @@
+/* eslint-disable github/a11y-no-title-attribute */
  export default function TagCloud(){
     return (
     <div className="tag-cloud text-gray-400">

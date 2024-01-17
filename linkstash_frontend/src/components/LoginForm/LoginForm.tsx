@@ -12,7 +12,7 @@ import { Authentication } from "@/app/context/authentication";
 ;import { BiError } from "react-icons/bi";
 import { IconContext } from "react-icons";
 import { InputComponent } from "..";
-import {generateClassNames} from "@/scripts/styles/index"
+import {generateClassNames} from "@/scripts/index"
 import styles from "./LoginForm.module.css";
 
 export default function LoginForm() {
@@ -40,8 +40,7 @@ export default function LoginForm() {
       <AlertBox isVisible={ isSubmited && !AuthenticationState.isPending && !AuthenticationState.isLoggedIn} handleClose={()=>{setIsSubmited(false)}} message="Login failed" />
       <section className={styles['login-form']}>
         <div className="content-area-header">
-          <h2>Login</h2>
-          {/* <h2>{JSON.stringify(AuthenticationContext.AuthenticationState)}</h2> */}
+          <h2>Login</h2>          
         </div>
         <form >
           <InputComponent id="email" type="text" name="email" placeholder="Email" label="Email" autocomplete="username" enabled={!AuthenticationState.isPending} handleChange={handleChange} />
@@ -52,7 +51,7 @@ export default function LoginForm() {
             <input
               type="submit"
               value="Login"
-              className = {generateClassNames(styles, "submit-button")}
+              className = { generateClassNames(styles, "submit-button")}
               onClick={(ev) => {
                 ev.preventDefault();
                 handleLogin();

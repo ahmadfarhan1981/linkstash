@@ -36,6 +36,7 @@ export default function RootLayout({
             <UserNavigationBar />
             <div className="left-spacer"></div>
             <div className="content">
+              {/* //TODO fix loader. suspense? */}
               <Loader isLoading={false}>{children}</Loader>
             </div>
             <div className="right-spacer"></div>
