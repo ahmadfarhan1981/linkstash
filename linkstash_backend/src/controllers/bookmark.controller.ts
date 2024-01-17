@@ -1,15 +1,17 @@
 import {authenticate} from '@loopback/authentication';
-import {inject} from '@loopback/core';
+import {inject, intercept} from '@loopback/core';
 import {
   Count,
   CountSchema,
   Filter,
   FilterBuilder,
   FilterExcludingWhere,
-  repository,
   Where,
+  repository,
 } from '@loopback/repository';
 import {
+  Response,
+  RestBindings,
   del,
   get,
   getModelSchemaRef,
@@ -18,11 +20,9 @@ import {
   post,
   put,
   requestBody,
-  Response,
   response,
-  RestBindings,
 } from '@loopback/rest';
-import {SecurityBindings, securityId, UserProfile} from '@loopback/security';
+import {SecurityBindings, UserProfile, securityId} from '@loopback/security';
 import {Bookmark} from '../models';
 import {BookmarkRepository} from '../repositories';
 
@@ -64,6 +64,7 @@ export class BookmarkController {
     return this.bookmarkRepository.count(where);
   }
 
+  @intercept('interceptors.AddCountToResultInterceptor')
   @get('/bookmarks')
   @response(200, {
     description: 'Array of Bookmark model instances',
@@ -79,13 +80,24 @@ export class BookmarkController {
   async find(
     @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
     @param.filter(Bookmark) filter?: Filter<Bookmark>,
-  ): Promise<Bookmark[]> {
+  ): Promise<Object> {
     // this.response.status(201);
-    var builder = new FilterBuilder();
+    var builder = new FilterBuilder(filter);
     builder.where({userId: currentUserProfile[securityId]});
+    const resultFilter = builder.build();
+    var allResultFilter: Filter<Bookmark> = JSON.parse(
+      JSON.stringify(resultFilter),
+    );
+    if (allResultFilter.limit) delete allResultFilter.limit;
 
-    // builder.include
-    return this.bookmarkRepository.find(filter);
+    const all = await this.bookmarkRepository.find(allResultFilter);
+
+    const returnValue = {
+      ...filter,
+      countAll: all.length,
+      data: await this.bookmarkRepository.find(resultFilter),
+    };
+    return returnValue;
   }
 
   @patch('/bookmarks')

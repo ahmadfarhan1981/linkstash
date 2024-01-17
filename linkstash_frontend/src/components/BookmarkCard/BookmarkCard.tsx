@@ -53,7 +53,7 @@ export default function BookmarkCard({bookmarkData}:{bookmarkData:BookmarkCardDa
       <div className={styles["commands"]}>
         <a
           href="https://web.archive.org/web/20240104032528/https://www.joshwcomeau.com/css/interactive-guide-to-grid/"
-          title="Show snapshot on the Internet Archive Wayback Machine"
+          // title="Show snapshot on the Internet Archive Wayback Machine"
           target="_blank"
           rel="noopener"
         >
