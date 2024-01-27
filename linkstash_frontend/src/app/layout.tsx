@@ -10,6 +10,7 @@ import {
 } from "@/components";
 import { Inter, Open_Sans } from "next/font/google";
 import type { Metadata } from "next";
+import ApplicationProvider from "@/components/ApplicationProvider/ApplicationProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 const openSans = Open_Sans({
@@ -28,6 +29,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
+    <ApplicationProvider>
     <AuthenticationProvider>
       <html lang="en">
         <body className={openSans.className}>
@@ -44,5 +46,6 @@ export default function RootLayout({
         </body>
       </html>
     </AuthenticationProvider>
+    </ApplicationProvider>
   );
 }

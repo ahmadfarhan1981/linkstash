@@ -43,8 +43,8 @@ export default function LoginForm() {
           <h2>Login</h2>          
         </div>
         <form >
-          <InputComponent id="email" type="text" name="email" placeholder="Email" label="Email" autocomplete="username" enabled={!AuthenticationState.isPending} handleChange={handleChange} />
-          <InputComponent id="password" type="password" name="password" placeholder="Email" label="Password" autocomplete="new-password" enabled={!AuthenticationState.isPending} handleChange={handleChange} />         
+          <InputComponent id="email" type="text" name="email" placeholder="Email" label="Email" autocomplete="username" disabled={AuthenticationState.isPending} handleChange={handleChange} />
+          <InputComponent id="password" type="password" name="password" placeholder="Email" label="Password" autocomplete="new-password" disabled={AuthenticationState.isPending} handleChange={handleChange} />         
          
           <br />
           <div className="mt-2">

@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "linkstash_backend"
+		},
+		{
+			"path": "linkstash_frontend"
+		}
+	],
+	"settings": {
+		"todo-tree.tree.showBadges": false
+	}
+}

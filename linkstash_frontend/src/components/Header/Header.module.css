@@ -1,0 +1,3 @@
+.items{
+    @apply text-center before:content-["\00a0["] after:content-["]\00a0"] 
+}

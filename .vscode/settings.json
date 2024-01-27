@@ -1,6 +1,3 @@
 {
-    "todo-tree.tree.showBadges": false,
-    "css.lint.unknownAtRules": "ignore",
-    "less.lint.unknownAtRules": "ignore",
-    "scss.lint.unknownAtRules": "ignore"
+    "todo-tree.tree.showBadges": false
 }

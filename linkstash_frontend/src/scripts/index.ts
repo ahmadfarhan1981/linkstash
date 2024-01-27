@@ -14,6 +14,7 @@ export function generateClassNames (styles:any, name:string):string{
 
 import axios, { AxiosHeaders, AxiosRequestConfig, RawAxiosRequestHeaders } from "axios"
 import { getBackendURL } from './server_scripts'
+import { ChangeEvent, SetStateAction } from 'react'
 
 
 export type ApiEndpoint = "/whoAmI" | "/bookmarks" |"/users/login/"
@@ -48,3 +49,8 @@ export async function makeApiCall(options:ApiCallOptions){
         .finally(()=>options.finallyCallback());
 
 }
+
+export function handleFormChange(event: ChangeEvent<HTMLInputElement>, setter:SetStateAction<any>)  {
+  const { name, value } = event.target;
+  setter((prevFormData: any) => ({ ...prevFormData, [name]: value }));
+};

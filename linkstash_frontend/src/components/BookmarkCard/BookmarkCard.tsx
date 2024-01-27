@@ -35,7 +35,7 @@ export default function BookmarkCard({bookmarkData}:{bookmarkData:BookmarkCardDa
           target="_blank"
           rel="noopener"
         >
-          {(bookmarkData as Bookmark).title}
+          { (bookmarkData as Bookmark).title? (bookmarkData as Bookmark).title : (bookmarkData as Bookmark).url}
         </a>
       </div>
 

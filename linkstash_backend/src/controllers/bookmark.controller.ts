@@ -40,6 +40,7 @@ export class BookmarkController {
     content: {'application/json': {schema: getModelSchemaRef(Bookmark)}},
   })
   async create(
+    @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
     @requestBody({
       content: {
         'application/json': {
@@ -52,6 +53,7 @@ export class BookmarkController {
     })
     bookmark: Omit<Bookmark, 'id'>,
   ): Promise<Bookmark> {
+    bookmark.userId = currentUserProfile[securityId];
     return this.bookmarkRepository.create(bookmark);
   }
 
@@ -82,20 +84,50 @@ export class BookmarkController {
     @param.filter(Bookmark) filter?: Filter<Bookmark>,
   ): Promise<Object> {
     // this.response.status(201);
+    console.log(JSON.stringify(currentUserProfile));
     var builder = new FilterBuilder(filter);
-    builder.where({userId: currentUserProfile[securityId]});
+
+    builder.impose({userId: currentUserProfile[securityId]});
     const resultFilter = builder.build();
     var allResultFilter: Filter<Bookmark> = JSON.parse(
       JSON.stringify(resultFilter),
     );
     if (allResultFilter.limit) delete allResultFilter.limit;
 
+    console.log(JSON.stringify(allResultFilter));
     const all = await this.bookmarkRepository.find(allResultFilter);
 
     const returnValue = {
       ...filter,
       countAll: all.length,
-      data: await this.bookmarkRepository.find(resultFilter),
+      data: all,
+    };
+    return returnValue;
+  }
+
+  @intercept('interceptors.AddCountToResultInterceptor')
+  @get('/all_bookmarks')
+  @response(200, {
+    description: 'Array of Bookmark model instances',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'array',
+          items: getModelSchemaRef(Bookmark, {includeRelations: true}),
+        },
+      },
+    },
+  })
+  async findAll(
+    @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
+    @param.filter(Bookmark) filter?: Filter<Bookmark>,
+  ): Promise<Object> {
+    const all = await this.bookmarkRepository.find(filter);
+
+    const returnValue = {
+      ...filter,
+      countAll: all.length,
+      data: all,
     };
     return returnValue;
   }

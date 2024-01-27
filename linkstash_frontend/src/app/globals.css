@@ -39,7 +39,7 @@ code {
     
   }
   .span-width{
-    @apply border-0 col-span-3
+    @apply border-0 col-span-3 
   }
 
   .content{
@@ -67,6 +67,6 @@ code {
   } 
 
   .content{
-    @apply flex flex-col items-center justify-between
+    @apply flex flex-col items-center justify-between 
   }
 }

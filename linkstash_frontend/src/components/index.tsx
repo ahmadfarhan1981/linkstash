@@ -1,7 +1,8 @@
+import InputComponent from "./InputComponent/InputComponent";
+
 import AuthenticationProvider from "./AuthenticationProvider/AuthenticationProvider"
 import BookmarkCard from "./BookmarkCard/BookmarkCard";
 import Header from "./Header/Header";
-import InputComponent from "./InputComponent/InputComponent";
 import Loader from "./Loader/Loader";
 import LoginForm from "./LoginForm/LoginForm";
 import Pager from "./Pager/Pager";
@@ -18,4 +19,8 @@ export {
   LoginForm,
   Pager,
   TagCloud,
+  
 };
+
+import * as inputComponentTypes from './InputComponent/types'
+export type AutocompleteType = inputComponentTypes.AutocompleteType

@@ -1,4 +1,4 @@
-import {Entity, model, property, belongsTo} from '@loopback/repository';
+import {Entity, belongsTo, model, property} from '@loopback/repository';
 import {User} from './user.model';
 
 @model()
@@ -28,6 +28,7 @@ export class Bookmark extends Entity {
 
   @property({
     type: 'date',
+    defaultFn: 'now',
   })
   created?: Date;
 

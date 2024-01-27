@@ -42,18 +42,14 @@ export function useAuthentication(): useAuthenticationReturnValue {
       const cookies = new Cookies();
       cookies.set(await getTokenCookieName(), token);
     };
-
     const failure = (error: any) => {
       // TODO handle error
       console.log(error);
     };
-
     const finallyFunction = () => {
       // always executed
       setIsPending(false);
     };
-    setIsPending(true);
-
     const body = JSON.stringify({
       strategy: "local",
       email: username,
@@ -71,6 +67,8 @@ export function useAuthentication(): useAuthenticationReturnValue {
       failureCallback: failure,
       finallyCallback: finallyFunction,
     };
+
+    setIsPending(true);
     await makeApiCall(options);
   };
 
@@ -105,6 +103,7 @@ export function useAuthentication(): useAuthenticationReturnValue {
           },
         });
       }
+      setIsPending(false);
     };
     verifyLogin();
   }, [isLoggedIn]);
