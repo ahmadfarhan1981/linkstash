@@ -65,3 +65,6 @@ typings/
 
 # Emacs auto-save file
 \#*#
+
+# generated archive assets
+public/archive/**

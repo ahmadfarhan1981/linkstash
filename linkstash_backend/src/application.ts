@@ -73,5 +73,6 @@ export class LinkstashApplication extends BootMixin(
         created: Date.now(),
       });
     }
+    console.log('MIGRATE');
   }
 }

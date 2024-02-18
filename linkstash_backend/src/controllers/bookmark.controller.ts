@@ -1,5 +1,6 @@
+//#region Imports
 import {authenticate} from '@loopback/authentication';
-import {inject, intercept} from '@loopback/core';
+import {inject, service} from '@loopback/core';
 import {
   Count,
   CountSchema,
@@ -15,16 +16,18 @@ import {
   del,
   get,
   getModelSchemaRef,
+  getWhereSchemaFor,
   param,
   patch,
   post,
-  put,
   requestBody,
   response,
 } from '@loopback/rest';
 import {SecurityBindings, UserProfile, securityId} from '@loopback/security';
-import {Bookmark} from '../models';
+import {Archive, Bookmark, User} from '../models';
 import {BookmarkRepository} from '../repositories';
+import {ArchiveService} from '../services';
+//#endregion
 
 @authenticate('jwt')
 export class BookmarkController {
@@ -34,6 +37,8 @@ export class BookmarkController {
     @inject(RestBindings.Http.RESPONSE) protected response: Response,
   ) {}
 
+
+//#region CRUD related endpoints
   @post('/bookmarks')
   @response(200, {
     description: 'Bookmark model instance',
@@ -57,16 +62,7 @@ export class BookmarkController {
     return this.bookmarkRepository.create(bookmark);
   }
 
-  @get('/bookmarks/count')
-  @response(200, {
-    description: 'Bookmark model count',
-    content: {'application/json': {schema: CountSchema}},
-  })
-  async count(@param.where(Bookmark) where?: Where<Bookmark>): Promise<Count> {
-    return this.bookmarkRepository.count(where);
-  }
-
-  @intercept('interceptors.AddCountToResultInterceptor')
+  // @intercept('interceptors.AddCountToResultInterceptor')
   @get('/bookmarks')
   @response(200, {
     description: 'Array of Bookmark model instances',
@@ -105,7 +101,25 @@ export class BookmarkController {
     return returnValue;
   }
 
-  @intercept('interceptors.AddCountToResultInterceptor')
+  @get('/bookmarks/{id}')
+  @response(200, {
+    description: 'Bookmark model instance',
+    content: {
+      'application/json': {
+        schema: getModelSchemaRef(Bookmark, {includeRelations: true}),
+      },
+    },
+  })
+  async findById(
+    @param.path.number('id') id: number,
+    @param.filter(Bookmark, {exclude: 'where'})
+    filter?: FilterExcludingWhere<Bookmark>,
+  ): Promise<Bookmark> {
+    return this.bookmarkRepository.findById(id, filter);
+  }
+
+  // @intercept('interceptors.AddCountToResultInterceptor')
+  // TODO only admins should be able to do this
   @get('/all_bookmarks')
   @response(200, {
     description: 'Array of Bookmark model instances',
@@ -132,42 +146,6 @@ export class BookmarkController {
     return returnValue;
   }
 
-  @patch('/bookmarks')
-  @response(200, {
-    description: 'Bookmark PATCH success count',
-    content: {'application/json': {schema: CountSchema}},
-  })
-  async updateAll(
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getModelSchemaRef(Bookmark, {partial: true}),
-        },
-      },
-    })
-    bookmark: Bookmark,
-    @param.where(Bookmark) where?: Where<Bookmark>,
-  ): Promise<Count> {
-    return this.bookmarkRepository.updateAll(bookmark, where);
-  }
-
-  @get('/bookmarks/{id}')
-  @response(200, {
-    description: 'Bookmark model instance',
-    content: {
-      'application/json': {
-        schema: getModelSchemaRef(Bookmark, {includeRelations: true}),
-      },
-    },
-  })
-  async findById(
-    @param.path.number('id') id: number,
-    @param.filter(Bookmark, {exclude: 'where'})
-    filter?: FilterExcludingWhere<Bookmark>,
-  ): Promise<Bookmark> {
-    return this.bookmarkRepository.findById(id, filter);
-  }
-
   @patch('/bookmarks/{id}')
   @response(204, {
     description: 'Bookmark PATCH success',
@@ -186,17 +164,6 @@ export class BookmarkController {
     await this.bookmarkRepository.updateById(id, bookmark);
   }
 
-  @put('/bookmarks/{id}')
-  @response(204, {
-    description: 'Bookmark PUT success',
-  })
-  async replaceById(
-    @param.path.number('id') id: number,
-    @requestBody() bookmark: Bookmark,
-  ): Promise<void> {
-    await this.bookmarkRepository.replaceById(id, bookmark);
-  }
-
   @del('/bookmarks/{id}')
   @response(204, {
     description: 'Bookmark DELETE success',
@@ -204,4 +171,143 @@ export class BookmarkController {
   async deleteById(@param.path.number('id') id: number): Promise<void> {
     await this.bookmarkRepository.deleteById(id);
   }
+
+  @get('/bookmarks/count')
+  @response(200, {
+    description: 'Bookmark model count',
+    content: {'application/json': {schema: CountSchema}},
+  })
+  async count(@param.where(Bookmark) where?: Where<Bookmark>): Promise<Count> {
+    return this.bookmarkRepository.count(where);
+  }
+//#endregion
+
+//#region Archive related endpoints
+  @post('/bookmarks/{id}/archive')
+  @response(200, {
+    description: 'Bookmark archived',
+    content: {
+      'application/json': {
+        schema: getModelSchemaRef(Bookmark, {includeRelations: true}),
+      },
+    },
+  })
+  async archive(
+    @service(ArchiveService) archiveService: ArchiveService,
+    @param.path.number('id') id: number,
+    @requestBody() archive: Required<Archive>,
+    @param.filter(Bookmark, {exclude: 'where'})
+    filter?: FilterExcludingWhere<Bookmark>,
+  ): Promise<Archive | undefined> {
+    const bookmark = await this.bookmarkRepository.findById(id, filter);
+    if (bookmark) {
+      return await archiveService.archive(bookmark);
+    }
+  }
+
+  @get('/bookmarks/{id}/archives', {
+    responses: {
+      '200': {
+        description: 'Get all available archives of the bookmark',
+        content: {
+          'application/json': {
+            schema: {type: 'array', items: getModelSchemaRef(Archive)},
+          },
+        },
+      },
+    },
+  })
+  async findArchives(
+    @param.path.number('id') id: number,
+    @param.query.object('filter') filter?: Filter<Archive>,
+  ): Promise<Archive[]> {
+    return this.bookmarkRepository.archives(id).find(filter);
+  }
+
+  @get('/bookmarks/{id}/archive', {
+    responses: {
+      '200': {
+        description: 'Get the latest archive for a bookmark',
+        content: {
+          'application/json': {
+            schema: {type: 'array', items: getModelSchemaRef(Archive)},
+          },
+        },
+      },
+    },
+  })
+  async getLatestArchive(
+    @param.path.number('id') id: number,
+  ): Promise<Archive> {
+    const builder = new FilterBuilder<Archive>()
+    const filter =builder.order(['version DESC'])
+                  .limit(1)
+                  .build()
+    const archives = await this.findArchives(id, filter);
+    return archives[0];
+  }
+
+  @del('/bookmarks/{id}/archives', {
+    responses: {
+      '200': {
+        description: 'Bookmark.Archive DELETE success count',
+        content: {'application/json': {schema: CountSchema}},
+      },
+    },
+  })
+  async deleteArchive(
+    @param.path.number('id') id: number,
+    @param.query.object('where', getWhereSchemaFor(Archive))
+    where?: Where<Archive>,
+  ): Promise<Count> {
+    return this.bookmarkRepository.archives(id).delete(where);
+  }
+//#endregion
+
+//#region Users related endpoints
+  @get('/bookmarks/{id}/user', {
+    responses: {
+      '200': {
+        description: 'User belonging to Bookmark',
+        content: {
+          'application/json': {
+            schema: getModelSchemaRef(User),
+          },
+        },
+      },
+    },
+  })
+  async getUser(
+    @param.path.number('id') id: typeof Bookmark.prototype.id,
+  ): Promise<User> {
+    return this.bookmarkRepository.user(id);
+  }
+//#endregion
+
+
+  /**
+   * ! Everything below this line are default LB4 implementation. Everything above is customized for LinkStash
+   * TODO verify that it fits our needs
+   */
+
+  // @patch('/bookmarks')
+  // @response(200, {
+  //   description: 'Bookmark PATCH success count',
+  //   content: {'application/json': {schema: CountSchema}},
+  // })
+  // async updateAll(
+  //   @requestBody({
+  //     content: {
+  //       'application/json': {
+  //         schema: getModelSchemaRef(Bookmark, {partial: true}),
+  //       },
+  //     },
+  //   })
+  //   bookmark: Bookmark,
+  //   @param.where(Bookmark) where?: Where<Bookmark>,
+  // ): Promise<Count> {
+  //   return this.bookmarkRepository.updateAll(bookmark, where);
+  // }
+
+
 }

@@ -17,7 +17,7 @@ import { getBackendURL } from './server_scripts'
 import { ChangeEvent, SetStateAction } from 'react'
 
 
-export type ApiEndpoint = "/whoAmI" | "/bookmarks" |"/users/login/"
+export type ApiEndpoint = "/whoAmI" | "/bookmarks" |"/users/login/" | `/bookmarks/${number}/archive`
 export type ApiMethod = "GET" | "POST" | "DELETE" |"PATCH" | "PUT"
 export type ApiCallOptions = {
     endpoint : ApiEndpoint,

@@ -1,4 +1,11 @@
-import {Entity, belongsTo, model, property} from '@loopback/repository';
+import {
+  Entity,
+  belongsTo,
+  hasMany,
+  model,
+  property,
+} from '@loopback/repository';
+import {Archive} from './archive.model';
 import {User} from './user.model';
 
 @model()
@@ -13,6 +20,9 @@ export class Bookmark extends Entity {
   @property({
     type: 'string',
     required: true,
+    jsonSchema: {
+      readonly: true,
+    },
   })
   url: string;
 
@@ -34,6 +44,9 @@ export class Bookmark extends Entity {
 
   @belongsTo(() => User)
   userId: string;
+
+  @hasMany(() => Archive)
+  archives: Archive[];
 
   constructor(data?: Partial<Bookmark>) {
     super(data);

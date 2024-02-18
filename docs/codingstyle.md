@@ -1,5 +1,9 @@
 Naming
 - acronyms should be camel case e.g. ```makeApiCall()``` not ```makeAPICall()```
+- backend 
+  - strictPascalCase
+  - TODO eslint enforcement
+  - TODO existing code have quite a few variable_with_underscore
 css styling
 - use ```kebab-case``` for css class naming
   - dont use BEM naming, with the use of css modules at component level, you should be able to get meaningful names without clashing.
