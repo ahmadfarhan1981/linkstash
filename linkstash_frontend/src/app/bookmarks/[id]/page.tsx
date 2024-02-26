@@ -12,16 +12,15 @@ import Pager from "@/components/Pager/Pager";
 import TagCloud from "@/components/TagCloud/TagCloud";
 import styles from "./styles.module.css";
 
-export default function Home() {
+export default function Home({ params }: { params: { id: number } }) {
   const AuthenticationContext = useContext(Authentication);
   const { AuthenticationState } = AuthenticationContext;
   const [bookmarks, setBookmarks] = useState<Bookmark[]>();
   useEffect(() => {
     {
-      //TODO use makeApiCall()
       if (!AuthenticationState.isLoggedIn) return;
       const body = JSON.stringify({});
-      const url = "http://localhost:3030/bookmarks/";
+      const url = `http://localhost:3030/bookmarks/${params.id}`;
       const config: AxiosRequestConfig = {
         method: "get",
         url: url,

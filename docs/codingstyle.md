@@ -1,5 +1,6 @@
 Naming
 - acronyms should be camel case e.g. ```makeApiCall()``` not ```makeAPICall()```
+- 
 - backend 
   - strictPascalCase
   - TODO eslint enforcement

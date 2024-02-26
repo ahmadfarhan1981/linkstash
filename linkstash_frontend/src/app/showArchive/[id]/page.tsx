@@ -4,14 +4,13 @@ import { ApiCallOptions, makeApiCall } from "@/scripts";
 import React, { useContext, useState } from "react";
 
 import AuthenticatedSection from "@/components/AuthenticatedSection/AuthenticatedSection";
-import { Authentication } from "../context/authentication";
 import { Loader } from "@/components";
+import { useAuthentication } from "@/app/context/authentication";
 
-export default function Home() {
+export default function Home({ params }: { params: { id: number } }) {
   const [isLoading, setIsLoading] = useState(true);
   const [archive, setArchive] = useState("");
-  const AuthenticationContext = useContext(Authentication);
-  const { AuthenticationState } = AuthenticationContext;
+  const { AuthenticationState } = useAuthentication();
 
   const success = async (response: any) => {
     const { Content } = response.data;
@@ -19,7 +18,7 @@ export default function Home() {
     setIsLoading(false);
   };
   const options: ApiCallOptions = {
-    endpoint: "/bookmarks/9/archive",
+    endpoint: `/bookmarks/${params.id}/archive`,
     method: "GET",
     headers: {
       "Content-Type": "application/json",

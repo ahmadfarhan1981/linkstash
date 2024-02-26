@@ -72,6 +72,7 @@ export function useAuthentication(): useAuthenticationReturnValue {
     await makeApiCall(options);
   };
 
+  //TODO remove useEffect. figure something out
   useEffect(() => {
     const verifyLogin = async () => {
       const cookies = new Cookies();

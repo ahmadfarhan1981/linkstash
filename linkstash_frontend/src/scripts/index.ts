@@ -29,26 +29,47 @@ export type ApiCallOptions = {
     finallyCallback: Function,
 
 }
-export async function makeApiCall(options:ApiCallOptions){
-    const processedEndpoint = options.endpoint //TODO process url parameters
-    const url =  (await getBackendURL()).concat(processedEndpoint) ;
-    const config: AxiosRequestConfig = {
-        method: options.method,
-        url: url,
-        data: options.body,
-        timeout: 3000,
-        headers: {
-          "Content-Type": "application/json",
-          ...options.headers
-        },
-      };
-  
-      axios(config)
-        .then((response)=>options.successCallback(response))
-        .catch((error)=>options.failureCallback(error))
-        .finally(()=>options.finallyCallback());
+
+export async function makeApiCall(options:ApiCallOptions, async:boolean=false){
+  const processedEndpoint = options.endpoint //TODO process url parameters
+  const url =  (await getBackendURL()).concat(processedEndpoint) ;
+  const config: AxiosRequestConfig = {
+      method: options.method,
+      url: url,
+      data: options.body,
+      timeout: 3000,
+      headers: {
+        "Content-Type": "application/json",
+        ...options.headers
+      },
+    };
+    
+    async? apiFetchAsync(config, options): apiFetchSync(config, options)
+    
+}
+
+async function apiFetchSync(config:AxiosRequestConfig, options:ApiCallOptions){    
+      try{
+        const response = await axios(config)
+        options.successCallback(response)
+      }
+      catch(error){
+        options.failureCallback(error)
+      }
+      finally{
+        options.finallyCallback()
+      }
 
 }
+
+async function apiFetchAsync(config:AxiosRequestConfig, options:ApiCallOptions){
+    axios(config)
+      .then((response)=>options.successCallback(response))
+      .catch((error)=>options.failureCallback(error))
+      .finally(()=>options.finallyCallback());
+
+}
+
 
 export function handleFormChange(event: ChangeEvent<HTMLInputElement>, setter:SetStateAction<any>)  {
   const { name, value } = event.target;

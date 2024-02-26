@@ -9,8 +9,9 @@ import {
   UserNavigationBar,
 } from "@/components";
 import { Inter, Open_Sans } from "next/font/google";
-import type { Metadata } from "next";
+
 import ApplicationProvider from "@/components/ApplicationProvider/ApplicationProvider";
+import type { Metadata } from "next";
 
 const inter = Inter({ subsets: ["latin"] });
 const openSans = Open_Sans({

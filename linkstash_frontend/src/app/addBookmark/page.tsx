@@ -1,23 +1,21 @@
 "use client";
 
 import { ApiCallOptions, handleFormChange, makeApiCall } from "@/scripts/index";
-import { AutocompleteType, InputComponent } from "@/components/";
 import React, { ChangeEvent, useContext, useState } from "react";
 
 import { Application } from "@/app/context/application";
 import AuthenticatedSection from "@/components/AuthenticatedSection/AuthenticatedSection";
-import { Authentication } from "@/app/context/authentication";
+import { InputComponent } from "@/components/";
 import axios from "axios";
 import debounce from "lodash/debounce";
-
+import { useAuthentication } from "@/app/context/authentication";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
   const ApplicationContext = useContext(Application);
     const {showHeaders, setShowHeaders } = ApplicationContext
   const router = useRouter()
-  const AuthenticationContext = useContext(Authentication);
-  const { AuthenticationState } = AuthenticationContext;
+  const { AuthenticationState } = useAuthentication();
   async function addBookmark(form: FormData) {
 
     //TODO bookmarklet layout

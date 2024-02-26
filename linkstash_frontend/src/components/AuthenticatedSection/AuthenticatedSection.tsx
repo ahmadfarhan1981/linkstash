@@ -2,7 +2,7 @@
 
 import { ReactNode, Suspense, useContext } from "react";
 
-import { Authentication } from "@/app/context/authentication";
+import { Authentication, useAuthentication } from "@/app/context/authentication";
 import { Loader } from "@/components";
 import LoginForm from "@/components/LoginForm/LoginForm";
 
@@ -11,8 +11,8 @@ export default function AuthenticatedSection({
 }: {
   children: ReactNode;
 }): ReactNode {
-    const AuthenticationContext = useContext(Authentication)
-    const {AuthenticationState} = AuthenticationContext
+    // const AuthenticationContext = useContext(Authentication)
+    const {AuthenticationState} = useAuthentication()
     return (
       
         <Loader isLoading={AuthenticationState.isPending}>

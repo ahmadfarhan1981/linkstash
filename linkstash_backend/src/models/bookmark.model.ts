@@ -19,10 +19,7 @@ export class Bookmark extends Entity {
 
   @property({
     type: 'string',
-    required: true,
-    jsonSchema: {
-      readonly: true,
-    },
+    required: true
   })
   url: string;
 
