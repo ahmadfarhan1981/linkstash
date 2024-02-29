@@ -3,6 +3,7 @@
         "rangav.vscode-thunder-client",
         "bradlc.vscode-tailwindcss",
         "usernamehw.errorlens",
-        "dbaeumer.vscode-eslint"
+        "dbaeumer.vscode-eslint",
+        "amatiasq.sort-imports"
     ]
 }

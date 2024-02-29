@@ -12,5 +12,10 @@
 	],
 	"settings": {
 		"todo-tree.tree.showBadges": false
+	},
+	"extensions": {
+		"recommendations": [
+			"amatiasq.sort-imports"
+		]
 	}
 }

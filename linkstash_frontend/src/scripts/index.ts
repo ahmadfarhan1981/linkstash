@@ -11,11 +11,10 @@ export function generateClassNames (styles:any, name:string):string{
     return styles[name]?styles[name].concat(" ").concat(name):name
 }
 
-
-import axios, { AxiosHeaders, AxiosRequestConfig, RawAxiosRequestHeaders } from "axios"
-import { getBackendURL } from './server_scripts'
 import { ChangeEvent, SetStateAction } from 'react'
+import axios, { AxiosHeaders, AxiosRequestConfig, RawAxiosRequestHeaders } from "axios"
 
+import { getBackendURL } from './server_scripts'
 
 export type ApiEndpoint = "/whoAmI" | "/bookmarks" |"/users/login/" | `/bookmarks/${number}/archive`
 export type ApiMethod = "GET" | "POST" | "DELETE" |"PATCH" | "PUT"
