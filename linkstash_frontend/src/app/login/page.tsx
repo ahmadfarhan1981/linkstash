@@ -1,14 +1,12 @@
 'useClient'
 
-import AuthenticatedSection from '@/components/AuthenticatedSection/AuthenticatedSection'
-import LoginForm from '@/components/LoginForm/LoginForm'
+import {AuthenticatedSection} from '@/components'
+import Link from 'next/link'
 
 export default function Home() {
-    return (
-        
+    return (        
         <AuthenticatedSection>
-            <div>Logged In</div>
-        </AuthenticatedSection>
-        
+            <div>Logged In. <Link href="logout">Logout</Link> </div>
+        </AuthenticatedSection>        
     )
 }

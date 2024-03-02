@@ -1,20 +1,14 @@
 "use client";
 
-import React, { useContext, useEffect, useState } from "react";
+import { AuthenticatedSection, BookmarkCard, TagCloud, useAuthentication } from "@/components";
+import React, { useEffect, useState } from "react";
 import axios, { AxiosRequestConfig } from "axios";
 
-import AuthenticatedSection from "@/components/AuthenticatedSection/AuthenticatedSection";
-import { Authentication } from "../context/authentication";
 import { Bookmark } from "@/types";
-import BookmarkCard from "@/components/BookmarkCard/BookmarkCard";
-import Cookies from "universal-cookie";
-import Pager from "@/components/Pager/Pager";
-import TagCloud from "@/components/TagCloud/TagCloud";
 import styles from "./styles.module.css";
 
 export default function Home() {
-  const AuthenticationContext = useContext(Authentication);
-  const { AuthenticationState } = AuthenticationContext;
+  const { AuthenticationState } = useAuthentication();
   const [bookmarks, setBookmarks] = useState<Bookmark[]>();
   useEffect(() => {
     {

@@ -2,19 +2,15 @@
 
 import React, { useContext, useEffect, useState } from "react";
 import axios, { AxiosRequestConfig } from "axios";
-
-import AuthenticatedSection from "@/components/AuthenticatedSection/AuthenticatedSection";
-import { Authentication } from "../context/authentication";
 import { Bookmark } from "@/types";
-import BookmarkCard from "@/components/BookmarkCard/BookmarkCard";
-import Cookies from "universal-cookie";
-import Pager from "@/components/Pager/Pager";
-import TagCloud from "@/components/TagCloud/TagCloud";
+
+
 import styles from "./styles.module.css";
+import { AuthenticatedSection, BookmarkCard, TagCloud, useAuthentication } from "@/components";
 
 export default function Home({ params }: { params: { id: number } }) {
-  const AuthenticationContext = useContext(Authentication);
-  const { AuthenticationState } = AuthenticationContext;
+
+  const { AuthenticationState } =  useAuthentication()
   const [bookmarks, setBookmarks] = useState<Bookmark[]>();
   useEffect(() => {
     {
@@ -41,7 +37,7 @@ export default function Home({ params }: { params: { id: number } }) {
         })
         .finally(function () {});
     }
-  }, [AuthenticationState.isLoggedIn, AuthenticationState.token]);
+  }, [AuthenticationState.isLoggedIn, AuthenticationState.token, params.id]);
 
   const [data, setData] = useState("");
 

@@ -1,14 +1,12 @@
 "use client";
 
 import { ApiCallOptions, handleFormChange, makeApiCall } from "@/scripts/index";
+import { AuthenticatedSection, InputComponent, useAuthentication } from "@/components";
 import React, { ChangeEvent, useContext, useState } from "react";
 
 import { Application } from "@/app/context/application";
-import AuthenticatedSection from "@/components/AuthenticatedSection/AuthenticatedSection";
-import { InputComponent } from "@/components/";
 import axios from "axios";
 import debounce from "lodash/debounce";
-import { useAuthentication } from "@/app/context/authentication";
 import { useRouter } from "next/navigation";
 
 export default function Home() {

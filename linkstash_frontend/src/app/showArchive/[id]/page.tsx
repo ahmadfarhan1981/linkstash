@@ -1,11 +1,10 @@
 "use client";
 
 import { ApiCallOptions, makeApiCall } from "@/scripts";
+import { Loader, useAuthentication, AuthenticatedSection } from "@/components";
 import React, { useContext, useState } from "react";
 
-import AuthenticatedSection from "@/components/AuthenticatedSection/AuthenticatedSection";
-import { Loader } from "@/components";
-import { useAuthentication } from "@/app/context/authentication";
+
 
 export default function Home({ params }: { params: { id: number } }) {
   const [isLoading, setIsLoading] = useState(true);
