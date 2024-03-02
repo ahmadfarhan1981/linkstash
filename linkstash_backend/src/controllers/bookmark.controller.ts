@@ -37,8 +37,7 @@ export class BookmarkController {
     @inject(RestBindings.Http.RESPONSE) protected response: Response,
   ) {}
 
-
-//#region CRUD related endpoints
+  //#region CRUD related endpoints
   @post('/bookmarks')
   @response(200, {
     description: 'Bookmark model instance',
@@ -180,26 +179,23 @@ export class BookmarkController {
   async count(@param.where(Bookmark) where?: Where<Bookmark>): Promise<Count> {
     return this.bookmarkRepository.count(where);
   }
-//#endregion
+  //#endregion
 
-//#region Archive related endpoints
+  //#region Archive related endpoints
   @post('/bookmarks/{id}/archive')
   @response(200, {
     description: 'Bookmark archived',
     content: {
       'application/json': {
-        schema: getModelSchemaRef(Bookmark, {includeRelations: true}),
+        schema: getModelSchemaRef(Archive),
       },
     },
   })
   async archive(
     @service(ArchiveService) archiveService: ArchiveService,
     @param.path.number('id') id: number,
-    @requestBody() archive: Required<Archive>,
-    @param.filter(Bookmark, {exclude: 'where'})
-    filter?: FilterExcludingWhere<Bookmark>,
   ): Promise<Archive | undefined> {
-    const bookmark = await this.bookmarkRepository.findById(id, filter);
+    const bookmark = await this.bookmarkRepository.findById(id);
     if (bookmark) {
       return await archiveService.archive(bookmark);
     }
@@ -239,10 +235,8 @@ export class BookmarkController {
   async getLatestArchive(
     @param.path.number('id') id: number,
   ): Promise<Archive> {
-    const builder = new FilterBuilder<Archive>()
-    const filter =builder.order(['version DESC'])
-                  .limit(1)
-                  .build()
+    const builder = new FilterBuilder<Archive>();
+    const filter = builder.order(['version DESC']).limit(1).build();
     const archives = await this.findArchives(id, filter);
     return archives[0];
   }
@@ -262,9 +256,9 @@ export class BookmarkController {
   ): Promise<Count> {
     return this.bookmarkRepository.archives(id).delete(where);
   }
-//#endregion
+  //#endregion
 
-//#region Users related endpoints
+  //#region Users related endpoints
   @get('/bookmarks/{id}/user', {
     responses: {
       '200': {
@@ -282,8 +276,7 @@ export class BookmarkController {
   ): Promise<User> {
     return this.bookmarkRepository.user(id);
   }
-//#endregion
-
+  //#endregion
 
   /**
    * ! Everything below this line are default LB4 implementation. Everything above is customized for LinkStash
@@ -308,6 +301,4 @@ export class BookmarkController {
   // ): Promise<Count> {
   //   return this.bookmarkRepository.updateAll(bookmark, where);
   // }
-
-
 }

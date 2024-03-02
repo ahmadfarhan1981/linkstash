@@ -2,23 +2,16 @@
 
 import {
   ChangeEvent,
-  Suspense,
-  useContext,
   useState,
 } from "react";
+import { AlertBox, InputComponent, Loader, useAuthentication } from "@/components";
 
-import  AlertBox from "@/components/AlertBox/AlertBox";
-import { Authentication } from "@/app/context/authentication";
-;import { BiError } from "react-icons/bi";
-import { IconContext } from "react-icons";
-import { InputComponent } from "..";
 import {generateClassNames} from "@/scripts/index"
 import styles from "./LoginForm.module.css";
 
 export default function LoginForm() {
   const [isSubmited, setIsSubmited] = useState(false);
-  const AuthenticationContext = useContext(Authentication)
-  const {login, AuthenticationState} = AuthenticationContext
+  const {login, AuthenticationState} = useAuthentication()
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -27,17 +20,15 @@ export default function LoginForm() {
       setIsSubmited(true)
         login(formData.email, formData.password) 
   };
-
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
   };
-
-  
   return (
-    <>      
-      <AlertBox isVisible={AuthenticationState.isPending} message="Loging in..." />
-      <AlertBox isVisible={ isSubmited && !AuthenticationState.isPending && !AuthenticationState.isLoggedIn} handleClose={()=>{setIsSubmited(false)}} message="Login failed" />
+    <>  
+      {/* <AlertBox isVisible={AuthenticationState.isPending}  message="Loging in..." /> */}
+      <AlertBox isVisible={ isSubmited && !AuthenticationState.isPending && !AuthenticationState.isLoggedIn} handleClose={()=>{setIsSubmited(false)}} message="Login failed." />
+      <Loader isLoading={AuthenticationState.isPending} text="Checking login">
       <section className={styles['login-form']}>
         <div className="content-area-header">
           <h2>Login</h2>          
@@ -60,6 +51,7 @@ export default function LoginForm() {
           </div>
         </form>
       </section>      
+      </Loader>
     </>
   );
 }

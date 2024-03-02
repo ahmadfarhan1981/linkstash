@@ -1,21 +1,22 @@
 "use client";
 
-import { AuthenticatedSection, BookmarkCard, TagCloud, useAuthentication } from "@/components";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import axios, { AxiosRequestConfig } from "axios";
-
 import { Bookmark } from "@/types";
-import styles from "./styles.module.css";
 
-export default function Home() {
-  const { AuthenticationState } = useAuthentication();
+
+import styles from "./styles.module.css";
+import { AuthenticatedSection, BookmarkCard, TagCloud, useAuthentication } from "@/components";
+
+export default function Home({ params }: { params: { id: number } }) {
+
+  const { AuthenticationState } =  useAuthentication()
   const [bookmarks, setBookmarks] = useState<Bookmark[]>();
   useEffect(() => {
     {
-      //TODO use makeApiCall()
       if (!AuthenticationState.isLoggedIn) return;
       const body = JSON.stringify({});
-      const url = "http://localhost:3030/bookmarks/";
+      const url = `http://localhost:3030/bookmarks/${params.id}`;
       const config: AxiosRequestConfig = {
         method: "get",
         url: url,
@@ -36,7 +37,7 @@ export default function Home() {
         })
         .finally(function () {});
     }
-  }, [AuthenticationState.isLoggedIn, AuthenticationState.token]);
+  }, [AuthenticationState.isLoggedIn, AuthenticationState.token, params.id]);
 
   const [data, setData] = useState("");
 

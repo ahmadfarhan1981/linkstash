@@ -29,10 +29,9 @@ async function download_resource(
     }
     const content_to_write = Buffer.from(response.data, 'base64');
     fs.writeFileSync(fullPath, content_to_write, {flag: 'a+'});
+    return {success: true, error: ''};
   } catch (error) {
     return {success: false, error: JSON.stringify(error)};
-  } finally {
-    return {success: true, error: ''};
   }
 }
 
@@ -45,7 +44,7 @@ async function download_resource(
  * Copied from: https://jsfiddle.net/zoxyoymn/10/ (https://stackoverflow.com/a/36381427)
  */
 function fileNameFromUrl(url: string): string {
-  var matches = url.match(/\/([^\/?#]+)[^\/]*$/);
+  let matches = url.match(/\/([^\/?#]+)[^\/]*$/);
   if (matches && matches.length > 1) {
     return matches[1];
   }
@@ -75,7 +74,7 @@ export class ArchiveService {
       const reader = new Readability(doc.window.document);
       const output = reader.parse();
       const content = output?.content ? output?.content : '';
-      var parsed_doc = new JSDOM(content);
+      let parsed_doc = new JSDOM(content);
 
       const contentBeforePost = parsed_doc.serialize();
       const size = Buffer.byteLength(contentBeforePost, 'utf8');

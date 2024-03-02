@@ -1,16 +1,13 @@
 import "./globals.css";
 
-// import UserNavigationBar  from "@/components/index"
-// import Loader  from "@/components/index"
 import {
-  AuthenticationProvider,
   Header,
   Loader,
+  Providers,
   UserNavigationBar,
 } from "@/components";
 import { Inter, Open_Sans } from "next/font/google";
 import type { Metadata } from "next";
-import ApplicationProvider from "@/components/ApplicationProvider/ApplicationProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 const openSans = Open_Sans({
@@ -29,8 +26,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ApplicationProvider>
-    <AuthenticationProvider>
+    <Providers>
       <html lang="en">
         <body className={openSans.className}>
           <div className="screen">
@@ -45,7 +41,6 @@ export default function RootLayout({
           </div>
         </body>
       </html>
-    </AuthenticationProvider>
-    </ApplicationProvider>
+    </Providers>
   );
 }

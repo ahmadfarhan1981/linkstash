@@ -1,5 +1,9 @@
 Naming
 - acronyms should be camel case e.g. ```makeApiCall()``` not ```makeAPICall()```
+-
+- frontend
+  - all components and hooks should be exported in the index file in src/components 
+  - all imports should be from the index in @/components
 - backend 
   - strictPascalCase
   - TODO eslint enforcement
