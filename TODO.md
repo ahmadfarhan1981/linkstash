@@ -4,7 +4,8 @@ TODO
   * finalize color scheme
   * biome instead of eslint
   * logging
-  * 
+  * group links by domain
+  * find duplicate link
   * 
 * frontend
   * input components

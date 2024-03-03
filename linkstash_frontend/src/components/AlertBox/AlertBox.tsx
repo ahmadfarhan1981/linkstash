@@ -1,17 +1,10 @@
 "use client";
 
-import {
-  ChangeEvent,
-  ReactNode,
-  useContext,
-  useState,
-} from "react";
-
-
-import { Authentication } from "@/app/context/authentication";
 import { BiError } from "react-icons/bi";
 import { IconContext } from "react-icons";
-
+import {
+  ReactNode,
+} from "react";
 
 export default function AlertBox({
   isVisible,

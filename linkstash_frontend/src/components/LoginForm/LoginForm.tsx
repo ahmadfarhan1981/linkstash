@@ -1,10 +1,10 @@
 "use client";
 
+import { AlertBox, InputComponent, Loader, useAuthentication } from "@/components";
 import {
   ChangeEvent,
   useState,
 } from "react";
-import { AlertBox, InputComponent, Loader, useAuthentication } from "@/components";
 
 import {generateClassNames} from "@/scripts/index"
 import styles from "./LoginForm.module.css";
