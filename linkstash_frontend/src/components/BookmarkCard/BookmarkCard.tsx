@@ -1,10 +1,10 @@
 "use client"
 
-import axios, { AxiosRequestConfig } from 'axios';
 import { useEffect, useState } from 'react';
 
 import {Bookmark} from '@/types'
 import styles from "./styles.module.css";
+import Link from 'next/link';
 
 // function fetchCard(){
 //   const config:AxiosRequestConfig ={
@@ -12,35 +12,23 @@ import styles from "./styles.module.css";
 //   }
 // }
 
-export type BookmarkCardData = Bookmark | number
 
-export default function BookmarkCard({bookmarkData}:{bookmarkData:BookmarkCardData}) {
-  const [data, setData] = useState<Bookmark>({})
-   
-  useEffect( () => {
-    if ( typeof bookmarkData === "number"){
-      //TODO load bookmark data based on the bookmark ID
-    }else{
-      setData(bookmarkData)              
-    }
-  },[bookmarkData])
-  
 
-  return (
-    
+export default function BookmarkCard({bookmarkData}:{bookmarkData:Bookmark}) {
+  return (  
     <div className={styles["card"]}>
       <div className={styles["title"]}>
         <a
-          href={(bookmarkData as Bookmark).url}
+          href={bookmarkData.url}
           target="_blank"
           rel="noopener"
         >
-          { (bookmarkData as Bookmark).title? (bookmarkData as Bookmark).title : (bookmarkData as Bookmark).url}
+          { bookmarkData.title? bookmarkData.title : bookmarkData.url}
         </a>
       </div>
 
       <div className={styles["description"]} >
-        {(bookmarkData as Bookmark).description}
+        {bookmarkData.description}
       </div>
 
       <div className={styles["tags"]}>

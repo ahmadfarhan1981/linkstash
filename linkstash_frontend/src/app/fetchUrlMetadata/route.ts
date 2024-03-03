@@ -1,8 +1,7 @@
 /* eslint-disable compat/compat */
-import { NextApiRequest, NextApiResponse } from "next";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextApiRequest, res: NextApiResponse) {
+export async function GET(req: NextRequest, res: NextResponse) {
   const ogs = require("open-graph-scraper");
   const url:string = req.url as string
   const { searchParams } = new URL( url );

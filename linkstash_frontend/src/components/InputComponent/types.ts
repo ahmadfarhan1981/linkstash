@@ -1,3 +1,5 @@
+import { ChangeEvent } from "react";
+
 /**
  *  https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#input_types
  *  button, checkbox, color, date, datetime-local, email, file, hidden, image, month, number, password, radio, range, reset, search, submit, tel, text, time, url, week, 
@@ -75,7 +77,7 @@ export type InputConfig = {
   name: string;
   value?: string;
   disabled?: boolean;
-  handleChange?: (event: ChangeEvent<HTMLInputElement>) => void;
+  handleChange?: (event: ChangeEvent<HTMLInputElement>  ) => void;
   required?: boolean;
   autocomplete?: AutocompleteType;
   autofocus?: boolean;

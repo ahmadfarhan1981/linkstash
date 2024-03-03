@@ -1,12 +1,11 @@
 "use client";
 
+import { AuthenticatedSection, BookmarkCard, TagCloud, useAuthentication } from "@/components";
 import React, { useContext, useEffect, useState } from "react";
 import axios, { AxiosRequestConfig } from "axios";
+
 import { Bookmark } from "@/types";
-
-
-import styles from "./styles.module.css";
-import { AuthenticatedSection, BookmarkCard, TagCloud, useAuthentication } from "@/components";
+import styles from "../styles.module.css";
 
 export default function Home({ params }: { params: { id: number } }) {
 
