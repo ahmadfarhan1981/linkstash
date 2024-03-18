@@ -22,6 +22,47 @@ export {ApplicationConfig};
 export class LinkstashApplication extends BootMixin(
   ServiceMixin(RepositoryMixin(RestApplication)),
 ) {
+  private async customMigration(): Promise<void> {
+    /**
+     * TODO: cant seem to get add index to the relation fields via model file
+     *       even after adding the jsonschema to the belongTo decorator
+     * TODO: these are mysql specific
+     */
+    const bookmarkRepo = await this.getRepository(BookmarkRepository);
+    const indices = await bookmarkRepo.execute('SHOW INDEX FROM `BookmarkTag`');
+    if (
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      !indices.some((row: {Column_name: string}) => {
+        return row.Column_name === 'bookmarkId';
+      })
+    )
+      await bookmarkRepo.execute(
+        'ALTER TABLE `BookmarkTag` ADD INDEX(`bookmarkId`)',
+      );
+
+    if (
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      !indices.some((row: {Column_name: string}) => {
+        return row.Column_name === 'tagId';
+      })
+    )
+      await bookmarkRepo.execute(
+        'ALTER TABLE `BookmarkTag` ADD INDEX(`tagId`) ',
+      );
+
+    // 2. Make further changes. When creating predefined model instances,
+    // handle the case when these instances already exist.
+    // const found = await bookmarkRepo.findOne({where: {title: 'google'}});
+    // if (!found) {
+    //   await bookmarkRepo.create({
+    //     title: 'google',
+    //     url: 'http://google.com',
+    //     description: 'it is google',
+    //     created: Date.now(),
+    //   });
+    // }
+    console.log('MIGRATE');
+  }
   constructor(options: ApplicationConfig = {}) {
     super(options);
 
@@ -58,21 +99,7 @@ export class LinkstashApplication extends BootMixin(
   }
 
   async migrateSchema(options?: SchemaMigrationOptions) {
-    // 1. Run migration scripts provided by connectors
-    await super.migrateSchema(options);
-
-    // 2. Make further changes. When creating predefined model instances,
-    // handle the case when these instances already exist.
-    const bookmarkRepo = await this.getRepository(BookmarkRepository);
-    const found = await bookmarkRepo.findOne({where: {title: 'google'}});
-    if (!found) {
-      await bookmarkRepo.create({
-        title: 'google',
-        url: 'http://google.com',
-        description: 'it is google',
-        created: Date.now(),
-      });
-    }
-    console.log('MIGRATE');
+    await super.migrateSchema(options); // 1. Run migration scripts provided by connectors
+    await this.customMigration(); // 2. Custom migration
   }
 }

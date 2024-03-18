@@ -11,7 +11,22 @@
 		}
 	],
 	"settings": {
-		"todo-tree.tree.showBadges": false
+		"todo-tree.tree.showBadges": false,
+		"sqltools.connections": [
+			{
+				"mysqlOptions": {
+					"authProtocol": "default",
+					"enableSsl": "Disabled"
+				},
+				"previewLimit": 50,
+				"server": "localhost",
+				"port": 3306,
+				"driver": "MySQL",
+				"name": "localhost",
+				"database": "linkstash_backend",
+				"username": "root"
+			}
+		]
 	},
 	"extensions": {
 		"recommendations": [

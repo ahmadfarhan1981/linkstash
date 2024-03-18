@@ -35,4 +35,24 @@ export class ArchiveBookmarkController {
   ): Promise<Bookmark> {
     return this.archiveRepository.bookmark(id);
   }
+
+
+  @get('/archives/{id}/bookmark', {
+    responses: {
+      '200': {
+        description: 'Bookmark belonging to Archive',
+        content: {
+          'application/json': {
+            schema: getModelSchemaRef(Bookmark),
+          },
+        },
+      },
+    },
+  })
+  async deleteArchive(
+    @param.path.string('id') id: typeof Archive.prototype.ArchiveId,
+  ): Promise<void> {
+    await  this.archiveRepository.deleteById(id)
+  }
+
 }

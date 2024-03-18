@@ -1,6 +1,6 @@
 //#region Imports
 import {authenticate} from '@loopback/authentication';
-import {inject, service} from '@loopback/core';
+import {inject} from '@loopback/core';
 import {
   Count,
   CountSchema,
@@ -8,15 +8,13 @@ import {
   FilterBuilder,
   FilterExcludingWhere,
   Where,
+  WhereBuilder,
   repository,
 } from '@loopback/repository';
 import {
-  Response,
-  RestBindings,
   del,
   get,
   getModelSchemaRef,
-  getWhereSchemaFor,
   param,
   patch,
   post,
@@ -24,9 +22,9 @@ import {
   response,
 } from '@loopback/rest';
 import {SecurityBindings, UserProfile, securityId} from '@loopback/security';
-import {Archive, Bookmark, User} from '../models';
-import {BookmarkRepository} from '../repositories';
-import {ArchiveService} from '../services';
+import {Bookmark, BookmarkTag, TagWithRelations, User} from '../models';
+import {BookmarkRepository, BookmarkTagRepository} from '../repositories';
+import {BookmarkWithTags} from '../types';
 //#endregion
 
 @authenticate('jwt')
@@ -34,7 +32,6 @@ export class BookmarkController {
   constructor(
     @repository(BookmarkRepository)
     public bookmarkRepository: BookmarkRepository,
-    @inject(RestBindings.Http.RESPONSE) protected response: Response,
   ) {}
 
   //#region CRUD related endpoints
@@ -80,11 +77,11 @@ export class BookmarkController {
   ): Promise<Object> {
     // this.response.status(201);
     console.log(JSON.stringify(currentUserProfile));
-    var builder = new FilterBuilder(filter);
+    const builder = new FilterBuilder(filter);
 
     builder.impose({userId: currentUserProfile[securityId]});
     const resultFilter = builder.build();
-    var allResultFilter: Filter<Bookmark> = JSON.parse(
+    const allResultFilter: Filter<Bookmark> = JSON.parse(
       JSON.stringify(resultFilter),
     );
     if (allResultFilter.limit) delete allResultFilter.limit;
@@ -111,10 +108,36 @@ export class BookmarkController {
   })
   async findById(
     @param.path.number('id') id: number,
+    @repository(BookmarkTagRepository)
+    bookmarkTagRepository: BookmarkTagRepository,
+    @param.query.boolean('tags') getTags?: boolean,
     @param.filter(Bookmark, {exclude: 'where'})
     filter?: FilterExcludingWhere<Bookmark>,
-  ): Promise<Bookmark> {
-    return this.bookmarkRepository.findById(id, filter);
+  ): Promise<BookmarkWithTags> {
+    const bookmarkPromise = this.bookmarkRepository.findById(id, filter);
+    if (!getTags) return bookmarkPromise as Promise<BookmarkWithTags>;
+
+    const bookmark = await bookmarkPromise;
+    const where = new WhereBuilder<BookmarkTag>()
+      .eq('bookmarkId', bookmark.id!)
+      .build();
+    const tagFilter = new FilterBuilder<BookmarkTag>()
+      .where(where)
+      .include({
+        relation: 'tag',
+        scope: {
+          fields: {Id: false, userId: false},
+        },
+      })
+      .build();
+
+    const bookmarkTags = await bookmarkTagRepository.find(tagFilter);
+    const tags: TagWithRelations[] = [];
+    bookmarkTags.map(bookmarkTag => {
+      tags.push(bookmarkTag.tag!);
+    });
+
+    return Promise.resolve({...bookmark, tags: tags});
   }
 
   // @intercept('interceptors.AddCountToResultInterceptor')
@@ -178,83 +201,6 @@ export class BookmarkController {
   })
   async count(@param.where(Bookmark) where?: Where<Bookmark>): Promise<Count> {
     return this.bookmarkRepository.count(where);
-  }
-  //#endregion
-
-  //#region Archive related endpoints
-  @post('/bookmarks/{id}/archive')
-  @response(200, {
-    description: 'Bookmark archived',
-    content: {
-      'application/json': {
-        schema: getModelSchemaRef(Archive),
-      },
-    },
-  })
-  async archive(
-    @service(ArchiveService) archiveService: ArchiveService,
-    @param.path.number('id') id: number,
-  ): Promise<Archive | undefined> {
-    const bookmark = await this.bookmarkRepository.findById(id);
-    if (bookmark) {
-      return await archiveService.archive(bookmark);
-    }
-  }
-
-  @get('/bookmarks/{id}/archives', {
-    responses: {
-      '200': {
-        description: 'Get all available archives of the bookmark',
-        content: {
-          'application/json': {
-            schema: {type: 'array', items: getModelSchemaRef(Archive)},
-          },
-        },
-      },
-    },
-  })
-  async findArchives(
-    @param.path.number('id') id: number,
-    @param.query.object('filter') filter?: Filter<Archive>,
-  ): Promise<Archive[]> {
-    return this.bookmarkRepository.archives(id).find(filter);
-  }
-
-  @get('/bookmarks/{id}/archive', {
-    responses: {
-      '200': {
-        description: 'Get the latest archive for a bookmark',
-        content: {
-          'application/json': {
-            schema: {type: 'array', items: getModelSchemaRef(Archive)},
-          },
-        },
-      },
-    },
-  })
-  async getLatestArchive(
-    @param.path.number('id') id: number,
-  ): Promise<Archive> {
-    const builder = new FilterBuilder<Archive>();
-    const filter = builder.order(['version DESC']).limit(1).build();
-    const archives = await this.findArchives(id, filter);
-    return archives[0];
-  }
-
-  @del('/bookmarks/{id}/archives', {
-    responses: {
-      '200': {
-        description: 'Bookmark.Archive DELETE success count',
-        content: {'application/json': {schema: CountSchema}},
-      },
-    },
-  })
-  async deleteArchive(
-    @param.path.number('id') id: number,
-    @param.query.object('where', getWhereSchemaFor(Archive))
-    where?: Where<Archive>,
-  ): Promise<Count> {
-    return this.bookmarkRepository.archives(id).delete(where);
   }
   //#endregion
 
