@@ -10,10 +10,10 @@ import {UserRepository} from './user.repository';
 
 export class TagRepository extends DefaultCrudRepository<
   Tag,
-  typeof Tag.prototype.Id,
+  typeof Tag.prototype.id,
   TagRelations
 > {
-  public readonly user: BelongsToAccessor<User, typeof Tag.prototype.Id>;
+  public readonly user: BelongsToAccessor<User, typeof Tag.prototype.id>;
 
   constructor(
     @inject('datasources.bookmark') dataSource: BookmarkDataSource,

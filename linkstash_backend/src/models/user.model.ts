@@ -6,12 +6,8 @@
 import {Entity, hasOne, model, property, hasMany} from '@loopback/repository';
 import {UserCredentials} from './user-credentials.model';
 import {Bookmark} from './bookmark.model';
+import {Tag} from './tag.model';
 
-@model({
-  settings: {
-    strict: false,
-  },
-})
 export class User extends Entity {
   // must keep it
   // add id:string<UUID>
@@ -38,6 +34,9 @@ export class User extends Entity {
   // must keep it
   @hasMany(() => Bookmark)
   bookmarks: Bookmark[];
+
+  @hasMany(() => Tag)
+  tags: Tag[];
   // feat email unique
   @property({
     type: 'string',
@@ -60,12 +59,6 @@ export class User extends Entity {
 
   @hasOne(() => UserCredentials)
   userCredentials: UserCredentials;
-
-  // Define well-known properties here
-
-  // Indexer property to allow additional data
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [prop: string]: any;
 
   constructor(data?: Partial<User>) {
     super(data);

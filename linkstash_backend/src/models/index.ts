@@ -5,4 +5,3 @@ export * from './user.model';
 export * from './archive.model';
 export * from './asset.model';
 export * from './tag.model';
-export * from './bookmark-tag.model';

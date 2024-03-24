@@ -1,2 +1,2 @@
-export * from './token-service'
-export * from './bookmark'
+export * from './schemas';
+export * from './token-service';

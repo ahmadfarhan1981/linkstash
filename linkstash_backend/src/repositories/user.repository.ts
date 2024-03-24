@@ -10,9 +10,10 @@ import {
   juggler,
   repository, HasManyRepositoryFactory} from '@loopback/repository';
 import {UserServiceBindings} from '../keys';
-import {User, UserCredentials, UserRelations, Bookmark} from '../models';
+import {User, UserCredentials, UserRelations, Bookmark, Tag} from '../models';
 import {UserCredentialsRepository} from './user-credentials.repository';
 import {BookmarkRepository} from './bookmark.repository';
+import {TagRepository} from './tag.repository';
 
 export class UserRepository extends DefaultCrudRepository<
   User,
@@ -26,13 +27,17 @@ export class UserRepository extends DefaultCrudRepository<
 
   public readonly bookmarks: HasManyRepositoryFactory<Bookmark, typeof User.prototype.id>;
 
+  public readonly tags: HasManyRepositoryFactory<Tag, typeof User.prototype.id>;
+
   constructor(
     @inject(`datasources.${UserServiceBindings.DATASOURCE_NAME}`)
     dataSource: juggler.DataSource,
     @repository.getter('UserCredentialsRepository')
-    protected userCredentialsRepositoryGetter: Getter<UserCredentialsRepository>, @repository.getter('BookmarkRepository') protected bookmarkRepositoryGetter: Getter<BookmarkRepository>,
+    protected userCredentialsRepositoryGetter: Getter<UserCredentialsRepository>, @repository.getter('BookmarkRepository') protected bookmarkRepositoryGetter: Getter<BookmarkRepository>, @repository.getter('TagRepository') protected tagRepositoryGetter: Getter<TagRepository>,
   ) {
     super(User, dataSource);
+    this.tags = this.createHasManyRepositoryFactoryFor('tags', tagRepositoryGetter,);
+    this.registerInclusionResolver('tags', this.tags.inclusionResolver);
     this.bookmarks = this.createHasManyRepositoryFactoryFor('bookmarks', bookmarkRepositoryGetter,);
     this.registerInclusionResolver('bookmarks', this.bookmarks.inclusionResolver);
     this.userCredentials = this.createHasOneRepositoryFactoryFor(

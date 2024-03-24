@@ -19,7 +19,7 @@ export class Bookmark extends Entity {
 
   @property({
     type: 'string',
-    required: true
+    required: true,
   })
   url: string;
 
@@ -38,6 +38,12 @@ export class Bookmark extends Entity {
     defaultFn: 'now',
   })
   created?: Date;
+
+  @property({
+    type: 'array',
+    itemType: 'string',
+  })
+  tagList?: string[];
 
   @belongsTo(() => User)
   userId: string;
