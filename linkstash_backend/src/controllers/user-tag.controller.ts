@@ -22,6 +22,7 @@ import {authenticate} from '@loopback/authentication';
 import {inject} from '@loopback/core';
 import {Tag} from '../models';
 import {UserRepository} from '../repositories';
+import {newTagSchema} from '../types/';
 
 @authenticate('jwt')
 export class UserTagController {
@@ -54,19 +55,11 @@ export class UserTagController {
     responses: {
       '201': {
         description: 'Tag created',
-        content: {
-          'application/json': {
-            schema: getModelSchemaRef(Tag, {exclude: ['id', 'userId']}),
-          },
-        },
+        content: {'application/json': {schema: newTagSchema}},
       },
       '202': {
         description: 'Existing tag',
-        content: {
-          'application/json': {
-            schema: getModelSchemaRef(Tag, {exclude: ['id', 'userId']}),
-          },
-        },
+        content: {'application/json': {schema: newTagSchema}},
       },
     },
   })
