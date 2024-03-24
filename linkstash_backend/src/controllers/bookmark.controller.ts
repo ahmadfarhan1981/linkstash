@@ -8,7 +8,6 @@ import {
   FilterBuilder,
   FilterExcludingWhere,
   Where,
-  WhereBuilder,
   repository,
 } from '@loopback/repository';
 import {
@@ -22,8 +21,8 @@ import {
   response,
 } from '@loopback/rest';
 import {SecurityBindings, UserProfile, securityId} from '@loopback/security';
-import {Bookmark, BookmarkTag, TagWithRelations, User} from '../models';
-import {BookmarkRepository, BookmarkTagRepository} from '../repositories';
+import {Bookmark, User} from '../models';
+import {BookmarkRepository} from '../repositories';
 import {BookmarkWithTags} from '../types';
 //#endregion
 
@@ -108,36 +107,11 @@ export class BookmarkController {
   })
   async findById(
     @param.path.number('id') id: number,
-    @repository(BookmarkTagRepository)
-    bookmarkTagRepository: BookmarkTagRepository,
-    @param.query.boolean('tags') getTags?: boolean,
     @param.filter(Bookmark, {exclude: 'where'})
     filter?: FilterExcludingWhere<Bookmark>,
   ): Promise<BookmarkWithTags> {
     const bookmarkPromise = this.bookmarkRepository.findById(id, filter);
-    if (!getTags) return bookmarkPromise as Promise<BookmarkWithTags>;
-
-    const bookmark = await bookmarkPromise;
-    const where = new WhereBuilder<BookmarkTag>()
-      .eq('bookmarkId', bookmark.id!)
-      .build();
-    const tagFilter = new FilterBuilder<BookmarkTag>()
-      .where(where)
-      .include({
-        relation: 'tag',
-        scope: {
-          fields: {Id: false, userId: false},
-        },
-      })
-      .build();
-
-    const bookmarkTags = await bookmarkTagRepository.find(tagFilter);
-    const tags: TagWithRelations[] = [];
-    bookmarkTags.map(bookmarkTag => {
-      tags.push(bookmarkTag.tag!);
-    });
-
-    return Promise.resolve({...bookmark, tags: tags});
+    return bookmarkPromise as Promise<BookmarkWithTags>;
   }
 
   // @intercept('interceptors.AddCountToResultInterceptor')
