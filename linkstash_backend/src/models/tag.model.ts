@@ -8,13 +8,14 @@ export class Tag extends Entity {
     id: true,
     generated: true,
   })
-  Id?: number;
+  id?: number;
 
   @property({
     type: 'string',
     required: true,
+    index: true,
   })
-  Name: string;
+  name: string;
 
   @belongsTo(() => User)
   userId: string;
@@ -26,7 +27,6 @@ export class Tag extends Entity {
 
 export interface TagRelations {
   // describe navigational properties here
-
 }
 
 export type TagWithRelations = Tag & TagRelations;

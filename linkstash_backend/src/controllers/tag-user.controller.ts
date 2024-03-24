@@ -31,7 +31,7 @@ export class TagUserController {
     },
   })
   async getUser(
-    @param.path.number('id') id: typeof Tag.prototype.Id,
+    @param.path.number('id') id: typeof Tag.prototype.id,
   ): Promise<User> {
     return this.tagRepository.user(id);
   }

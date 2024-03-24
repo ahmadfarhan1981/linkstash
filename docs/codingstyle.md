@@ -1,6 +1,6 @@
 Naming
 - acronyms should be camel case e.g. ```makeApiCall()``` not ```makeAPICall()```
--
+- database table in pascalCase with non capital first word  //TODO ongoing, some fields are not in line with this
 - frontend
   - all components and hooks should be exported in the index file in src/components 
   - all imports should be from the index in @/components
