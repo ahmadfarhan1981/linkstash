@@ -71,7 +71,7 @@ export class UserTagController {
         'application/json': {
           schema: getModelSchemaRef(Tag, {
             title: 'NewTagInUser',
-            exclude: ['id', 'userId'],
+            exclude: ['id', "userId"],
           }),
         },
       },

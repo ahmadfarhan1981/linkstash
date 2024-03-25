@@ -3,11 +3,16 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-import {Entity, hasOne, model, property, hasMany} from '@loopback/repository';
-import {UserCredentials} from './user-credentials.model';
+import {Entity, hasMany, hasOne, model, property} from '@loopback/repository';
 import {Bookmark} from './bookmark.model';
 import {Tag} from './tag.model';
+import {UserCredentials} from './user-credentials.model';
 
+@model({
+  settings: {
+    strict: false,
+  },
+})
 export class User extends Entity {
   // must keep it
   // add id:string<UUID>
@@ -30,14 +35,13 @@ export class User extends Entity {
   })
   username?: string;
 
-
   // must keep it
   @hasMany(() => Bookmark)
   bookmarks: Bookmark[];
 
   @hasMany(() => Tag)
   tags: Tag[];
-  // feat email unique
+
   @property({
     type: 'string',
     required: true,
@@ -59,6 +63,10 @@ export class User extends Entity {
 
   @hasOne(() => UserCredentials)
   userCredentials: UserCredentials;
+
+  // Indexer property to allow additional data
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [prop: string]: any;
 
   constructor(data?: Partial<User>) {
     super(data);

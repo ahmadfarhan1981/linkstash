@@ -4,55 +4,39 @@
 // License text available at https://opensource.org/licenses/MIT
 
 import {Getter, inject} from '@loopback/core';
-import {
-  DefaultCrudRepository,
-  HasOneRepositoryFactory,
-  juggler,
-  repository, HasManyRepositoryFactory} from '@loopback/repository';
+import {DefaultCrudRepository, HasManyRepositoryFactory, HasOneRepositoryFactory, juggler, repository} from '@loopback/repository';
 import {UserServiceBindings} from '../keys';
-import {User, UserCredentials, UserRelations, Bookmark, Tag} from '../models';
-import {UserCredentialsRepository} from './user-credentials.repository';
+import {Bookmark, Tag, User, UserCredentials, UserRelations} from '../models';
 import {BookmarkRepository} from './bookmark.repository';
 import {TagRepository} from './tag.repository';
+import {UserCredentialsRepository} from './user-credentials.repository';
 
-export class UserRepository extends DefaultCrudRepository<
-  User,
-  typeof User.prototype.id,
-  UserRelations
-> {
-  public readonly userCredentials: HasOneRepositoryFactory<
-    UserCredentials,
-    typeof User.prototype.id
-  >;
+export class UserRepository extends DefaultCrudRepository<User, typeof User.prototype.id, UserRelations> {
+  public readonly userCredentials: HasOneRepositoryFactory<UserCredentials, typeof User.prototype.id>;
 
   public readonly bookmarks: HasManyRepositoryFactory<Bookmark, typeof User.prototype.id>;
 
   public readonly tags: HasManyRepositoryFactory<Tag, typeof User.prototype.id>;
 
   constructor(
-    @inject(`datasources.${UserServiceBindings.DATASOURCE_NAME}`)
-    dataSource: juggler.DataSource,
-    @repository.getter('UserCredentialsRepository')
-    protected userCredentialsRepositoryGetter: Getter<UserCredentialsRepository>, @repository.getter('BookmarkRepository') protected bookmarkRepositoryGetter: Getter<BookmarkRepository>, @repository.getter('TagRepository') protected tagRepositoryGetter: Getter<TagRepository>,
+    @inject(`datasources.${UserServiceBindings.DATASOURCE_NAME}`) dataSource: juggler.DataSource,
+    @repository.getter('UserCredentialsRepository') protected userCredentialsRepositoryGetter: Getter<UserCredentialsRepository>,
+    @repository.getter('BookmarkRepository') protected bookmarkRepositoryGetter: Getter<BookmarkRepository>,
+    @repository.getter('TagRepository') protected tagRepositoryGetter: Getter<TagRepository>,
   ) {
     super(User, dataSource);
-    this.tags = this.createHasManyRepositoryFactoryFor('tags', tagRepositoryGetter,);
-    this.registerInclusionResolver('tags', this.tags.inclusionResolver);
-    this.bookmarks = this.createHasManyRepositoryFactoryFor('bookmarks', bookmarkRepositoryGetter,);
+
+    this.bookmarks = this.createHasManyRepositoryFactoryFor('bookmarks', bookmarkRepositoryGetter);
     this.registerInclusionResolver('bookmarks', this.bookmarks.inclusionResolver);
-    this.userCredentials = this.createHasOneRepositoryFactoryFor(
-      'userCredentials',
-      userCredentialsRepositoryGetter,
-    );
-    this.registerInclusionResolver(
-      'userCredentials',
-      this.userCredentials.inclusionResolver,
-    );
+
+    this.tags = this.createHasManyRepositoryFactoryFor('tags', tagRepositoryGetter);
+    this.registerInclusionResolver('tags', this.tags.inclusionResolver);
+
+    this.userCredentials = this.createHasOneRepositoryFactoryFor('userCredentials', userCredentialsRepositoryGetter);
+    this.registerInclusionResolver('userCredentials', this.userCredentials.inclusionResolver);
   }
 
-  async findCredentials(
-    userId: typeof User.prototype.id,
-  ): Promise<UserCredentials | undefined> {
+  async findCredentials(userId: typeof User.prototype.id): Promise<UserCredentials | undefined> {
     return this.userCredentials(userId)
       .get()
       .catch(err => {

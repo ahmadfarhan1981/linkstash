@@ -1,30 +1,10 @@
-import {
-  Count,
-  CountSchema,
-  Filter,
-  repository,
-  Where,
-} from '@loopback/repository';
-import {
-  del,
-  get,
-  getModelSchemaRef,
-  getWhereSchemaFor,
-  param,
-  patch,
-  post,
-  requestBody,
-} from '@loopback/rest';
-import {
-  User,
-  Bookmark,
-} from '../models';
+import {Count, CountSchema, Filter, repository, Where} from '@loopback/repository';
+import {del, get, getModelSchemaRef, getWhereSchemaFor, param, patch, post, requestBody} from '@loopback/rest';
+import {Bookmark, User} from '../models';
 import {UserRepository} from '../repositories';
 
 export class UserBookmarkController {
-  constructor(
-    @repository(UserRepository) protected userRepository: UserRepository,
-  ) { }
+  constructor(@repository(UserRepository) protected userRepository: UserRepository) {}
 
   @get('/users/{id}/bookmarks', {
     responses: {
@@ -38,10 +18,7 @@ export class UserBookmarkController {
       },
     },
   })
-  async find(
-    @param.path.string('id') id: string,
-    @param.query.object('filter') filter?: Filter<Bookmark>,
-  ): Promise<Bookmark[]> {
+  async find(@param.path.string('id') id: string, @param.query.object('filter') filter?: Filter<Bookmark>): Promise<Bookmark[]> {
     return this.userRepository.bookmarks(id).find(filter);
   }
 
@@ -61,11 +38,12 @@ export class UserBookmarkController {
           schema: getModelSchemaRef(Bookmark, {
             title: 'NewBookmarkInUser',
             exclude: ['id'],
-            optional: ['userId']
+            optional: ['userId'],
           }),
         },
       },
-    }) bookmark: Omit<Bookmark, 'id'>,
+    })
+    bookmark: Omit<Bookmark, 'id'>,
   ): Promise<Bookmark> {
     return this.userRepository.bookmarks(id).create(bookmark);
   }
@@ -101,10 +79,7 @@ export class UserBookmarkController {
       },
     },
   })
-  async delete(
-    @param.path.string('id') id: string,
-    @param.query.object('where', getWhereSchemaFor(Bookmark)) where?: Where<Bookmark>,
-  ): Promise<Count> {
+  async delete(@param.path.string('id') id: string, @param.query.object('where', getWhereSchemaFor(Bookmark)) where?: Where<Bookmark>): Promise<Count> {
     return this.userRepository.bookmarks(id).delete(where);
   }
 }

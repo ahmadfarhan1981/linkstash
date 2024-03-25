@@ -1,27 +1,10 @@
 //#region Imports
 import {authenticate} from '@loopback/authentication';
 import {inject} from '@loopback/core';
-import {
-  Count,
-  CountSchema,
-  Filter,
-  FilterBuilder,
-  FilterExcludingWhere,
-  Where,
-  repository,
-} from '@loopback/repository';
-import {
-  del,
-  get,
-  getModelSchemaRef,
-  param,
-  patch,
-  post,
-  requestBody,
-  response,
-} from '@loopback/rest';
+import {Count, CountSchema, Filter, FilterBuilder, FilterExcludingWhere, Where, repository} from '@loopback/repository';
+import {del, get, getModelSchemaRef, param, patch, post, requestBody, response} from '@loopback/rest';
 import {SecurityBindings, UserProfile, securityId} from '@loopback/security';
-import {Bookmark, BookmarkWithRelations, User} from '../models';
+import {Bookmark, BookmarkWithRelations} from '../models';
 import {BookmarkRepository} from '../repositories';
 //#endregion
 
@@ -69,19 +52,11 @@ export class BookmarkController {
       },
     },
   })
-  async find(
-    @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
-    @param.filter(Bookmark) filter?: Filter<Bookmark>,
-  ): Promise<Object> {
-    // this.response.status(201);
-    console.log(JSON.stringify(currentUserProfile));
+  async find(@inject(SecurityBindings.USER) currentUserProfile: UserProfile, @param.filter(Bookmark) filter?: Filter<Bookmark>): Promise<Object> {
     const builder = new FilterBuilder(filter);
-
     builder.impose({userId: currentUserProfile[securityId]});
     const resultFilter = builder.build();
-    const allResultFilter: Filter<Bookmark> = JSON.parse(
-      JSON.stringify(resultFilter),
-    );
+    const allResultFilter: Filter<Bookmark> = JSON.parse(JSON.stringify(resultFilter));
     if (allResultFilter.limit) delete allResultFilter.limit;
 
     console.log(JSON.stringify(allResultFilter));
@@ -126,10 +101,7 @@ export class BookmarkController {
       },
     },
   })
-  async findAll(
-    @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
-    @param.filter(Bookmark) filter?: Filter<Bookmark>,
-  ): Promise<Object> {
+  async findAll(@inject(SecurityBindings.USER) currentUserProfile: UserProfile, @param.filter(Bookmark) filter?: Filter<Bookmark>): Promise<Object> {
     const all = await this.bookmarkRepository.find(filter);
 
     const returnValue = {
@@ -177,23 +149,23 @@ export class BookmarkController {
   //#endregion
 
   //#region Users related endpoints
-  @get('/bookmarks/{id}/user', {
-    responses: {
-      '200': {
-        description: 'User belonging to Bookmark',
-        content: {
-          'application/json': {
-            schema: getModelSchemaRef(User),
-          },
-        },
-      },
-    },
-  })
-  async getUser(
-    @param.path.number('id') id: typeof Bookmark.prototype.id,
-  ): Promise<User> {
-    return this.bookmarkRepository.user(id);
-  }
+  // @get('/bookmarks/{id}/user', {
+  //   responses: {
+  //     '200': {
+  //       description: 'User belonging to Bookmark',
+  //       content: {
+  //         'application/json': {
+  //           schema: getModelSchemaRef(User),
+  //         },
+  //       },
+  //     },
+  //   },
+  // })
+  // async getUser(
+  //   @param.path.number('id') id: typeof Bookmark.prototype.id,
+  // ): Promise<User> {
+  //   return this.bookmarkRepository.user(id);
+  // }
   //#endregion
 
   /**

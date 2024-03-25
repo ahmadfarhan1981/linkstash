@@ -1,27 +1,20 @@
-import {inject, Getter} from '@loopback/core';
-import {DefaultCrudRepository, repository, BelongsToAccessor, HasManyRepositoryFactory, DefaultTransactionalRepository} from '@loopback/repository';
+import {Getter, inject} from '@loopback/core';
+import {DefaultCrudRepository, HasManyRepositoryFactory, repository} from '@loopback/repository';
 import {BookmarkDataSource} from '../datasources';
-import {Bookmark, BookmarkRelations, User, Archive} from '../models';
-import {UserRepository} from './user.repository';
+import {Archive, Bookmark, BookmarkRelations} from '../models';
 import {ArchiveRepository} from './archive.repository';
+import {UserRepository} from './user.repository';
 
-export class BookmarkRepository extends DefaultCrudRepository<
-  Bookmark,
-  typeof Bookmark.prototype.id,
-  BookmarkRelations
-> {
-
-  public readonly user: BelongsToAccessor<User, typeof Bookmark.prototype.id>;
-
+export class BookmarkRepository extends DefaultCrudRepository<Bookmark, typeof Bookmark.prototype.id, BookmarkRelations> {
   public readonly archives: HasManyRepositoryFactory<Archive, typeof Bookmark.prototype.id>;
 
   constructor(
-    @inject('datasources.bookmark') dataSource: BookmarkDataSource, @repository.getter('UserRepository') protected userRepositoryGetter: Getter<UserRepository>, @repository.getter('ArchiveRepository') protected archiveRepositoryGetter: Getter<ArchiveRepository>,
+    @inject('datasources.bookmark') dataSource: BookmarkDataSource,
+    @repository.getter('UserRepository') protected userRepositoryGetter: Getter<UserRepository>,
+    @repository.getter('ArchiveRepository') protected archiveRepositoryGetter: Getter<ArchiveRepository>,
   ) {
     super(Bookmark, dataSource);
-    this.archives = this.createHasManyRepositoryFactoryFor('archives', archiveRepositoryGetter,);
+    this.archives = this.createHasManyRepositoryFactoryFor('archives', archiveRepositoryGetter);
     this.registerInclusionResolver('archives', this.archives.inclusionResolver);
-    this.user = this.createBelongsToAccessorFor('user', userRepositoryGetter,);
-    this.registerInclusionResolver('user', this.user.inclusionResolver);
   }
 }

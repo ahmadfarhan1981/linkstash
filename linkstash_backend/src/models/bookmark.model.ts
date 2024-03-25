@@ -1,12 +1,5 @@
-import {
-  Entity,
-  belongsTo,
-  hasMany,
-  model,
-  property,
-} from '@loopback/repository';
+import {Entity, hasMany, model, property} from '@loopback/repository';
 import {Archive} from './archive.model';
-import {User} from './user.model';
 
 @model()
 export class Bookmark extends Entity {
@@ -39,13 +32,12 @@ export class Bookmark extends Entity {
   })
   created?: Date;
 
-  @property({
-    type: 'array',
-    itemType: 'string',
-  })
+  @property.array(String)
   tagList?: string[];
 
-  @belongsTo(() => User)
+  @property({
+    type: 'string',
+  })
   userId: string;
 
   @hasMany(() => Archive)
