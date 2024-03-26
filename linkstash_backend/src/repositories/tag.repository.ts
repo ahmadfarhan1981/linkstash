@@ -15,5 +15,6 @@ export class TagRepository extends DefaultCrudRepository<Tag, typeof Tag.prototy
   ) {
     super(Tag, dataSource);
     this.bookmarks = this.createReferencesManyAccessorFor('bookmarks', bookmarkRepositoryGetter);
+    this.registerInclusionResolver('bookmarks', this.bookmarks.inclusionResolver);
   }
 }

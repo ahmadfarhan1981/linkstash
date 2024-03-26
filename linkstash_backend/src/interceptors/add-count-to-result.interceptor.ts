@@ -35,24 +35,23 @@ export class AddCountToResultInterceptor implements Provider<Interceptor> {
    * @param invocationCtx - Invocation context
    * @param next - A function to invoke next interceptor or the target method
    */
-  async intercept(
-    invocationCtx: InvocationContext,
-    next: () => ValueOrPromise<InvocationResult>,
-  ) {
+  async intercept(invocationCtx: InvocationContext, next: () => ValueOrPromise<InvocationResult>) {
     try {
       // Add pre-invocation logic here
       const result = await next();
       // Add post-invocation logic here
-      console.log(invocationCtx.args);
-      const newResult = {
-        count: result.length,
-        data: result,
-      };
-      console.log(`result= ${result}`);
-      //return newResult;
+      // console.log(invocationCtx.args);
+      // const newResult = {
+      //   count: result.length,
+      //   data: result,
+      // };
+      // console.log(`result= ${result}`);
+      // return newResult;
       return result;
     } catch (err) {
       // Add error handling logic here
+      // eslint-disable-next-line no-console
+      console.log(err);
       throw err;
     }
   }

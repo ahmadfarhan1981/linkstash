@@ -2,28 +2,19 @@ import {BootMixin} from '@loopback/boot';
 import {ApplicationConfig} from '@loopback/core';
 import {RepositoryMixin, SchemaMigrationOptions} from '@loopback/repository';
 import {RestApplication} from '@loopback/rest';
-import {
-  RestExplorerBindings,
-  RestExplorerComponent,
-} from '@loopback/rest-explorer';
+import {RestExplorerBindings, RestExplorerComponent} from '@loopback/rest-explorer';
 import {ServiceMixin} from '@loopback/service-proxy';
 import path from 'path';
-import {BookmarkRepository} from './repositories/bookmark.repository';
 import {MySequence} from './sequence';
 
 import {AuthenticationComponent} from '@loopback/authentication';
-import {
-  JWTAuthenticationComponent,
-  UserServiceBindings,
-} from '@loopback/authentication-jwt';
+import {JWTAuthenticationComponent, UserServiceBindings} from '@loopback/authentication-jwt';
 import {BookmarkDataSource} from './datasources';
 
 export {ApplicationConfig};
-export class LinkstashApplication extends BootMixin(
-  ServiceMixin(RepositoryMixin(RestApplication)),
-) {
+export class LinkstashApplication extends BootMixin(ServiceMixin(RepositoryMixin(RestApplication))) {
   private async customMigration(): Promise<void> {
-    const bookmarkRepo = await this.getRepository(BookmarkRepository);
+    // eslint-disable-next-line no-console
     console.log('MIGRATE');
   }
 

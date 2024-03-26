@@ -1,21 +1,5 @@
-import {
-  Count,
-  CountSchema,
-  Filter,
-  repository,
-  Where,
-} from '@loopback/repository';
-import {
-  del,
-  get,
-  getModelSchemaRef,
-  getWhereSchemaFor,
-  param,
-  post,
-  requestBody,
-  Response,
-  RestBindings,
-} from '@loopback/rest';
+import {Count, CountSchema, Filter, repository, Where} from '@loopback/repository';
+import {del, get, getModelSchemaRef, getWhereSchemaFor, param, post, requestBody, Response, RestBindings} from '@loopback/rest';
 import {SecurityBindings, securityId, UserProfile} from '@loopback/security';
 
 import {authenticate} from '@loopback/authentication';
@@ -26,9 +10,7 @@ import {newTagSchema} from '../types/';
 
 @authenticate('jwt')
 export class UserTagController {
-  constructor(
-    @repository(UserRepository) protected userRepository: UserRepository,
-  ) {}
+  constructor(@repository(UserRepository) protected userRepository: UserRepository) {}
 
   @get('/tags', {
     responses: {
@@ -42,13 +24,8 @@ export class UserTagController {
       },
     },
   })
-  async find(
-    @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
-    @param.query.object('filter') filter?: Filter<Tag>,
-  ): Promise<Tag[]> {
-    return this.userRepository
-      .tags(currentUserProfile[securityId])
-      .find(filter);
+  async find(@inject(SecurityBindings.USER) currentUserProfile: UserProfile, @param.query.object('filter') filter?: Filter<Tag>): Promise<Tag[]> {
+    return this.userRepository.tags(currentUserProfile[securityId]).find(filter);
   }
 
   @post('/tags', {
@@ -71,7 +48,7 @@ export class UserTagController {
         'application/json': {
           schema: getModelSchemaRef(Tag, {
             title: 'NewTagInUser',
-            exclude: ['id', "userId"],
+            exclude: ['id', 'userId'],
           }),
         },
       },
@@ -79,11 +56,9 @@ export class UserTagController {
     tag: Omit<Tag, 'id' | 'userId'>,
   ): Promise<Omit<Tag, "id|'userId">> {
     //TODO make this return Omit<Tag, "id|'userId">
-    const existing = await this.userRepository
-      .tags(currentUserProfile[securityId])
-      .find({
-        where: {name: tag.name},
-      });
+    const existing = await this.userRepository.tags(currentUserProfile[securityId]).find({
+      where: {name: tag.name},
+    });
     if (existing.length > 0) {
       res.status(202);
       return Promise.resolve(existing[0]);
@@ -105,8 +80,6 @@ export class UserTagController {
     @param.query.object('where', getWhereSchemaFor(Tag))
     where?: Where<Tag>,
   ): Promise<Count> {
-    return this.userRepository
-      .tags(currentUserProfile[securityId])
-      .delete(where);
+    return this.userRepository.tags(currentUserProfile[securityId]).delete(where);
   }
 }

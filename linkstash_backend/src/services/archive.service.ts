@@ -4,16 +4,11 @@ import {repository} from '@loopback/repository/dist/decorators';
 import {Readability} from '@mozilla/readability';
 import axios from 'axios';
 import {JSDOM} from 'jsdom';
+import {createHash} from 'node:crypto';
 import fs from 'node:fs';
-import path from 'node:path';
 import {Archive, Bookmark} from '../models';
 import {BookmarkRepository} from '../repositories';
-import {createHash} from 'node:crypto';
-import {getModelSchemaRef} from '@loopback/rest';
-async function download_resource(
-  url: string,
-  downloadLocation: string,
-): Promise<{success: boolean; error: string}> {
+async function downloadResource(url: string, downloadLocation: string): Promise<{success: boolean; error: string}> {
   try {
     const response = await axios.get(url, {responseType: 'arraybuffer'});
 
@@ -27,8 +22,8 @@ async function download_resource(
       // TODO archive versioning
       fs.unlinkSync(fullPath);
     }
-    const content_to_write = Buffer.from(response.data, 'base64');
-    fs.writeFileSync(fullPath, content_to_write, {flag: 'a+'});
+    const contentToWrite = Buffer.from(response.data, 'base64');
+    fs.writeFileSync(fullPath, contentToWrite, {flag: 'a+'});
     return {success: true, error: ''};
   } catch (error) {
     return {success: false, error: JSON.stringify(error)};
@@ -44,7 +39,7 @@ async function download_resource(
  * Copied from: https://jsfiddle.net/zoxyoymn/10/ (https://stackoverflow.com/a/36381427)
  */
 function fileNameFromUrl(url: string): string {
-  let matches = url.match(/\/([^\/?#]+)[^\/]*$/);
+  const matches = url.match(/\/([^\/?#]+)[^\/]*$/);
   if (matches && matches.length > 1) {
     return matches[1];
   }
@@ -74,71 +69,52 @@ export class ArchiveService {
       const reader = new Readability(doc.window.document);
       const output = reader.parse();
       const content = output?.content ? output?.content : '';
-      let parsed_doc = new JSDOM(content);
+      const parsedDoc = new JSDOM(content);
 
-      const contentBeforePost = parsed_doc.serialize();
+      const contentBeforePost = parsedDoc.serialize();
       const size = Buffer.byteLength(contentBeforePost, 'utf8');
       const hash = createHash('sha256').update(contentBeforePost).digest('hex');
 
-      const archives = await this.bookmarkRepository
-        .archives(bookmark.id)
-        .find({order: ['version DESC'], limit: 1});
+      const archives = await this.bookmarkRepository.archives(bookmark.id).find({order: ['version DESC'], limit: 1});
 
       const latestExisting = archives[0];
 
-      const isHashChanged =
-        !latestExisting
-        || size !== latestExisting.Filesize
-        || hash !== latestExisting.Hash;
-      const isContentChanged =
-        !latestExisting
-        || isHashChanged
-        || Buffer.compare(
-          Buffer.from(contentBeforePost),
-          Buffer.from(latestExisting.Content),
-        ) !== 0;
+      const isHashChanged = !latestExisting || size !== latestExisting.Filesize || hash !== latestExisting.Hash;
+      const isContentChanged = !latestExisting || isHashChanged || Buffer.compare(Buffer.from(contentBeforePost), Buffer.from(latestExisting.Content)) !== 0;
 
-      if( latestExisting && !isHashChanged && !isContentChanged )
-          return latestExisting
-      const collisionId =
-        latestExisting && isHashChanged && isContentChanged
-          ? latestExisting.CollisionId + 1
-          : 0;
+      if (latestExisting && !isHashChanged && !isContentChanged) return latestExisting;
+      const collisionId = latestExisting && isHashChanged && isContentChanged ? latestExisting.CollisionId + 1 : 0;
       const version = latestExisting ? latestExisting.Version + 1 : 0;
 
       // return true;
 
-      const images = parsed_doc.window.document.querySelectorAll('img');
+      const images = parsedDoc.window.document.querySelectorAll('img');
       /**
        * TODO rewrite the path of all resources ( images/pdfs etc)
        * fetch the resource and points the archive copy to the local relative path
        *
        */
-      images.forEach(async img => {
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
+      images.forEach( async img => {
         //some lazy loaded images uses the src data property to store the image source
-        const image_src: string = img.src
-          ? img.src
-          : (img.dataset.src as string);
+        const imageSrc: string = img.src ? img.src : (img.dataset.src as string);
         const downloadLocation = `public/archive/${bookmark.id}/assets/${version}/`;
-        const {success, error} = await download_resource(
-          image_src,
-          downloadLocation,
-        );
+        const {success} = await downloadResource(imageSrc, downloadLocation);
         //TODO configurations
         const host = 'http://localhost:3030';
         if (success) {
           //if downloaded the asset, then rewrite the path in the archive
           // TODO consider using abosolute path for the assets
-          const local_image_path = `${host}/archive/${bookmark.id}/assets/${version}/${fileNameFromUrl(image_src as string)}`;
-          img.src = local_image_path;
-          img.dataset.src = local_image_path;
+          const localImagePath = `${host}/archive/${bookmark.id}/assets/${version}/${fileNameFromUrl(imageSrc as string)}`;
+          img.src = localImagePath;
+          img.dataset.src = localImagePath;
         }
       });
 
-      const content_to_write = parsed_doc.serialize();
+      const contentToWrite = parsedDoc.serialize();
       const archive = {
         ArchiveId: `${bookmark.id}-${version}`,
-        Content: content_to_write,
+        Content: contentToWrite,
         ContentBeforeProcess: contentBeforePost,
         Hash: hash,
         Filesize: size,
@@ -149,9 +125,10 @@ export class ArchiveService {
         bookmarkId: bookmark.id as number,
       };
 
-      return this.bookmarkRepository.archives(bookmark.id).create(archive);
+      return await this.bookmarkRepository.archives(bookmark.id).create(archive);
     } catch (error) {
       // TODO Logging
+      // eslint-disable-next-line no-console
       console.log(error);
     }
   }
