@@ -2,6 +2,7 @@
   "plugins": ["compat","github"],
   "extends": ["next/core-web-vitals", "plugin:compat/recommended", "plugin:github/react"],
   "rules": {
+    "no-console":"warn",
     "no-duplicate-imports": ["error", { "includeExports": true }],
     "sort-imports": "error"
   },
