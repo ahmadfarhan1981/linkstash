@@ -27,7 +27,6 @@ export default function Home() {
     };
     const success = async (response: any) => {
       router.push('/bookmarks')
-
     };
     const failure = (error: any) => {
       console.log(error);

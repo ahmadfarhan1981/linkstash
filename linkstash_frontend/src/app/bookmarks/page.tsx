@@ -1,45 +1,29 @@
 "use client";
 
-import { AuthenticatedSection, BookmarkCard, TagCloud, useAuthentication } from "@/components";
-import React, { useEffect, useState } from "react";
-import axios, { AxiosRequestConfig } from "axios";
+import {
+  AuthenticatedSection,
+  BookmarkCard,
+  TagCloud,
+  useAuthentication,
+} from "@/components";
+import React, { useEffect } from "react";
 
-import { Bookmark } from "@/types";
 import styles from "./styles.module.css";
+import { useBookmarks } from "@/hooks/useBookmarks";
 
 export default function Home() {
   const { AuthenticationState } = useAuthentication();
-  const [bookmarks, setBookmarks] = useState<Bookmark[]>();
+  const { bookmarks, fetchBookmarks } = useBookmarks();
   useEffect(() => {
     {
-      //TODO use makeApiCall()
       if (!AuthenticationState.isLoggedIn) return;
-      const body = JSON.stringify({});
-      const url = "http://localhost:3030/bookmarks/";
-      const config: AxiosRequestConfig = {
-        method: "get",
-        url: url,
-        data: body,
-        timeout: 3000,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer ".concat(AuthenticationState.token),
-        },
-      };
-
-      axios(config)
-        .then(function (response) {
-          setBookmarks(response.data.data);
-        })
-        .catch(function (error) {
-          console.log(error);
-        })
-        .finally(function () {});
+      fetchBookmarks();
     }
-  }, [AuthenticationState.isLoggedIn, AuthenticationState.token]);
-
-  const [data, setData] = useState("");
-
+  }, [
+    AuthenticationState.isLoggedIn,
+    AuthenticationState.token,
+    fetchBookmarks,
+  ]);
   return (
     <AuthenticatedSection>
       <div className={styles["bookmarks-page"]}>
@@ -47,7 +31,6 @@ export default function Home() {
           {bookmarks?.map((bookmark) => (
             <BookmarkCard bookmarkData={bookmark} key={bookmark.id} />
           ))}
-          
         </div>
         <div className={styles["tag-cloud"]}>
           <TagCloud />
