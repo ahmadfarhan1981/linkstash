@@ -21,8 +21,7 @@ export default function Home() {
     }
   }, [
     AuthenticationState.isLoggedIn,
-    AuthenticationState.token,
-    fetchBookmarks,
+    AuthenticationState.token
   ]);
   return (
     <AuthenticatedSection>

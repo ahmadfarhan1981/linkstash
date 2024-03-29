@@ -1,9 +1,10 @@
 "use client";
 
-import { ApiCallOptions, handleFormChange, makeApiCall } from "@/scripts/index";
 import { AuthenticatedSection, InputComponent, useAuthentication } from "@/components";
 import React, { ChangeEvent, useContext, useState } from "react";
+import { handleFormChange, makeApiCall } from "@/scripts/index";
 
+import { ApiCallOptions } from "@/types";
 import { Application } from "@/app/context/application";
 import axios from "axios";
 import debounce from "lodash/debounce";

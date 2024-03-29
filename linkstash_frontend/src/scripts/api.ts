@@ -10,7 +10,6 @@ import {
 import axios, { AxiosRequestConfig } from "axios";
 
 import { ApiCallOptions } from "@/types";
-import { getPageFiles } from "next/dist/server/get-page-files";
 
 export async function makeApiCall(
   options: ApiCallOptions,
@@ -29,7 +28,6 @@ export async function makeApiCall(
     },
     params: options.requestParams ? options.requestParams : EMPTY_PARAM,
   };
-  console.log(config);
   async ? apiFetchAsync(config, options) : apiFetchSync(config, options);
 }
 

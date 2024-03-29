@@ -33,11 +33,9 @@ export default function AuthenticationProvider({
   children,
 }: {
   children: ReactNode;
-}): ReactNode {
-  // const val = useContext(Authentication);
+}): ReactNode {  
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isPending, setIsPending] = useState(true);
-  const [cookieTokenName, setCookieTokenName] = useState("");
   const [token, setToken] = useState("");
   const AuthenticationState = {
     isLoggedIn,
@@ -56,7 +54,7 @@ export default function AuthenticationProvider({
     const failure = (error: any) => {
       // TODO handle error
       setIsLoggedIn(false);
-      console.log(error);
+      console.error(error);
     };
     const finallyFunction = () => {
       // always executed
@@ -69,11 +67,7 @@ export default function AuthenticationProvider({
     });
     const options: ApiCallOptions = {
       endpoint: "/users/login/",
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        UserAgent: "react",
-      },
+      method: "POST",      
       body: body,
       successCallback: success,
       failureCallback: failure,
@@ -101,16 +95,13 @@ export default function AuthenticationProvider({
         makeApiCall({
           method: "GET",
           endpoint: "/whoAmI",
-          headers: {
-            "Content-Type": "application/json",
+          headers: {            
             Authorization: "Bearer ".concat(cookieToken),
-          },
-          body: {},
-          successCallback: (response: any) => {
+          },        
+          successCallback: () => {
             setIsLoggedIn(true);
             setToken(cookieToken);
-          },
-          failureCallback: (error: any) => {},
+          },          
           finallyCallback: () => {
             setIsPending(false);
           },

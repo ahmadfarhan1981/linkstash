@@ -27,7 +27,6 @@ export function useBookmarks(): useBookmarksReturnValue {
         console.log(response.data.data);
         setBookmarks(response.data.data);
       },
-      requestParams: { tags: true },
     };
     makeApiCall(options);
   };

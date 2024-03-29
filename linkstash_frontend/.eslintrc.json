@@ -1,10 +1,15 @@
 {
-  "plugins": ["compat","github"],
-  "extends": ["next/core-web-vitals", "plugin:compat/recommended", "plugin:github/react"],
+  "plugins": ["compat", "github"],
+  "extends": [
+    "next/core-web-vitals",
+    "plugin:compat/recommended",
+    "plugin:github/react"
+  ],
   "rules": {
-    "no-console":"warn",
+    "no-console": "warn",
     "no-duplicate-imports": ["error", { "includeExports": true }],
-    "sort-imports": "error"
+    "sort-imports": "error",
+    "no-unused-vars": "warn"
   },
   "env": {
     "browser": true
