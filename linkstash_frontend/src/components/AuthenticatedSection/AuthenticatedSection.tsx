@@ -2,7 +2,7 @@
 import {LoginForm, useAuthentication} from "@/components";
 import { ReactNode } from "react";
 
-export default function AuthenticatedSection({
+export function AuthenticatedSection({
   children,
 }: {
   children: ReactNode;

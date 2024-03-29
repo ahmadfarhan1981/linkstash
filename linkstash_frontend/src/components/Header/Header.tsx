@@ -4,7 +4,7 @@ import { Application } from '@/app/context/application';
 import Link from 'next/link'
 import styles from './Header.module.css'
 import { useContext } from 'react'
-export default function Header(){
+export function Header(){
     const ApplicationContext = useContext(Application);
     const {showHeaders} = ApplicationContext
 

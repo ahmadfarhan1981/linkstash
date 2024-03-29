@@ -3,7 +3,7 @@ import React, { ChangeEvent } from "react";
 import { InputConfig } from './types'
 import styles from "./InputComponent.module.css";
 
-export default function InputComponent(
+export function InputComponent(
   config: InputConfig = {
     type: "text",
     id: "",

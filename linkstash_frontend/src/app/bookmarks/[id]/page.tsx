@@ -1,5 +1,6 @@
 "use client";
 
+import { ApiCallOptions, Bookmark } from "@/types";
 import {
   AuthenticatedSection,
   BookmarkCard,
@@ -10,9 +11,8 @@ import {
 import React, { useContext, useEffect, useState } from "react";
 import axios, { AxiosRequestConfig } from "axios";
 
-import { ApiCallOptions, Bookmark } from "@/types";
-import styles from "../styles.module.css";
 import { makeApiCall } from "@/scripts";
+import styles from "../styles.module.css";
 
 export default function Home({ params }: { params: { id: number } }) {
   const { AuthenticationState } = useAuthentication();

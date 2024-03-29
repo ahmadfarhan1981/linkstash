@@ -1,10 +1,11 @@
 "use client";
 
 import { MyTag, MyTagGroup } from "../TagGroup/TagGroup";
+
 import { Bookmark } from "@/types";
+import Link from "next/link";
 import styles from "./styles.module.css";
 import { useListData } from "react-stately";
-import Link from "next/link";
 
 // function fetchCard(){
 //   const config:AxiosRequestConfig ={
@@ -12,7 +13,7 @@ import Link from "next/link";
 //   }
 // }
 
-export default function BookmarkCard({
+export function BookmarkCard({
   bookmarkData,
 }: {
   bookmarkData: Bookmark;

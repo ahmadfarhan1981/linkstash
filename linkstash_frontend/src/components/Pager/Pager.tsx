@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-export default function Pager(){
+export function Pager(){
     return (
         <div className='border-2 font-mono text-xs content-end text-right'>
             

@@ -1,5 +1,5 @@
 /* eslint-disable github/a11y-no-title-attribute */
- export default function TagCloud(){
+ export function TagCloud(){
     return (
     <div className="tag-cloud text-gray-400">
     <div id="tag_cloud_header"><p><a className="tag_heading_selected" title="show a cloud of your most-used tags" href="?mode=cloud">top tags  &nbsp;&nbsp; 

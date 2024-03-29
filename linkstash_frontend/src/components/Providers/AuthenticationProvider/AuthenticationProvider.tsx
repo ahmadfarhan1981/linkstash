@@ -29,7 +29,7 @@ export function useAuthentication(): useAuthenticationReturnValue {
   return useContext(Authentication) 
 }
 
-export default function AuthenticationProvider({
+export function AuthenticationProvider({
   children,
 }: {
   children: ReactNode;

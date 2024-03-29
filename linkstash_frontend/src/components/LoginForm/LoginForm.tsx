@@ -9,7 +9,7 @@ import {
 import {generateClassNames} from "@/scripts/index"
 import styles from "./LoginForm.module.css";
 
-export default function LoginForm() {
+export function LoginForm() {
   const [isSubmited, setIsSubmited] = useState(false);
   const {login, AuthenticationState} = useAuthentication()
   const [formData, setFormData] = useState({
