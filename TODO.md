@@ -22,3 +22,6 @@ TODO
   * Scheduler for the arcchiving
   * !! TRANSACTIONS?
   * usehooks better
+    * use custom hooks for context
+    * use custome hooks better in general
+      * [custom hook eleraning](https://www.linkedin.com/learning/react-hooks/reusing-form-logic-with-custom-hooks?autoSkip=true&dApp=206046736&resume=false&u=2092596)
