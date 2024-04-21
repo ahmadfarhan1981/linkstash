@@ -12,16 +12,14 @@ TODO
   * archive button
   * view archive
   * better error handling
-  *  
+  * taggin ui
 * backend 
   * how to handle composite index for archive and assets
     * Probly just handle in mysql and have a migrate script for the db structure
-  * puppteer reuirements?
-    * libatk1.0-0
-    * libatk-bridge2.0-0
-  * Scheduler for the arcchiving
+  * Scheduler for the archiving
   * !! TRANSACTIONS?
   * usehooks better
     * use custom hooks for context
     * use custome hooks better in general
       * [custom hook eleraning](https://www.linkedin.com/learning/react-hooks/reusing-form-logic-with-custom-hooks?autoSkip=true&dApp=206046736&resume=false&u=2092596)
+  * fetching favicons, might as well move OGS and the whole fetching URL metadata to server side?
