@@ -1,53 +1,48 @@
 "use client";
 
-import { AuthenticatedSection, BookmarkCard, TagCloud, useAuthentication } from "@/components";
-import React, { useContext, useEffect, useState } from "react";
-import axios, { AxiosRequestConfig } from "axios";
+import { ApiCallOptions, Bookmark } from "@/types";
+import {
+  AuthenticatedSection,
+  BookmarkCard,
+  Loader,
+  TagCloud,
+} from "@/components";
+import { useEffect, useState } from "react";
 
-import { Bookmark } from "@/types";
+import { makeApiCall } from "@/scripts";
 import styles from "../styles.module.css";
+import { useAuthentication } from "@/hooks";
 
 export default function Home({ params }: { params: { id: number } }) {
-
-  const { AuthenticationState } =  useAuthentication()
-  const [bookmarks, setBookmarks] = useState<Bookmark[]>();
+  const { AuthenticationState } = useAuthentication();
+  const [bookmark, setBookmark] = useState<Bookmark>();
   useEffect(() => {
     {
       if (!AuthenticationState.isLoggedIn) return;
-      const body = JSON.stringify({});
-      const url = `http://localhost:3030/bookmarks/${params.id}`;
-      const config: AxiosRequestConfig = {
-        method: "get",
-        url: url,
-        data: body,
-        timeout: 3000,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer ".concat(AuthenticationState.token),
-        },
+
+      const success = (response: any) => {
+        setBookmark(response.data);
       };
 
-      axios(config)
-        .then(function (response) {
-          setBookmarks(response.data.data);
-        })
-        .catch(function (error) {
-          console.log(error);
-        })
-        .finally(function () {});
+      const option: ApiCallOptions = {
+        endpoint: `/bookmarks/${params.id}`,
+        method: "GET",
+        headers: {
+          Authorization: "Bearer ".concat(AuthenticationState.token),
+        },
+        successCallback: success,
+      };
+      makeApiCall(option);
     }
   }, [AuthenticationState.isLoggedIn, AuthenticationState.token, params.id]);
-
-  const [data, setData] = useState("");
 
   return (
     <AuthenticatedSection>
       <div className={styles["bookmarks-page"]}>
         <div className={styles["bookmark-list"]}>
-          {bookmarks?.map((bookmark) => (
-            <BookmarkCard bookmarkData={bookmark} key={bookmark.id} />
-          ))}
-          
+          <Loader isLoading={!bookmark} text="Loading bookmarks...">
+            <BookmarkCard bookmarkData={bookmark!}></BookmarkCard>
+          </Loader>
         </div>
         <div className={styles["tag-cloud"]}>
           <TagCloud />

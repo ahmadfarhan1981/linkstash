@@ -1,4 +1,4 @@
-import { ChangeEvent } from "react";
+import { ChangeEvent, ChangeEventHandler } from "react";
 
 /**
  *  https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#input_types
@@ -77,7 +77,7 @@ export type InputConfig = {
   name: string;
   value?: string;
   disabled?: boolean;
-  handleChange?: (event: ChangeEvent<HTMLInputElement>  ) => void;
+  handleChange?: ChangeEventHandler<HTMLInputElement> | ChangeEventHandler<HTMLTextAreaElement>;
   required?: boolean;
   autocomplete?: AutocompleteType;
   autofocus?: boolean;

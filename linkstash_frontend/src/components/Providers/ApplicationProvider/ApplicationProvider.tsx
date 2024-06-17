@@ -4,7 +4,7 @@ import {
   useApplication
 } from "@/app/context/application";
 import { ReactNode } from "react";
-export default function ApplicationProvider({
+export function ApplicationProvider({
   children,
 }: {
   children: ReactNode;

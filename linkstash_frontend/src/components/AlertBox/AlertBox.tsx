@@ -6,7 +6,7 @@ import {
   ReactNode,
 } from "react";
 
-export default function AlertBox({
+export function AlertBox({
   isVisible,
   message,
   handleClose,

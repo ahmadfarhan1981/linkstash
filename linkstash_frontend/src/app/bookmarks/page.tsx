@@ -3,17 +3,18 @@
 import {
   AuthenticatedSection,
   BookmarkCard,
+  Loader,
   TagCloud,
-  useAuthentication,
 } from "@/components";
 import React, { useEffect } from "react";
 
 import styles from "./styles.module.css";
+import { useAuthentication } from "@/hooks";
 import { useBookmarks } from "@/hooks/useBookmarks";
 
 export default function Home() {
   const { AuthenticationState } = useAuthentication();
-  const { bookmarks, fetchBookmarks } = useBookmarks();
+  const { bookmarks, fetchBookmarks, isLoading } = useBookmarks();
   useEffect(() => {
     {
       if (!AuthenticationState.isLoggedIn) return;
@@ -21,11 +22,11 @@ export default function Home() {
     }
   }, [
     AuthenticationState.isLoggedIn,
-    AuthenticationState.token,
-    fetchBookmarks,
+    AuthenticationState.token
   ]);
   return (
     <AuthenticatedSection>
+      <Loader isLoading={isLoading} text="Loading bookmarks">
       <div className={styles["bookmarks-page"]}>
         <div className={styles["bookmark-list"]}>
           {bookmarks?.map((bookmark) => (
@@ -36,6 +37,7 @@ export default function Home() {
           <TagCloud />
         </div>
       </div>
+      </Loader>
     </AuthenticatedSection>
   );
 }

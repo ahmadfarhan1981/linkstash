@@ -3,13 +3,22 @@
     @apply mt-4 border-0 p-0  bg-blue-50 gap-0 shadow
 }
 .title{
-    @apply text-blue-600  gap-0 m-0 p-0 font-bold tracking-tighter 
+    @apply text-blue-600  gap-0 m-0 p-0 font-bold tracking-tighter
 }
 .description{
-    @apply truncate gap-0
+    @apply truncate gap-0 
 }
+
+
+ .no-tags {
+    @apply font-extralight inline
+ }
+ .no-tags::before{
+    content: "";
+ }
+
  .tags {
-    @apply font-light
+    @apply font-light inline bg-blue-100 mx-1 px-1 rounded  border-indigo-200  border-2 before:content-['#'] before:font-medium hover:bg-blue-300 after:last-of-type:content-[''] after:content-[',']
  }
 
 .commands{

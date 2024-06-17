@@ -1,43 +1,23 @@
 "use client";
 
-import { ApiCallOptions, getTokenCookieName, makeApiCall } from "@/scripts";
+import { ApiCallOptions, AuthenticationState } from "@/types";
 import {
   ReactNode,
-  createContext,
-  useContext,
   useEffect,
   useState,
 } from "react";
+import { getTokenCookieName, makeApiCall } from "@/scripts";
+
+import { Authentication } from "@/hooks";
 import Cookies from "universal-cookie";
 
-type AuthenticationState = {
-  isLoggedIn: boolean;
-  isPending: boolean;
-  token: string;
-};
-export type useAuthenticationReturnValue = {
-  AuthenticationState: AuthenticationState;
-  login: (username: string, password: string) => void;
-  logout: () => void;
-};
-
-const Authentication = createContext<useAuthenticationReturnValue>(
-  {} as useAuthenticationReturnValue
-);
-
-export function useAuthentication(): useAuthenticationReturnValue {
-  return useContext(Authentication) 
-}
-
-export default function AuthenticationProvider({
+export function AuthenticationProvider({
   children,
 }: {
   children: ReactNode;
-}): ReactNode {
-  // const val = useContext(Authentication);
+}): ReactNode {  
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isPending, setIsPending] = useState(true);
-  const [cookieTokenName, setCookieTokenName] = useState("");
   const [token, setToken] = useState("");
   const AuthenticationState = {
     isLoggedIn,
@@ -56,7 +36,7 @@ export default function AuthenticationProvider({
     const failure = (error: any) => {
       // TODO handle error
       setIsLoggedIn(false);
-      console.log(error);
+      console.error(error);
     };
     const finallyFunction = () => {
       // always executed
@@ -69,11 +49,7 @@ export default function AuthenticationProvider({
     });
     const options: ApiCallOptions = {
       endpoint: "/users/login/",
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        UserAgent: "react",
-      },
+      method: "POST",      
       body: body,
       successCallback: success,
       failureCallback: failure,
@@ -83,41 +59,35 @@ export default function AuthenticationProvider({
     setIsPending(true);
     await makeApiCall(options);
   };
+  const verifyLogin = async () => {
+    const cookies = new Cookies();
+    //TODO figure out server actions and setting via env var
+    const cookieTokenName = "linkstash-token";
+    if (isLoggedIn) return;
 
+    setIsPending(true);
+    if (cookies.get(cookieTokenName)) {
+      const cookieToken = cookies.get(cookieTokenName);
+
+      makeApiCall({
+        method: "GET",
+        endpoint: "/whoAmI",
+        headers: {            
+          Authorization: "Bearer ".concat(cookieToken),
+        },        
+        successCallback: () => {
+          setIsLoggedIn(true);
+          setToken(cookieToken);
+        },          
+        finallyCallback: () => {
+          setIsPending(false);
+        },
+      });
+    }
+    setIsPending(false);
+  };
   // TODO remove useEffect. figure something out
   useEffect(() => {
-    const verifyLogin = async () => {
-      const cookies = new Cookies();
-      //if( !cookieTokenName) setCookieTokenName(await getTokenCookieName());
-
-      //TODO figure out server actions and setting via env var
-      const cookieTokenName = "linkstash-token";
-      if (isLoggedIn) return;
-
-      setIsPending(true);
-      if (cookies.get(cookieTokenName)) {
-        const cookieToken = cookies.get(cookieTokenName);
-
-        makeApiCall({
-          method: "GET",
-          endpoint: "/whoAmI",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer ".concat(cookieToken),
-          },
-          body: {},
-          successCallback: (response: any) => {
-            setIsLoggedIn(true);
-            setToken(cookieToken);
-          },
-          failureCallback: (error: any) => {},
-          finallyCallback: () => {
-            setIsPending(false);
-          },
-        });
-      }
-      setIsPending(false);
-    };
     verifyLogin();
   }, [isLoggedIn]);
 
@@ -130,7 +100,9 @@ export default function AuthenticationProvider({
       cookies.remove(cookieTokenName);
     }
   };
+
   return (
+
     <Authentication.Provider value={{AuthenticationState, login, logout}}>{children}</Authentication.Provider>
   );
 }

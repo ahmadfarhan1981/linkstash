@@ -33,6 +33,9 @@ code {
 
 
 @layer components{
+  .tag-autocomplete-item{
+    @apply hover:cursor-pointer font-light bg-blue-100 mx-1 px-1 rounded border-purple-200  border-2 before:font-medium hover:bg-purple-300
+  }
   .screen{
     @apply  m-auto max-w-[975px] w-screen grid p-3;
     grid-template-columns: 2fr 96fr 2fr;
@@ -68,5 +71,19 @@ code {
 
   .content{
     @apply flex flex-col items-center justify-between 
+  }
+
+  .react-aria-GridList {
+    @apply text-2xl
+  }
+  .react-aria-GridListItem{
+    @apply text-green-900
+  }
+  .big{
+    @apply bg-white
+  }
+
+  .tag-container{
+    @apply overflow-x-auto border-2 w-[250px]
   }
 }

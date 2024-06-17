@@ -1,8 +1,9 @@
 import React, { ReactNode } from "react";
-import { AuthenticationProvider, ApplicationProvider } from "@/components";
 
+import { ApplicationProvider } from "./ApplicationProvider/ApplicationProvider";
+import { AuthenticationProvider } from "./AuthenticationProvider/AuthenticationProvider";
 
-export default function Providers({
+export function Providers({
   children,
 }: {
   children: ReactNode;

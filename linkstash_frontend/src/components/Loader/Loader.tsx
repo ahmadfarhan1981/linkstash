@@ -2,7 +2,7 @@
 import { ReactNode } from "react";
 import styles from "./Loader.module.css";
 
-export default function Loader({
+export function Loader({
   isLoading,
   text="",
   children,

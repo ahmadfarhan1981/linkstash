@@ -3,7 +3,9 @@ export const EMPTY_BODY = JSON.stringify({});
 export const EMPTY_PARAM = {} as Record<string, any>;
 
 export const DEFAULT_FAILURE_CALLBACK = (error: any) => {
+  // eslint-disable-next-line no-console
   console.log(error);
+  //TODO logging
 };
 export const DEFAULT_FINALLY_CALLBACK = EMPTY_FUNCTION;
 

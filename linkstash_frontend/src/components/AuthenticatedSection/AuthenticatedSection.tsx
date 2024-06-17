@@ -1,8 +1,10 @@
 "use client"
-import {LoginForm, useAuthentication} from "@/components";
-import { ReactNode } from "react";
 
-export default function AuthenticatedSection({
+import {LoginForm} from "@/components";
+import { ReactNode } from "react";
+import { useAuthentication } from "@/hooks";
+
+export function AuthenticatedSection({
   children,
 }: {
   children: ReactNode;
