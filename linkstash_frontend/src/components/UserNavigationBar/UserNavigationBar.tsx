@@ -1,12 +1,10 @@
 "use client";
-import { useAuthentication } from "@/components";
+import { useAuthentication } from "@/hooks";
 export function UserNavigationBar() {
-  const authenticationContext = useAuthentication();
+  const { AuthenticationState } = useAuthentication();
   return (
     <div className="title userNavigationBar span-width">
-      {authenticationContext.AuthenticationState.isLoggedIn
-        ? "Logged in"
-        : "Not logged in"}
+      {AuthenticationState.isLoggedIn ? "Logged in" : "Not logged in"}
     </div>
   );
 }

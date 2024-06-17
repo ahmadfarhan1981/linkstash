@@ -1,4 +1,4 @@
-import React, { ChangeEvent } from "react";
+import React, { ChangeEvent, ChangeEventHandler } from "react";
 
 import { InputConfig } from './types'
 import styles from "./InputComponent.module.css";
@@ -11,7 +11,7 @@ export function InputComponent(
     label: "",
     value: "",
     disabled: false,
-    handleChange: (event: ChangeEvent<HTMLInputElement>) => {},
+    //handleChange: ChangeEventHandler<HTMLTextAreaElement> | ChangeEventHandler<HTMLInputElement>, 
     required: false,
     autofocus: false,
   }
@@ -21,7 +21,6 @@ export function InputComponent(
     id,
     name,
     label,
-    labelWidth,
     value,
     disabled,
     handleChange,
@@ -32,12 +31,7 @@ export function InputComponent(
     pattern
   } = config;
 
-  const labelClassName = labelWidth?"inline-block m-2 w-100": "inline-block m-2 w-100"
-  const labelProperties = {
-    className : labelClassName
-  }
-  //w-[".concat(labelWidth?.toString()).concat("px]
-
+  
   // if(!handleOnInvalid) 
 
   if(type==="textarea")  return (
@@ -51,7 +45,7 @@ export function InputComponent(
       className={styles["form-input"].concat(" form-input")}
       required={required}
       id={id}
-      onChange={handleChange}
+      onChange={handleChange as ChangeEventHandler<HTMLTextAreaElement>}
       disabled= {disabled }
       value={value}
       
@@ -71,10 +65,11 @@ export function InputComponent(
         className={styles["form-input"].concat(" form-input")}
         required={required}
         id={id}
-        onChange={handleChange}
+        onChange={handleChange as ChangeEventHandler<HTMLInputElement>}
         disabled= {disabled }
         value={value}
         pattern={pattern}
+        onKeyDown={(e=>console.log( e))}
         // onInvalid={e=>(e.target as HTMLInputElement).setCustomValidity('arroooooo')}
        
       />

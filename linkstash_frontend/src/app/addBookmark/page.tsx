@@ -1,56 +1,56 @@
 "use client";
 
-import { AuthenticatedSection, InputComponent, useAuthentication } from "@/components";
-import React, { ChangeEvent, useContext, useState } from "react";
+import {
+  AuthenticatedSection,
+  InputComponent,
+  MyComboBox,
+  MyItem,
+  MyTag,
+  MyTagGroup,
+} from "@/components";
 import { handleFormChange, makeApiCall } from "@/scripts/index";
+import { ChangeEvent, useState } from "react";
+import { Key, Link } from "react-aria-components";
 
+import { useAuthentication } from "@/hooks/useAuthentication";
 import { ApiCallOptions } from "@/types";
-import { Application } from "@/app/context/application";
 import axios from "axios";
 import debounce from "lodash/debounce";
 import { useRouter } from "next/navigation";
+import { useListData } from "react-stately";
 
 export default function Home() {
-  const ApplicationContext = useContext(Application);
-    const {showHeaders, setShowHeaders } = ApplicationContext
-  const router = useRouter()
+  const router = useRouter();
   const { AuthenticationState } = useAuthentication();
-  async function addBookmark(form: FormData) {
+  const tagList = useListData({ initialItems: ["read-later"],
+    getKey: item=> item
 
+   });
+  async function addBookmark(form: FormData) {
     //TODO bookmarklet layout
     //TODO make the page more responsive when adding. (disable input while pending, splash screen before redirecting etc)
-    
+
     //TODO handle not entering the protocol at the beginning of the url (http:// or https://)
     const postData: addBookmarkFormData = {
       url: form.get("url")?.toString(),
       title: form.get("title")?.toString(),
       description: form.get("description")?.toString(),
+      tagList: tagList.items,
     };
+    // eslint-disable-next-line no-unused-vars
     const success = async (response: any) => {
-      router.push('/bookmarks')
+      router.push("/bookmarks");
     };
-    const failure = (error: any) => {
-      console.log(error);
-    };
-    const finallyFunction = () => {
-      // always executed
-    };
-
-    console.log(postData);
     const options: ApiCallOptions = {
       endpoint: "/bookmarks",
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
-        UserAgent: "react",
         Authorization: "Bearer ".concat(AuthenticationState.token),
       },
       body: postData,
       successCallback: success,
-      failureCallback: failure,
-      finallyCallback: finallyFunction,
     };
-
+    
     await makeApiCall(options);
   }
 
@@ -61,8 +61,7 @@ export default function Home() {
 
     axios
       .get("/fetchUrlMetadata/?url=".concat(encodeURIComponent(value)))
-      .then(function (response) {
-        console.log(response);
+      .then(function (response) {        
         const { ogTitle, ogDescription } = response.data.data;
         setFormData((prevFormData: any) => ({
           ...prevFormData,
@@ -81,115 +80,142 @@ export default function Home() {
     url?: string;
     title?: string;
     description?: string;
-    tags?: string;
+    tagList?: string[];
   };
 
+  const [tagListInput, setTagListInput] = useState<Key | null>(null);
+
+  const clearTagListCombo  = () =>{
+    setTagListInput(null)
+  }
+  const appendToTaglist= (value:string)=>{
+    if (value) {
+      console.log(tagList.getItem(value))
+      if(!tagList.getItem(value))
+        tagList.append(value);
+      //debounce(clearTagListCombo, 1000)
+      
+    }
+  }
+
+
+  const handleKeyDown = (e:any) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const { value } = e.target ;
+      console.log(`Enter ${value}` );
+      console.log(tagList)
+      appendToTaglist(value)
+      clearTagListCombo()
+    }
+  };
+
+  const handleTagComboSelectionChange = (key: Key) => {
+    console.log(key);
+    appendToTaglist (key?.toString()) 
+
+  };
   return (
     <>
-    <AuthenticatedSection>
-      <form action={addBookmark}>
-        <table>
-          <tbody>
-            <tr>
-              <td>
-                <InputComponent
-                  label="URL"
-                  labelWidth={111}
-                  autocomplete="off"
-                  id="url"
-                  name="url"
-                  placeholder="URL"
-                  handleChange={debounce(handleURLChange, 1000)}
-                  type="url"
-                />
-              </td>
-            </tr>
-            <tr>
-              <td>
-                {" "}
-                <InputComponent
-                  type="text"
-                  label="Title"
-                  required={true}
-                  placeholder="Title"
-                  autocomplete="off"
-                  name="title"
-                  id="title"
-                  value={formData.title}
-                  handleChange={(e) => handleFormChange(e, setFormData)}
-                />
-              </td>
-            </tr>
+      <AuthenticatedSection>
+        <form action={addBookmark}>
+          <div>
+            <InputComponent
+              label="URL"
+              labelWidth={111}
+              autocomplete="off"
+              id="url"
+              name="url"
+              placeholder="URL"
+              handleChange={debounce(handleURLChange, 1000)}
+              type="url"
+            />
+          </div>
 
-            <tr>
-              <td>
-                <InputComponent
-                  label="Description"
-                  type="textarea"
-                  placeholder="Description"
-                  name="description"
-                  autocomplete="off"
-                  id="description"
-                  value={formData.description}
-                  handleChange={(e) => handleFormChange(e, setFormData)}
-                />
-              </td>
-            </tr>
+          <div>
+            <InputComponent
+              type="text"
+              label="Title"
+              required={true}
+              placeholder="Title"
+              autocomplete="off"
+              name="title"
+              id="title"
+              value={formData.title}
+              handleChange={(
+                e:
+                  | ChangeEvent<HTMLInputElement>
+                  | ChangeEvent<HTMLTextAreaElement>
+              ) => handleFormChange(e, setFormData)}
+            />
+          </div>
 
-            <tr>
-              <td>
-                {" "}
-                <InputComponent
-                  name="tags"
-                  autocomplete="off"
-                  id="tags"
-                  type={"text"}
-                  label={"tags"}
-                />
-              </td>
-            </tr>
+          <div>
+            <InputComponent
+              label="Description"
+              type="textarea"
+              placeholder="Description"
+              name="description"
+              autocomplete="off"
+              id="description"
+              value={formData.description}
+              handleChange={(
+                e:
+                  | ChangeEvent<HTMLTextAreaElement>
+                  | ChangeEvent<HTMLInputElement>
+              ) => handleFormChange(e, setFormData)}
+            />
+          </div>
 
-            <tr>
-              <td></td>
-              <td>
-                <input type="checkbox" name="private" id="private" />{" "}
-                <label className="display:inline" htmlFor="private">
-                  private
-                </label>
-                <input type="checkbox" name="toread" id="toread" />{" "}
-                <label className="display:inline" htmlFor="toread">
-                  read later
-                </label>
-              </td>
-            </tr>
+          <div>
+            <MyComboBox
+              label="tags"
+              allowsCustomValue={true}
+              onInputChange={setTagListInput}
+              inputValue={tagListInput ? tagListInput.toString() : ""}
+              selectedKey={tagListInput}
+              description={
+                "Pick existing tag or write a new one and press enter"
+              }
+              onKeyDown={handleKeyDown}
+              onSelectionChange={handleTagComboSelectionChange}
+              menuTrigger="manual"
+            >
+              <MyItem id={`test`}>{`test`}</MyItem>
+              <MyItem id={`test2`}>test2</MyItem>
+            </MyComboBox>
+          </div>
+          <div>
+            <MyTagGroup label="Tags:"  renderEmptyState={() => "emptyTag"}>
+              {tagList.items.map((tag) => (
+                <MyTag
+                  key={tag}
+                  id={tag}
+                  textValue={tag}
+                  className={
+                    "font-light inline bg-blue-100 mx-1 px-1 rounded  border-purple-200  border-2 before:content-['#'] before:font-medium hover:bg-purple-300 after:last-of-type:content-[''] after:content-[',']"
+                  }
+                >
+                  <Link href={`/tags/${tag}`}>{tag}</Link>
+                </MyTag>
+              ))}
+            </MyTagGroup>
+          </div>
 
-            <tr>
-              {" "}
-              <td></td>
-              <td>
-                <input type="submit" value="add bookmark" />
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </form>
-      {/* <input type="button" onClick={()=>{setShowHeaders(!showHeaders)}} value="click"></input> */}
+          <div>
+            <input type="checkbox" name="private" id="private" />{" "}
+            <label className="display:inline" htmlFor="private">
+              private
+            </label>
+            <input type="checkbox" name="toread" id="toread" />{" "}
+            <label className="display:inline" htmlFor="toread">
+              read later
+            </label>
+            <input type="submit" value="add bookmark" />
+          </div>
+        </form>
+        {/* <input type="button" onClick={()=>{setShowHeaders(!showHeaders)}} value="click"></input> */}
       </AuthenticatedSection>
-      {/* <form >
-              <InputComponent id="email" type="text" name="email" placeholder="Email" label="Email" autocomplete="username"  handleChange={e=>handleFormChange(e, setFormData)} />
-              <InputComponent id="password" type="password" name="password" placeholder="Email" label="Password" autocomplete="new-password" handleChange={e=>handleFormChange(e,setFormData)} />         
-             
-              <br />
-              <label>{JSON.stringify(formData)}</label>
-              <div className="mt-2">
-                <input
-                  type="submit"
-                  value="Login"
-                  className = "submit-button"
-                  onClick={(event)=>{}}
-                />
-              </div>
-            </form> */}
     </>
   );
 }

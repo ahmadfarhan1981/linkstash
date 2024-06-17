@@ -1,5 +1,7 @@
-import { ApplicationProvider, AuthenticationProvider } from "@/components";
 import React, { ReactNode } from "react";
+
+import { ApplicationProvider } from "./ApplicationProvider/ApplicationProvider";
+import { AuthenticationProvider } from "./AuthenticationProvider/AuthenticationProvider";
 
 export function Providers({
   children,

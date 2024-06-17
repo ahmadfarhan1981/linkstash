@@ -1,6 +1,8 @@
 "use client"
-import {LoginForm, useAuthentication} from "@/components";
+
+import {LoginForm} from "@/components";
 import { ReactNode } from "react";
+import { useAuthentication } from "@/hooks";
 
 export function AuthenticatedSection({
   children,

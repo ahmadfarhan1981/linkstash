@@ -1,11 +1,10 @@
 "use client";
 
-import { MyTag, MyTagGroup } from "../TagGroup/TagGroup";
+import { MyTag, MyTagGroup } from "@/components";
 
 import { Bookmark } from "@/types";
 import Link from "next/link";
 import styles from "./styles.module.css";
-import { useListData } from "react-stately";
 
 // function fetchCard(){
 //   const config:AxiosRequestConfig ={
@@ -13,11 +12,7 @@ import { useListData } from "react-stately";
 //   }
 // }
 
-export function BookmarkCard({
-  bookmarkData,
-}: {
-  bookmarkData: Bookmark;
-}) {
+export function BookmarkCard({ bookmarkData }: { bookmarkData: Bookmark }) {
   const emptyTag = <div className={styles["no-tags"]}>No tags</div>;
   return (
     <>

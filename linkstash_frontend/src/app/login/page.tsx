@@ -1,4 +1,4 @@
-'useClient'
+'use client'
 
 import {AuthenticatedSection} from '@/components'
 import Link from 'next/link'

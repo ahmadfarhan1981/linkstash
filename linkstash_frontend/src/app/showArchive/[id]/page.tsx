@@ -1,10 +1,11 @@
 "use client";
 
-import { AuthenticatedSection, Loader, useAuthentication } from "@/components";
-import React, { useContext, useState } from "react";
+import { AuthenticatedSection, Loader } from "@/components";
 
 import { ApiCallOptions } from "@/types";
 import { makeApiCall } from "@/scripts";
+import { useAuthentication } from "@/hooks";
+import { useState } from "react";
 
 export default function Home({ params }: { params: { id: number } }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -20,15 +21,10 @@ export default function Home({ params }: { params: { id: number } }) {
     endpoint: `/bookmarks/${params.id}/archive`,
     method: "GET",
     headers: {
-      "Content-Type": "application/json",
-      UserAgent: "react",
       Authorization: "Bearer ".concat(AuthenticationState.token),
     },
     body: {},
     successCallback: success,
-    failureCallback: (error: any) => {
-      console.log(error);
-    },
     finallyCallback: () => {
       setIsLoading(false);
     },

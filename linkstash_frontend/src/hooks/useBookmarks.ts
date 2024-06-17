@@ -1,17 +1,20 @@
-import { ApiCallOptions, makeApiCall } from "@/scripts";
+import { ApiCallOptions, Bookmark } from "@/types";
 import React, { useState } from "react";
-import { Bookmark } from "@/types";
-import { useAuthentication } from "@/components";
+
+import { makeApiCall } from "@/scripts";
+import { useAuthentication } from "@/hooks";
 
 export type useBookmarksReturnValue = {
   bookmarks: Bookmark[];
   setBookmarks: React.Dispatch<React.SetStateAction<Bookmark[]>>;
   fetchBookmarks: () => void;
+  isLoading: boolean;
 };
 
 export function useBookmarks(): useBookmarksReturnValue {
   const [bookmarks, setBookmarks] = useState([] as Bookmark[]);
   const { AuthenticationState } = useAuthentication();
+  const [isLoading, setIsLoading] = useState(false);
   const fetchBookmarks = () => {
     //TODO use makeApiCall()
 
@@ -24,16 +27,19 @@ export function useBookmarks(): useBookmarksReturnValue {
         Authorization: "Bearer ".concat(AuthenticationState.token),
       },
       successCallback: (response: any) => {
-        console.log(response.data.data);
         setBookmarks(response.data.data);
       },
     };
+    setIsLoading(true);
+
     makeApiCall(options);
+    setIsLoading(false);
   };
 
   return {
     bookmarks,
     setBookmarks,
     fetchBookmarks,
+    isLoading,
   };
 }

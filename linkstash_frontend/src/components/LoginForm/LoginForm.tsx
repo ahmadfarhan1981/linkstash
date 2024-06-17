@@ -1,13 +1,14 @@
 "use client";
 
-import { AlertBox, InputComponent, Loader, useAuthentication } from "@/components";
+import { AlertBox, InputComponent, Loader } from "@/components";
 import {
   ChangeEvent,
   useState,
 } from "react";
 
-import {generateClassNames} from "@/scripts/index"
+import { generateClassNames } from "@/scripts";
 import styles from "./LoginForm.module.css";
+import { useAuthentication } from "@/hooks";
 
 export function LoginForm() {
   const [isSubmited, setIsSubmited] = useState(false);

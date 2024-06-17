@@ -1,3 +1,4 @@
+'use client'
 /**
  * Copied from https://react-spectrum.adobe.com/react-aria/TagGroup.html#reusable-wrappers
  * 
