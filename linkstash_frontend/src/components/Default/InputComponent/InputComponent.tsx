@@ -69,7 +69,7 @@ export function InputComponent(
         disabled= {disabled }
         value={value}
         pattern={pattern}
-        onKeyDown={(e=>console.log( e))}
+        // onKeyDown={(e=>console.log( e))}
         // onInvalid={e=>(e.target as HTMLInputElement).setCustomValidity('arroooooo')}
        
       />

@@ -8,6 +8,9 @@
 		},
 		{
 			"path": "linkstash_frontend"
+		},
+		{
+			"path": "linkstash_website"
 		}
 	],
 	"settings": {
@@ -26,7 +29,8 @@
 				"database": "linkstash_backend",
 				"username": "root"
 			}
-		]
+		],
+		"liveServer.settings.multiRootWorkspaceName": "linkstash_website"
 	},
 	"extensions": {
 		"recommendations": [

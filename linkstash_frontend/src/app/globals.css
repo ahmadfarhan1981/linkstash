@@ -83,7 +83,4 @@ code {
     @apply bg-white
   }
 
-  .tag-container{
-    @apply overflow-x-auto border-2 w-[250px]
-  }
 }

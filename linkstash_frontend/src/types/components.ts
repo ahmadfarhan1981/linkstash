@@ -1,0 +1,1 @@
+export type TagListItem = { id:string, name:string}

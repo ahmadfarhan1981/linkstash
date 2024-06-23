@@ -1,9 +1,11 @@
-/* eslint-disable no-console */
+
 /* eslint-disable sort-imports */
 /* eslint-disable compat/compat */
 "use client";
 
 import { MyTag, MyTagGroup } from "@/components";
+import { TagInput } from "@/components/Default/TagInput/TagInput";
+import { TagListItem } from "@/types";
 import { Key, useRef, useState } from "react";
 
 import {
@@ -35,6 +37,7 @@ export default function Home() {
 
   const delayAbit = () => {
     const tagList = document.getElementById("existingTagGrid");
+    console.log(tagList)
     if (!tagList?.dataset.empty) {
       setIsOpen(true);
     } else {
@@ -49,12 +52,9 @@ export default function Home() {
     setTimeout(delayAbit, 500);
   };
 
-  const filterTagList = (item: any, filterText: string) => {
-    const partOfItem = filterText ? item.name.includes(filterText) : true;
-
+  const filterTagList = (item: TagListItem, filterText: string) => {
+    const partOfItem = filterText ? item.name.includes(filterText) || item.id.includes(filterText) : true;
     const inTagList = tagList.items.includes(item.name);
-
-    //console.log(item, partOfItem, tagList.items, inTagList)
     return partOfItem && !inTagList;
   };
 
@@ -66,6 +66,7 @@ export default function Home() {
     ],
     getKey: (item) => item.id,
     filter: filterTagList,
+
   });
 
   const clearTagListInput = () => {
@@ -100,7 +101,11 @@ export default function Home() {
 
   return (
     <>
+
+
+
       <div>
+      
         <div>
           <TextField
             ref={tagInput}
