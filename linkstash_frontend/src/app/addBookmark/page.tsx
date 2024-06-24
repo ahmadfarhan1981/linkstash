@@ -1,31 +1,49 @@
 "use client";
 
+import { ApiCallOptions, TagListItem } from "@/types";
 import {
   AuthenticatedSection,
   InputComponent,
-  MyComboBox,
-  MyItem,
-  MyTag,
-  MyTagGroup,
+  Loader,
+  TagInput,
 } from "@/components";
+import { ChangeEvent, useEffect, useState } from "react";
 import { handleFormChange, makeApiCall } from "@/scripts/index";
-import { ChangeEvent, useState } from "react";
-import { Key, Link } from "react-aria-components";
 
-import { useAuthentication } from "@/hooks/useAuthentication";
-import { ApiCallOptions } from "@/types";
 import axios from "axios";
 import debounce from "lodash/debounce";
-import { useRouter } from "next/navigation";
+import { useAuthentication } from "@/hooks/useAuthentication";
 import { useListData } from "react-stately";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const router = useRouter();
   const { AuthenticationState } = useAuthentication();
-  const tagList = useListData({ initialItems: ["read-later"],
-    getKey: item=> item
+ 
+  const [allTags, setAllTags] = useState<TagListItem[]>([]);
+  const [isTagFetched, setIsTagFetced] = useState(false);
 
-   });
+
+
+  useEffect(()=>{
+    if (!AuthenticationState.isLoggedIn || isTagFetched) return
+    const success = async (response: any) => {      
+      const result = response.data.map( (element:TagListItem)=> { return {id:String(element.id), name:element.name} as TagListItem }  )      
+      setAllTags(result)
+      setIsTagFetced(true)
+      
+    };
+    const options: ApiCallOptions = {
+      endpoint: "/tags",
+      method: "GET",
+      headers: {
+        Authorization: "Bearer ".concat(AuthenticationState.token),
+      },
+      successCallback: success,
+    };
+    makeApiCall(options, false, true);
+  },[AuthenticationState.isLoggedIn, AuthenticationState.token, isTagFetched])
+
   async function addBookmark(form: FormData) {
     //TODO bookmarklet layout
     //TODO make the page more responsive when adding. (disable input while pending, splash screen before redirecting etc)
@@ -35,7 +53,7 @@ export default function Home() {
       url: form.get("url")?.toString(),
       title: form.get("title")?.toString(),
       description: form.get("description")?.toString(),
-      tagList: tagList.items,
+      tagList: tagList.items.map((tag:TagListItem)=>tag.name),
     };
     // eslint-disable-next-line no-unused-vars
     const success = async (response: any) => {
@@ -50,7 +68,6 @@ export default function Home() {
       body: postData,
       successCallback: success,
     };
-    
     await makeApiCall(options);
   }
 
@@ -69,7 +86,8 @@ export default function Home() {
           description: ogDescription,
         }));
       })
-      .catch(function (error) {
+      // eslint-disable-next-line no-unused-vars
+      .catch(function (error) {        
         return;
       });
   }
@@ -83,41 +101,15 @@ export default function Home() {
     tagList?: string[];
   };
 
-  const [tagListInput, setTagListInput] = useState<Key | null>(null);
-
-  const clearTagListCombo  = () =>{
-    setTagListInput(null)
-  }
-  const appendToTaglist= (value:string)=>{
-    if (value) {
-      console.log(tagList.getItem(value))
-      if(!tagList.getItem(value))
-        tagList.append(value);
-      //debounce(clearTagListCombo, 1000)
-      
-    }
-  }
-
-
-  const handleKeyDown = (e:any) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      const { value } = e.target ;
-      console.log(`Enter ${value}` );
-      console.log(tagList)
-      appendToTaglist(value)
-      clearTagListCombo()
-    }
-  };
-
-  const handleTagComboSelectionChange = (key: Key) => {
-    console.log(key);
-    appendToTaglist (key?.toString()) 
-
-  };
+  const tagList = useListData({
+    initialItems: [],
+    getKey: (item:TagListItem) => item.id,
+  });
+  
   return (
     <>
       <AuthenticatedSection>
+        <Loader isLoading={!isTagFetched}>
         <form action={addBookmark}>
           <div>
             <InputComponent
@@ -165,41 +157,18 @@ export default function Home() {
                   | ChangeEvent<HTMLInputElement>
               ) => handleFormChange(e, setFormData)}
             />
-          </div>
-
+          </div>          
           <div>
-            <MyComboBox
-              label="tags"
-              allowsCustomValue={true}
-              onInputChange={setTagListInput}
-              inputValue={tagListInput ? tagListInput.toString() : ""}
-              selectedKey={tagListInput}
-              description={
-                "Pick existing tag or write a new one and press enter"
-              }
-              onKeyDown={handleKeyDown}
-              onSelectionChange={handleTagComboSelectionChange}
-              menuTrigger="manual"
-            >
-              <MyItem id={`test`}>{`test`}</MyItem>
-              <MyItem id={`test2`}>test2</MyItem>
-            </MyComboBox>
-          </div>
-          <div>
-            <MyTagGroup label="Tags:"  renderEmptyState={() => "emptyTag"}>
-              {tagList.items.map((tag) => (
-                <MyTag
-                  key={tag}
-                  id={tag}
-                  textValue={tag}
-                  className={
-                    "font-light inline bg-blue-100 mx-1 px-1 rounded  border-purple-200  border-2 before:content-['#'] before:font-medium hover:bg-purple-300 after:last-of-type:content-[''] after:content-[',']"
-                  }
-                >
-                  <Link href={`/tags/${tag}`}>{tag}</Link>
-                </MyTag>
-              ))}
-            </MyTagGroup>
+          {isTagFetched && <TagInput 
+            selectedTags={tagList} 
+            tagsToChooseFrom={allTags} 
+            maxWidthInPixel={700} 
+            inputLabel={"Tags:"} 
+            selectedLabel={"Tags:"}
+            description="List of selected tags."
+            serializedTagsToChooseFrom={JSON.stringify(allTags)}
+            
+            />}
           </div>
 
           <div>
@@ -215,6 +184,7 @@ export default function Home() {
           </div>
         </form>
         {/* <input type="button" onClick={()=>{setShowHeaders(!showHeaders)}} value="click"></input> */}
+        </Loader>
       </AuthenticatedSection>
     </>
   );

@@ -4,8 +4,8 @@ import {inject} from '@loopback/core';
 import {Filter, FilterBuilder, FilterExcludingWhere, repository} from '@loopback/repository';
 import {Response, RestBindings, del, get, getModelSchemaRef, param, patch, post, requestBody, response} from '@loopback/rest';
 import {SecurityBindings, UserProfile, securityId} from '@loopback/security';
-import {Bookmark, BookmarkWithRelations} from '../models';
-import {BookmarkRepository, UserRepository} from '../repositories';
+import {Bookmark, BookmarkWithRelations, Tag} from '../models';
+import {BookmarkRepository, TagRepository, UserRepository} from '../repositories';
 import {bookmarkPatchSchema} from '../types';
 //#endregion
 
@@ -13,6 +13,7 @@ import {bookmarkPatchSchema} from '../types';
 export class BookmarkController {
   constructor(
     @repository(BookmarkRepository) public bookmarkRepository: BookmarkRepository,
+    @repository(TagRepository) public tagRepository: TagRepository,
     @repository(UserRepository) public userRepository: UserRepository,
   ) {}
 
@@ -36,8 +37,24 @@ export class BookmarkController {
     })
     bookmark: Omit<Bookmark, 'id'>,
   ): Promise<Bookmark> {
+    //TODO currently non atomic, use transaction
     bookmark.userId = currentUserProfile[securityId];
-    return this.bookmarkRepository.create(bookmark);
+    const result = await this.bookmarkRepository.create(bookmark);
+    const bookmarkId = result.getId();
+
+    for (const tag of result.tagList!) {
+      const filter = new FilterBuilder<Tag>().impose({name: tag}).build();
+      const existingTag = await this.tagRepository.findOne(filter);
+
+      if (!existingTag) {
+        const newTag: Partial<Omit<Tag, 'id'>> = {name: tag, bookmarkIds: [bookmarkId]};
+        await this.userRepository.tags(currentUserProfile[securityId]).create(newTag);
+      } else {
+        existingTag.bookmarkIds.push(bookmarkId);
+        await this.tagRepository.updateById(existingTag.id, existingTag);
+      }
+    }
+    return result;
     //return this.userRepository.bookmarks(id).create(bookmark);
   }
 

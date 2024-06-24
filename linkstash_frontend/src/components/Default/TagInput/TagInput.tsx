@@ -16,30 +16,38 @@ import { ListData, useListData } from "react-stately";
 import { MyTag, MyTagGroup } from "@/components";
 
 import { TagListItem } from "@/types";
+import styles from "../InputComponent/InputComponent.module.css"; //TODO refactor style
 
 export type TagInputProps = {
   tagsToChooseFrom?: TagListItem[];
   selectedTags: ListData<TagListItem>;
   maxWidthInPixel?: Number;
+  inputLabel?: string;
+  selectedLabel?: string;
+  description: string;
+  serializedTagsToChooseFrom:string
 };
 
 
 
 export function TagInput(props: TagInputProps  ) {
-  const { selectedTags, tagsToChooseFrom=[], maxWidthInPixel=150 } = props;
+  const { selectedTags, tagsToChooseFrom=[], maxWidthInPixel=150, inputLabel, selectedLabel, description } = props; //TODO default values
   const gridListRef = useRef(null);
   const tagInput = useRef(null);
   const [tagListInput, setTagListInput] = useState<Key | null>("");
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleTagListChange = (value: string) => {
+  
+  
+  
+  const handleTagInputChange = (value: string) => {
     setTagListInput(value);
     filteredTagsToChooseFrom.setFilterText(value);
   };
 
   const filterTagList = (item: TagListItem, filterText: string) => {
     const partOfItem = filterText
-      ? item.name.includes(filterText) || item.id.includes(filterText)
+      ? item.name.includes(filterText) //|| item.id.includes(filterText)
       : true;
     const addedTag = selectedTags.getItem(item.id);
     const result = partOfItem && !addedTag;
@@ -56,9 +64,9 @@ export function TagInput(props: TagInputProps  ) {
   const clearTagListInput = () => {
     setTagListInput("");
   };
-  const appendToTaglist = (value: string) => {
+  const appendToTaglist = (value: TagListItem) => {
     if (value) {
-      if (!selectedTags.getItem(value)) selectedTags.append({ id: value, name: value });
+      if (!selectedTags.getItem(value.id)) selectedTags.append({ id: value.id, name: value.name });
     }
   };
 
@@ -67,12 +75,12 @@ export function TagInput(props: TagInputProps  ) {
 
     if (e.key === "Enter") {
       e.preventDefault();
-      appendToTaglist(value);
+      appendToTaglist({id:value, name:value});
       clearTagListInput();
       filteredTagsToChooseFrom.setFilterText("");
       setIsOpen(false);
     }
-    if (e.key === "ArrowDown") {
+    if (e.key === "ArrowDown" && gridListRef.current) {
       gridListRef.current.focus();
     }
 
@@ -93,22 +101,27 @@ export function TagInput(props: TagInputProps  ) {
     }
   }, [tagListInput, filteredTagsToChooseFrom.items.length]);
   
+
+
   return (
     <>
-      <div style={{width:maxWidthInPixel}} className={" border-2 "}>
-        <div id="tagListInputDiv" className={" border-2"}>
-          <TextField
-            className={"w-[250px]"}
+      <div style={{width:maxWidthInPixel}} >      
+      <div id="tagListInputDiv">
+      <label className={styles["form-label"]} >
+          <TextField            
             ref={tagInput}
-            onChange={handleTagListChange}
+            onChange={handleTagInputChange}
             value={tagListInput}
             onKeyDown={handleKeyDown}
           >
-            <Label />
-            <Input />
+            {/* //TODO refactor style */}
+            <Label className={styles["form-label"]} ><span className="inline-block m-2 w-[90px]">{inputLabel}{" "}</span>
+            <Input className={styles["form-input"].concat(" form-input")} />
+            </Label>  
             <Text slot="description" />
             <FieldError />
           </TextField>
+          </label>
         </div>
         <Popover isOpen={isOpen} triggerRef={tagInput} className={"popover"}>
           <GridList
@@ -125,7 +138,8 @@ export function TagInput(props: TagInputProps  ) {
             aria-label="Existing tags that matches input"
             selectionMode="multiple"
             onAction={(e) => {
-              appendToTaglist(e.toString());
+              const tag = tagsToChooseFrom.find((tag)=> tag.id == e.toString() )
+              if (tag) appendToTaglist( tag );
               setTagListInput("");
               setIsOpen(false);
             }}
@@ -144,13 +158,14 @@ export function TagInput(props: TagInputProps  ) {
             )}
           </GridList>
         </Popover>
-        <div id="selectedTagListDiv" className="overflow-x-auto border-2">
+        <div id="selectedTagListDiv" className="overflow-x-auto">
           <MyTagGroup
-            aria-label="Added tags"
-            label="Tags:"
+            aria-label={selectedLabel}
+            label={selectedLabel?selectedLabel:""}
             renderEmptyState={() => "**no tags specified**"}
             onRemove={(keys) => selectedTags.remove(...keys)}
-          >
+            description={description}
+          >            
             {selectedTags.items.map((tag) => (
               <MyTag
                 key={tag.id}
@@ -162,10 +177,10 @@ export function TagInput(props: TagInputProps  ) {
               >
                 <Link href={`/tags/${tag}`}>{tag.name}</Link>
               </MyTag>
-            ))}
+            ))}            
           </MyTagGroup>
-        </div>
-      </div>
+          </div>
+      </div>      
     </>
   );
 }

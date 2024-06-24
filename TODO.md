@@ -8,16 +8,20 @@ TODO
   * find duplicate link
   * 
 * frontend
+  * FIX LOGIN FLICKERING.
   * input components
   * archive button
   * view archive
   * better error handling
   * taggin ui
 * backend 
+  * TRANSACTIONS
+  * Updating tags
+    * when bookmarks is deleted / edited
+  * Updating bookmarks when tags are edited
   * how to handle composite index for archive and assets
     * Probly just handle in mysql and have a migrate script for the db structure
   * Scheduler for the archiving
-  * !! TRANSACTIONS?
   * usehooks better
     * use custom hooks for context
     * use custome hooks better in general
