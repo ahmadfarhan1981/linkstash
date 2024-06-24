@@ -16,10 +16,7 @@ export function useBookmarks(): useBookmarksReturnValue {
   const { AuthenticationState } = useAuthentication();
   const [isLoading, setIsLoading] = useState(false);
   const fetchBookmarks = () => {
-    //TODO use makeApiCall()
-
     if (!AuthenticationState.isLoggedIn) return;
-
     const options: ApiCallOptions = {
       endpoint: "/bookmarks",
       method: "GET",
@@ -31,7 +28,6 @@ export function useBookmarks(): useBookmarksReturnValue {
       },
     };
     setIsLoading(true);
-
     makeApiCall(options);
     setIsLoading(false);
   };

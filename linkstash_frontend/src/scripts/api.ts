@@ -13,7 +13,8 @@ import { ApiCallOptions } from "@/types";
 
 export async function makeApiCall(
   options: ApiCallOptions,
-  async: boolean = false
+  async: boolean = false,
+  printRequests: boolean = false
 ) {
   const processedEndpoint = options.endpoint;
   const url = (await getBackendURL()).concat(processedEndpoint);
@@ -28,6 +29,7 @@ export async function makeApiCall(
     },
     params: options.requestParams ? options.requestParams : EMPTY_PARAM,
   };
+  if( printRequests ) console.log(JSON.stringify(config));
   async ? apiFetchAsync(config, options) : apiFetchSync(config, options);
 }
 

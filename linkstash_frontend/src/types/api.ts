@@ -5,7 +5,8 @@ export type ApiEndpoint =
   | "/bookmarks"
   | "/users/login/"
   | `/bookmarks/${number}/archive`
-  | `/bookmarks/${number}`;
+  | `/bookmarks/${number}`
+  | '/tags'
 export type ApiMethod = "GET" | "POST" | "DELETE" | "PATCH" | "PUT";
 export type ApiCallOptions = {
   endpoint: ApiEndpoint;
