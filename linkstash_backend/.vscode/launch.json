@@ -3,7 +3,7 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Launch Program",
+      "name": "Launch debugger",
       "skipFiles": [
         "<node_internals>/**"
       ],
@@ -32,7 +32,7 @@
       "type": "node",
       "request": "attach",
       "name": "Attach to Process",
-      "port": 5858
-    }
+      "port": 9229
+    },
   ]
 }

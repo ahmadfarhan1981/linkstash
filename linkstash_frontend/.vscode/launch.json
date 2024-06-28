@@ -7,9 +7,24 @@
         {
             "type": "chrome",
             "request": "launch",
-            "name": "Chrome: Linkstash frontend",
+            "name": "Chrome: frontend",
             "url": "http://localhost:3000",
             "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Firefox: frontend",
+            "type": "firefox",
+            "request": "launch",
+            "reAttach": true,
+            "url": "http://localhost:3000",
+            "webRoot": "${workspaceFolder}",
+            "pathMappings": [
+                {
+                    "url": "webpack://_n_e/src/components",
+                    "path": "${workspaceFolder}/src/components"
+                },
+               
+            ]
         }
     ]
 }

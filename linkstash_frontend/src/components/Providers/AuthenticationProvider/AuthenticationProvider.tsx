@@ -84,7 +84,6 @@ export function AuthenticationProvider({
         },
       });
     }
-    setIsPending(false);
   };
   // TODO remove useEffect. figure something out
   useEffect(() => {
