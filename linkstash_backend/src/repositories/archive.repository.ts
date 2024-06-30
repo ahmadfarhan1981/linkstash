@@ -1,10 +1,10 @@
 import {inject, Getter} from '@loopback/core';
-import {DefaultCrudRepository, repository, BelongsToAccessor} from '@loopback/repository';
+import {repository, BelongsToAccessor, DefaultTransactionalRepository} from '@loopback/repository';
 import {BookmarkDataSource} from '../datasources';
 import {Archive, ArchiveRelations, Bookmark} from '../models';
 import {BookmarkRepository} from './bookmark.repository';
 
-export class ArchiveRepository extends DefaultCrudRepository<
+export class ArchiveRepository extends DefaultTransactionalRepository<
   Archive,
   typeof Archive.prototype.ArchiveId,
   ArchiveRelations

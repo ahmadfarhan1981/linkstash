@@ -1,12 +1,13 @@
 //#region Imports
 import {authenticate} from '@loopback/authentication';
 import {inject} from '@loopback/core';
-import {Filter, FilterBuilder, FilterExcludingWhere, repository} from '@loopback/repository';
+import {Filter, FilterBuilder, FilterExcludingWhere, IsolationLevel, Transaction, repository} from '@loopback/repository';
 import {Response, RestBindings, del, get, getModelSchemaRef, param, patch, post, requestBody, response} from '@loopback/rest';
 import {SecurityBindings, UserProfile, securityId} from '@loopback/security';
 import {Bookmark, BookmarkWithRelations, Tag} from '../models';
 import {BookmarkRepository, TagRepository, UserRepository} from '../repositories';
 import {bookmarkPatchSchema} from '../types';
+import {difference, remove} from 'lodash'
 //#endregion
 
 @authenticate('jwt')
@@ -17,46 +18,16 @@ export class BookmarkController {
     @repository(UserRepository) public userRepository: UserRepository,
   ) {}
 
-  //#region CRUD related endpoints
-  @post('/bookmarks')
-  @response(200, {
-    description: 'Bookmark model instance',
-    content: {'application/json': {schema: getModelSchemaRef(Bookmark)}},
-  })
-  async create(
-    @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getModelSchemaRef(Bookmark, {
-            title: 'NewBookmark',
-            exclude: ['id'],
-          }),
-        },
-      },
-    })
-    bookmark: Omit<Bookmark, 'id'>,
-  ): Promise<Bookmark> {
-    //TODO currently non atomic, use transaction
-    bookmark.userId = currentUserProfile[securityId];
-    const result = await this.bookmarkRepository.create(bookmark);
-    const bookmarkId = result.getId();
 
-    for (const tag of result.tagList!) {
-      const filter = new FilterBuilder<Tag>().impose({name: tag}).build();
-      const existingTag = await this.tagRepository.findOne(filter);
+  //readonly actions
+  /**
+   * Read only actions
+   * - find
+   * - findById
+   * - findAll
+   *
+   */
 
-      if (!existingTag) {
-        const newTag: Partial<Omit<Tag, 'id'>> = {name: tag, bookmarkIds: [bookmarkId]};
-        await this.userRepository.tags(currentUserProfile[securityId]).create(newTag);
-      } else {
-        existingTag.bookmarkIds.push(bookmarkId);
-        await this.tagRepository.updateById(existingTag.id, existingTag);
-      }
-    }
-    return result;
-    //return this.userRepository.bookmarks(id).create(bookmark);
-  }
 
   // @intercept('interceptors.AddCountToResultInterceptor')
   @get('/bookmarks')
@@ -134,6 +105,46 @@ export class BookmarkController {
     return returnValue;
   }
 
+
+  //write actions
+  /**
+   * readwrite actions
+   * - create
+   * - updateByID
+   * - deleteByID
+   *
+   */
+
+
+  @post('/bookmarks')
+  @response(200, {
+    description: 'Bookmark model instance',
+    content: {'application/json': {schema: getModelSchemaRef(Bookmark)}},
+  })
+  async create(
+    @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: getModelSchemaRef(Bookmark, {
+            title: 'NewBookmark',
+            exclude: ['id'],
+          }),
+        },
+      },
+    })
+    bookmark: Omit<Bookmark, 'id'>,
+  ): Promise<Bookmark> {
+    //TODO currently non atomic, use transaction
+    bookmark.userId = currentUserProfile[securityId];
+    const transaction = await this.bookmarkRepository.beginTransaction(IsolationLevel.READ_COMMITTED)
+    const result = await this.bookmarkRepository.create(bookmark, transaction);
+    await this.linkAllTags(result, currentUserProfile[securityId], transaction, true)
+    await transaction.commit()
+    return result;
+    //return this.userRepository.bookmarks(id).create(bookmark);
+  }
+
   @patch('/bookmarks/{id}')
   @response(204, {
     description: 'Bookmark PATCH success',
@@ -152,10 +163,28 @@ export class BookmarkController {
     @inject(RestBindings.Http.RESPONSE) res: Response,
   ): Promise<void> {
     // console.log(bookmark);
-    const existing = await this.userRepository.bookmarks(currentUserProfile[securityId]).find({where: {id: id}});
+    const existing = await this.userRepository.bookmarks(currentUserProfile['securityId']).find({where: {id: id}});
     // console.log(existing);
     if (existing.length > 0) {
-      await this.bookmarkRepository.updateAll(bookmark, {id: id});
+      const oldTags = existing[0].tagList!
+      const newTagsToAdd = difference(bookmark.tagList, oldTags )
+      const oldTagsToRemove = difference(oldTags, bookmark.tagList!)
+      const transaction = await this.bookmarkRepository.beginTransaction();
+      if(oldTagsToRemove.length> 0 ){
+        await this.unlinkTagsFromBookmark(currentUserProfile[securityId],
+                                          oldTagsToRemove,
+                                          id,
+                                          transaction)
+      }
+      if(newTagsToAdd.length > 0 ){
+        await this.linkTagsToBookmark(currentUserProfile[securityId],
+                                      newTagsToAdd,
+                                      id,
+                                      transaction,
+                                      true)
+      }
+      await this.bookmarkRepository.updateAll(bookmark, {id: id}, transaction);
+      await transaction.commit()
     } else {
       res.status(404);
       throw new Error(`Entity not found: Bookmark with id ${id}`);
@@ -173,7 +202,11 @@ export class BookmarkController {
   ): Promise<void> {
     const existing = await this.userRepository.bookmarks(currentUserProfile[securityId]).find({where: {id: id}});
     if (existing.length > 0) {
+      //TODO transaction
+      const transaction = await this.bookmarkRepository.beginTransaction(IsolationLevel.READ_COMMITTED)
+      await this.unlinkAllTags(existing[0],currentUserProfile[securityId], transaction)
       await this.bookmarkRepository.deleteById(id);
+      await transaction.commit()
     } else {
       res.status(404);
       throw new Error(`Entity not found: Bookmark with id ${id}`);
@@ -182,13 +215,71 @@ export class BookmarkController {
     //await this.bookmarkRepository.deleteById(id);
   }
 
-  // @get('/bookmarks/count')
-  // @response(200, {
-  //   description: 'Bookmark model count',
-  //   content: {'application/json': {schema: CountSchema}},
-  // })
-  // async count(@param.where(Bookmark) where?: Where<Bookmark>): Promise<Count> {
-  //   return this.bookmarkRepository.count(where);
-  // }
-  //#endregion
+  // helper functions
+  async linkAllTags(bookmark:Bookmark, userID:string, transaction:Transaction, createNonExisting:boolean = false){
+    await this.linkTagsToBookmark(userID, bookmark.tagList!, bookmark.id!, transaction, createNonExisting)
+  }
+  async linkTagsToBookmark(userId:string, tags:string[], bookmarkId:number, transaction:Transaction, createNonExisting:boolean = false){
+    for(const tag of tags){
+      await this.linkTagToBookmark(userId, tag, bookmarkId, transaction, createNonExisting)
+    }
+  }
+
+  async linkTagToBookmark(userId:string, tag:string, bookmarkId:number, transaction:Transaction, createNonExisting:boolean = false){
+    const filter = new FilterBuilder<Tag>().impose({name: tag}).build();
+    const existingTag:Tag[] = await this.userRepository.tags(userId).find(filter, transaction);
+      if(existingTag.length === 0){
+        if(createNonExisting){
+          //create
+          const newTag: Partial<Omit<Tag, 'id'>> = {name: tag, bookmarkIds: [bookmarkId]};
+        await this.userRepository.tags(userId).create(newTag, transaction);
+        }else{
+          //log exists
+          //exit
+          return
+        }
+      }
+
+      if (existingTag.length === 1) {
+        if(!(existingTag[0].bookmarkIds.includes(bookmarkId))){
+          existingTag[0].bookmarkIds.push(bookmarkId);
+          await this.tagRepository.updateById(existingTag[0].id, existingTag[0], transaction);
+        }else{
+          // log if linked
+          //exit
+          return
+        }
+      }else{
+      //log unexpected more than 1 tag
+      }
+  }
+
+
+  async unlinkAllTags(bookmark:Bookmark, userID:string, transaction:Transaction){
+    await this.unlinkTagsFromBookmark(userID, bookmark.tagList!, bookmark.id!, transaction)
+  }
+
+  async unlinkTagsFromBookmark(userId:string, tags:string[], bookmarkId:number, transaction:Transaction){
+    for(const tag of tags){
+      await this.unlinkTagFromBookmark(userId, tag, bookmarkId, transaction)
+    }
+  }
+
+  async unlinkTagFromBookmark(userId:string, tag:string, bookmarkId:number, transaction:Transaction){
+    const filter = new FilterBuilder<Tag>().impose({name: tag}).build();
+    const existingTag:Tag[] = await this.userRepository.tags(userId).find(filter, transaction);
+
+    if (existingTag.length === 1) {
+      const tagToUpdate = existingTag[0]
+      remove(tagToUpdate.bookmarkIds, (element)=>{return element === bookmarkId})
+      if(tagToUpdate.bookmarkIds.length===0){
+        await this.tagRepository.deleteById(tagToUpdate.id)
+      }else{
+        await this.tagRepository.updateById(tagToUpdate.id, tagToUpdate, transaction);
+      }
+    }else{
+      //log unexpected
+    }
+  }
+
 }

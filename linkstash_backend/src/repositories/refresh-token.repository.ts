@@ -1,9 +1,9 @@
 import {inject} from '@loopback/core';
-import {DefaultCrudRepository, juggler} from '@loopback/repository';
+import {DefaultTransactionalRepository, juggler} from '@loopback/repository';
 import {RefreshToken, RefreshTokenRelations} from '../models';
 import {RefreshTokenServiceBindings} from '../keys';
 
-export class RefreshTokenRepository extends DefaultCrudRepository<
+export class RefreshTokenRepository extends DefaultTransactionalRepository<
   RefreshToken,
   typeof RefreshToken.prototype.id,
   RefreshTokenRelations

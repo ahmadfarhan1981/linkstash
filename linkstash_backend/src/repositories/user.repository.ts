@@ -4,14 +4,14 @@
 // License text available at https://opensource.org/licenses/MIT
 
 import {Getter, inject} from '@loopback/core';
-import {DefaultCrudRepository, HasManyRepositoryFactory, HasOneRepositoryFactory, juggler, repository} from '@loopback/repository';
+import {DefaultTransactionalRepository, HasManyRepositoryFactory, HasOneRepositoryFactory, juggler, repository} from '@loopback/repository';
 import {UserServiceBindings} from '../keys';
 import {Bookmark, Tag, User, UserCredentials, UserRelations} from '../models';
 import {BookmarkRepository} from './bookmark.repository';
 import {TagRepository} from './tag.repository';
 import {UserCredentialsRepository} from './user-credentials.repository';
 
-export class UserRepository extends DefaultCrudRepository<User, typeof User.prototype.id, UserRelations> {
+export class UserRepository extends DefaultTransactionalRepository<User, typeof User.prototype.id, UserRelations> {
   public readonly userCredentials: HasOneRepositoryFactory<UserCredentials, typeof User.prototype.id>;
 
   public readonly bookmarks: HasManyRepositoryFactory<Bookmark, typeof User.prototype.id>;

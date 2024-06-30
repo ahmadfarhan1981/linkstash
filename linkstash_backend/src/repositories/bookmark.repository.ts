@@ -1,11 +1,11 @@
 import {Getter, inject} from '@loopback/core';
-import {DefaultCrudRepository, HasManyRepositoryFactory, repository} from '@loopback/repository';
+import {DefaultTransactionalRepository, HasManyRepositoryFactory, repository} from '@loopback/repository';
 import {BookmarkDataSource} from '../datasources';
 import {Archive, Bookmark, BookmarkRelations} from '../models';
 import {ArchiveRepository} from './archive.repository';
 import {UserRepository} from './user.repository';
 
-export class BookmarkRepository extends DefaultCrudRepository<Bookmark, typeof Bookmark.prototype.id, BookmarkRelations> {
+export class BookmarkRepository extends DefaultTransactionalRepository<Bookmark, typeof Bookmark.prototype.id, BookmarkRelations> {
   public readonly archives: HasManyRepositoryFactory<Archive, typeof Bookmark.prototype.id>;
 
   constructor(

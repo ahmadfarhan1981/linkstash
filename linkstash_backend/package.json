@@ -33,6 +33,7 @@
     "openapi-spec": "node ./dist/openapi-spec",
     "prestart": "npm run rebuild",
     "start": "node -r source-map-support/register .",
+    "predev": "npm run rebuild",
     "dev": "node --inspect -r source-map-support/register .",
     "clean": "lb-clean dist *.tsbuildinfo .eslintcache",
     "rebuild": "npm run clean && npm run build"
@@ -62,6 +63,7 @@
     "@mozilla/readability": "^0.5.0",
     "axios": "^1.6.7",
     "jsdom": "^24.0.0",
+    "lodash": "^4.17.21",
     "loopback-connector-mysql": "^5.4.4",
     "tslib": "^2.0.0"
   },
