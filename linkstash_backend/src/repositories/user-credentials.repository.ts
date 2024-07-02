@@ -4,11 +4,11 @@
 // License text available at https://opensource.org/licenses/MIT
 
 import {inject} from '@loopback/core';
-import {DefaultCrudRepository, juggler} from '@loopback/repository';
+import {DefaultTransactionalRepository, juggler} from '@loopback/repository';
 import {UserServiceBindings} from '../keys';
 import {UserCredentials, UserCredentialsRelations} from '../models';
 
-export class UserCredentialsRepository extends DefaultCrudRepository<
+export class UserCredentialsRepository extends DefaultTransactionalRepository<
   UserCredentials,
   typeof UserCredentials.prototype.id,
   UserCredentialsRelations
