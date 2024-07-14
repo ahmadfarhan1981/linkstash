@@ -115,7 +115,7 @@ export function TagInput(props: TagInputProps  ) {
             onKeyDown={handleKeyDown}
           >
             {/* //TODO refactor style */}
-            <Label className={styles["form-label"]} ><span className="inline-block m-2 w-[90px]">{inputLabel}{" "}</span>
+            <Label className={styles["form-label"]} ><span className="inline-block mr-2 w-[90px]">{inputLabel}{" "}</span>
             <Input className={styles["form-input"].concat(" form-input")} />
             </Label>  
             <Text slot="description" />

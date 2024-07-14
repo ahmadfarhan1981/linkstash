@@ -74,6 +74,7 @@ export type InputConfig = {
   id: string;
   label: String;
   labelWidth?: number;
+  labelAuto?: boolean
   name: string;
   value?: string;
   disabled?: boolean;

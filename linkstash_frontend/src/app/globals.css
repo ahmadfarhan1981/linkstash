@@ -58,7 +58,7 @@ code {
   }
   
   .form-input{
-    @apply placeholder:italic placeholder:text-slate-300 drop-shadow text-black disabled:text-slate-400 disabled:shadow-none disabled:bg-slate-200 disabled:border-slate-200
+    @apply placeholder:italic placeholder:text-slate-300 drop-shadow text-black disabled:text-slate-400 disabled:shadow-none disabled:bg-slate-200 disabled:border-slate-200 py-1
   }
 
   .form-label{

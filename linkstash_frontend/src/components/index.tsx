@@ -9,4 +9,5 @@ export * from "./Pager/Pager";
 export * from "./Providers/Providers";
 export * from "./TagCloud/TagCloud";
 export * from "./UserNavigationBar/UserNavigationBar";
+export * from "./BookmarksToolbar/BookmarskToolbar"
 
