@@ -114,7 +114,6 @@ export default function Home() {
           <div>
             <InputComponent
               label="URL"
-              labelWidth={111}
               autocomplete="off"
               id="url"
               name="url"

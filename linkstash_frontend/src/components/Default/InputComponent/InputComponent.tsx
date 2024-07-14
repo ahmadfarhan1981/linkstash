@@ -14,6 +14,8 @@ export function InputComponent(
     //handleChange: ChangeEventHandler<HTMLTextAreaElement> | ChangeEventHandler<HTMLInputElement>, 
     required: false,
     autofocus: false,
+    labelWidth: 90,
+    labelAuto: false,
   }
 ) {
   const {
@@ -28,7 +30,9 @@ export function InputComponent(
     autocomplete,
     autofocus,
     placeholder,
-    pattern
+    pattern,
+    labelWidth,
+    labelAuto,
   } = config;
 
   
@@ -36,7 +40,7 @@ export function InputComponent(
 
   if(type==="textarea")  return (
     <label className={styles["form-label"]}>
-    <span className="inline-block m-2 w-[90px]">{label}{" "}</span>
+    <span className="inline-block mr-2 w-[90px] align-top">{label}{" "}</span>
     <textarea      
       name={name}        
       autoFocus={autofocus}
@@ -55,8 +59,8 @@ export function InputComponent(
   return (
     <>
     <label className={styles["form-label"]} >
-      <span className="inline-block m-2 w-[90px]">{label}{" "}</span>
-      <input
+      <span style={ labelAuto? {} : {width:labelWidth?labelWidth:90}} className="inline-block mr-2">{label}{" "}</span>
+      <input        
         type={type}
         name={name}        
         autoFocus={autofocus}

@@ -20,10 +20,9 @@
             "webRoot": "${workspaceFolder}",
             "pathMappings": [
                 {
-                    "url": "webpack://_n_e/src/components",
-                    "path": "${workspaceFolder}/src/components"
+                    "url": "webpack://_n_e/src",
+                    "path": "${workspaceFolder}/src"
                 },
-               
             ]
         }
     ]

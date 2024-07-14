@@ -3,6 +3,7 @@
 import {
   AuthenticatedSection,
   BookmarkCard,
+  BookmarksToolbar,
   Loader,
   TagCloud,
 } from "@/components";
@@ -24,14 +25,20 @@ export default function Home() {
     AuthenticationState.isLoggedIn,
     AuthenticationState.token
   ]);
+  //TODO paging
+  //TODO sorting
+  //TODO filtering
   return (
     <AuthenticatedSection>
       <Loader isLoading={isLoading} text="Loading bookmarks">
       <div className={styles["bookmarks-page"]}>
         <div className={styles["bookmark-list"]}>
+        <div className=""><BookmarksToolbar /></div>
+        <div>
           {bookmarks?.map((bookmark) => (
             <BookmarkCard bookmarkData={bookmark} key={bookmark.id} />
           ))}
+        </div>
         </div>
         <div className={styles["tag-cloud"]}>
           <TagCloud />

@@ -10,7 +10,7 @@
   }
 
   .form-label{
-    @apply text-slate-400 focus:text-black  has-[:focus]:text-black transition-all ease-in duration-300
+    @apply text-slate-400 focus:text-black ml-0  has-[:focus]:text-black transition-all ease-in duration-300
   }
 
   .submit-button{
