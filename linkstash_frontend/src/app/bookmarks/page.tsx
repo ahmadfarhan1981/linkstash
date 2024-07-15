@@ -8,7 +8,7 @@ import {
   Pager,
   TagCloud,
 } from "@/components";
-import React, { Suspense, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SortBy, SortDirection, useBookmarks } from "@/hooks/useBookmarks";
 
 import styles from "./styles.module.css";
@@ -28,6 +28,7 @@ export default function Home() {
     useBookmarks();
   const [maxPage, setMaxPage] = useState(0);
   const [pageSize, setPageSize] = useState<number>(3);
+  const [filter, setFilter] = useState<string>("");
   useEffect(() => {
     {
       if (!AuthenticationState.isLoggedIn) return;
@@ -36,6 +37,7 @@ export default function Home() {
         sortDirection: sortDirection,
         page: currentPage,
         perPage: pageSize,
+        filter: filter,
       });
     }
   }, [
@@ -45,6 +47,7 @@ export default function Home() {
     pageSize,
     sortBy,
     sortDirection,
+    filter,
   ]);
 
   useEffect(() => {
@@ -63,9 +66,6 @@ export default function Home() {
     setCurrentPage(page ? Number.parseInt(page) : 1);
   }, [searchParams.get("page")]);
 
-  //TODO paging
-  //TODO sorting
-  //TODO filtering
   return (
     <AuthenticatedSection>
       <Loader isLoading={isLoading} text="Loading bookmarks">
@@ -76,6 +76,7 @@ export default function Home() {
                 setSortBy={setSortBy}
                 setSortDirection={setSortDirection}
                 setPageSize={setPageSize}
+                setFilter={setFilter}
               />
             </div>
             <div>

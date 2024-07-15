@@ -9,12 +9,13 @@ import {
   Select,
   SelectValue,
 } from "react-aria-components";
-import { CSSProperties, ReactNode } from "react";
+import React, { CSSProperties, ChangeEvent, ReactNode } from "react";
 import { SortBy, SortDirection } from "@/hooks";
 
 import { InputComponent } from "../Default";
 import { Key } from "@react-types/shared"
 import { useListData } from "react-stately";
+import { debounce } from "lodash";
 
 const svgStyle: CSSProperties = {
   fontSize: "medium",
@@ -99,10 +100,12 @@ export function BookmarksToolbar({
   setSortBy,
   setSortDirection,
   setPageSize,
+  setFilter,
 }: {
   setSortBy: React.Dispatch<React.SetStateAction<SortBy>>;
   setSortDirection: React.Dispatch<React.SetStateAction<SortDirection>>;
   setPageSize: React.Dispatch<React.SetStateAction<number>>;
+  setFilter: React.Dispatch<React.SetStateAction<string>>;
 }) {
   let list = useListData<SortListItem>({
     initialItems: [
@@ -150,6 +153,8 @@ export function BookmarksToolbar({
     setSortBy(list.getItem(key).sortBy);
     setSortDirection(list.getItem(key).sortDirection);
   };
+
+  const handleFilterChange = (e:ChangeEvent<HTMLInputElement>)=>{setFilter(e.target.value)}
   return (
     <>
       <div className={"flex w-full "}>
@@ -159,6 +164,7 @@ export function BookmarksToolbar({
             name="filter"
             type="text"
             id="filter"
+            handleChange={debounce(handleFilterChange, 750)}
             label={"Filter"}
           ></InputComponent>
         </div>

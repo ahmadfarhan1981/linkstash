@@ -21,17 +21,37 @@ export type fetchBookmarksOptions = {
   sortDirection : SortDirection ; 
   page: number;
   perPage: number;
+  filter: string;
 }
 
 
 function generateRequestParams(options:fetchBookmarksOptions):Record<string, any> {
-  const {sortBy, sortDirection, page, perPage} = options;
+  const {sortBy, sortDirection, page, perPage, filter} = options;
   const offset = ( page - 1 ) * perPage;
   
+  const filterStringFilter =`
+  
+    ,"where": {
+        "or": [
+                {
+                    "title": {
+                        "like": "%${filter}%"
+                    }
+                },
+                {
+                    "url": {
+                        "like": "%${filter}%"
+                    }
+                }
+              ]
+              }`
+
+
   const filterString = `{
     "skip" :${offset},
     "limit": ${perPage},
     "order": "${sortBy} ${sortDirection}"
+    ${filter?filterStringFilter:""}
   }`
   return {"filter":filterString}
 }

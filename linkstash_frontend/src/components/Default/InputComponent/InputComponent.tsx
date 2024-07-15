@@ -11,7 +11,7 @@ export function InputComponent(
     label: "",
     value: "",
     disabled: false,
-    //handleChange: ChangeEventHandler<HTMLTextAreaElement> | ChangeEventHandler<HTMLInputElement>, 
+    handleChange: ()=>{},
     required: false,
     autofocus: false,
     labelWidth: 90,
