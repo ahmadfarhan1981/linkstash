@@ -8,6 +8,16 @@ TODO
   * find duplicate link
   * 
 * frontend
+  * url param for curent page, page size, filtering and sorting
+  * secodary sort criteria url when no title. and just in general tiebreakers to make it deteministic
+  * refactor bookmarks page
+  * styling for filter and paging
+  * finish bookmark card
+    * archive
+    * delete
+    * edit
+    * 
+  * tag filter
   * input components
   * NextJS routing best practice
     * loading.js https://nextjs.org/docs/app/building-your-application/routing/loading-ui-and-streaming

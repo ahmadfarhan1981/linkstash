@@ -2,9 +2,11 @@
 "use client";
 
 import React, { ReactNode } from "react";
-import router, { useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 import Link from "next/link";
+import { setUrlParam } from "@/scripts";
+
 
 export function Pager({
   currentPage,
@@ -27,7 +29,11 @@ export function Pager({
               page: i,
             },
           }}
-          onClick={() => setCurrentPage(i)}
+          onClick={(e) => {
+            e.preventDefault();
+            setCurrentPage(i);
+            setUrlParam("page", i.toString(), searchParams);
+          }}
           id={`page_${i}`}
           className={
             i === currentPage
@@ -44,42 +50,58 @@ export function Pager({
   const moveNext = () => {
     const nextPage = currentPage === maxPages ? currentPage : currentPage + 1;
     setCurrentPage(nextPage);
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("page", nextPage.toString());
-    window.history.pushState(null, "", `?${params.toString()}`);
+    setUrlParam("page", nextPage.toString(), searchParams);
   };
   const movePrev = () => {
     const prevPage = currentPage === 1 ? currentPage : currentPage - 1;
     setCurrentPage(prevPage);
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("page", prevPage.toString());
-    window.history.pushState(null, "", `?${params.toString()}`);
+    setUrlParam("page", prevPage.toString(), searchParams);
   };
   const moveFirst = () => {
     setCurrentPage(1);
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("page", "1");
-    window.history.pushState(null, "", `?${params.toString()}`);
+    setUrlParam("page", "1", searchParams);
   };
   const moveLast = () => {
     setCurrentPage(maxPages);
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("page", maxPages.toString());
-    window.history.pushState(null, "", `?${params.toString()}`);
+    setUrlParam("page", maxPages.toString(), searchParams);
   };
   return (
     <div className="border-2 font-mono text-xs content-end text-right">
-      <Link href="#" onClick={() => moveFirst()}>
+      <Link
+        href="#"
+        onClick={(e) => {
+          e.preventDefault();
+          moveFirst();
+        }}
+      >
         {"|<-"}
       </Link>{" "}
-      <Link href="#" onClick={() => movePrev()}>
+      <Link
+        href="#"
+        onClick={(e) => {
+          e.preventDefault();
+          movePrev();
+        }}
+      >
         {"<"}
       </Link>{" "}
       {pages}
-      <Link href="#" onClick={() => moveNext()}>
+      <Link
+        href="#"
+        onClick={(e) => {
+          e.preventDefault;
+          moveNext();
+        }}
+      >
         {">"}
       </Link>{" "}
-      <Link href="#" onClick={() => moveLast()}>
+      <Link
+        href="#"
+        onClick={(e) => {
+          e.preventDefault();
+          moveLast();
+        }}
+      >
         {"->|"}
       </Link>{" "}
     </div>

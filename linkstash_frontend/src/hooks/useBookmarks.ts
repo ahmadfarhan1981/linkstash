@@ -42,6 +42,11 @@ function generateRequestParams(options:fetchBookmarksOptions):Record<string, any
                     "url": {
                         "like": "%${filter}%"
                     }
+                },
+                {
+                    "description": {
+                        "like": "%${filter}%"
+                    }
                 }
               ]
               }`

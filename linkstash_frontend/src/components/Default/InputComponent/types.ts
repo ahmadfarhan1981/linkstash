@@ -88,4 +88,5 @@ export type InputConfig = {
   className?: string[];
   pattern?: string;
   children?: React.ReactNode;
+  defaultValue?: string;
 };

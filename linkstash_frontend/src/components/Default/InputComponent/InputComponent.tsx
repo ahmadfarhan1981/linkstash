@@ -16,6 +16,7 @@ export function InputComponent(
     autofocus: false,
     labelWidth: 90,
     labelAuto: false,
+    defaultValue: "",
   }
 ) {
   const {
@@ -33,6 +34,7 @@ export function InputComponent(
     pattern,
     labelWidth,
     labelAuto,
+    defaultValue
   } = config;
 
   
@@ -52,6 +54,7 @@ export function InputComponent(
       onChange={handleChange as ChangeEventHandler<HTMLTextAreaElement>}
       disabled= {disabled }
       value={value}
+      defaultValue={defaultValue}
       
     />
   </label>);
@@ -73,6 +76,7 @@ export function InputComponent(
         disabled= {disabled }
         value={value}
         pattern={pattern}
+        defaultValue={defaultValue}
         // onKeyDown={(e=>console.log( e))}
         // onInvalid={e=>(e.target as HTMLInputElement).setCustomValidity('arroooooo')}
        

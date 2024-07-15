@@ -14,6 +14,7 @@ import { SortBy, SortDirection, useBookmarks } from "@/hooks/useBookmarks";
 import styles from "./styles.module.css";
 import { useAuthentication } from "@/hooks";
 import { useSearchParams } from "next/navigation";
+import { setUrlParam } from "@/scripts";
 
 export default function Home() {
   const searchParams = useSearchParams();
@@ -27,7 +28,7 @@ export default function Home() {
   const { bookmarks, fetchBookmarks, isLoading, numNonPagedResults } =
     useBookmarks();
   const [maxPage, setMaxPage] = useState(0);
-  const [pageSize, setPageSize] = useState<number>(3);
+  const [pageSize, setPageSize] = useState<number>(10);
   const [filter, setFilter] = useState<string>("");
   useEffect(() => {
     {
@@ -53,7 +54,13 @@ export default function Home() {
   useEffect(() => {
     {
       if (!AuthenticationState.isLoggedIn) return;
-      setMaxPage(Math.ceil(numNonPagedResults / pageSize));
+      const lastPage =Math.ceil(numNonPagedResults / pageSize)
+      setMaxPage(lastPage);
+      if(currentPage>lastPage)
+        {
+           setCurrentPage(lastPage)
+           setUrlParam("page", lastPage.toString(), searchParams)
+        }
     }
   }, [
     AuthenticationState.isLoggedIn,
@@ -61,10 +68,19 @@ export default function Home() {
     numNonPagedResults,
     pageSize,
   ]);
+
+
   useEffect(() => {
     const page = searchParams.get("page");
     setCurrentPage(page ? Number.parseInt(page) : 1);
   }, [searchParams.get("page")]);
+
+  useEffect(() => {
+    const perPage = searchParams.get("perPage");
+    setPageSize(perPage?perPage:"10");
+  }, [searchParams.get("perPage")]);
+
+
 
   return (
     <AuthenticatedSection>
@@ -73,6 +89,10 @@ export default function Home() {
           <div className={styles["bookmark-list"]}>
             <div className="">
               <BookmarksToolbar
+                sortBy={sortBy}
+                sortDirection={sortDirection}
+                pageSize={pageSize}
+                filter={filter}
                 setSortBy={setSortBy}
                 setSortDirection={setSortDirection}
                 setPageSize={setPageSize}
