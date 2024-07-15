@@ -1,7 +1,8 @@
+/* eslint-disable github/a11y-no-title-attribute */
 "use client";
 
 import { MyTag, MyTagGroup } from "@/components";
-
+import { formatDistanceToNow, formatRFC7231 } from "date-fns";
 import { Bookmark } from "@/types";
 import Link from "next/link";
 import styles from "./styles.module.css";
@@ -35,15 +36,13 @@ export function BookmarkCard({ bookmarkData }: { bookmarkData: Bookmark }) {
           </MyTagGroup>
         </div>
 
-        <div className={styles["commands"]}>
-          <a
-            href="https://web.archive.org/web/20240104032528/https://www.joshwcomeau.com/css/interactive-guide-to-grid/"
-            // title="Show snapshot on the Internet Archive Wayback Machine"
-            target="_blank"
-            rel="noopener"
+        
+        <div className={styles["commands"]}>  
+          <span title={formatRFC7231(bookmarkData.created?bookmarkData.created:new Date(-8640000000000000))}
+            
           >
-            Yesterday ∞
-          </a>
+            {formatDistanceToNow(bookmarkData.created?bookmarkData.created:new Date(-8640000000000000), { addSuffix: true })} ∞
+          </span>
 
           <span className="separator">|</span>
 

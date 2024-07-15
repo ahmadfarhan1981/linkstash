@@ -1,3 +1,4 @@
+export const DEV_MOCK_RESPONSE = false
 export const EMPTY_FUNCTION = () => {};
 export const EMPTY_BODY = JSON.stringify({});
 export const EMPTY_PARAM = {} as Record<string, any>;

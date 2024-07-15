@@ -1,23 +1,50 @@
 import { ApiCallOptions, Bookmark } from "@/types";
+import { DEV_MOCK_RESPONSE, makeApiCall } from "@/scripts";
 import React, { useState } from "react";
 
-import { makeApiCall } from "@/scripts";
+import { MOCK_BOOKMARKLIST_FULL_NOSORT_NOFILTER } from "@/scripts/dev_mode";
 import { useAuthentication } from "@/hooks";
 
 export type useBookmarksReturnValue = {
   bookmarks: Bookmark[];
   setBookmarks: React.Dispatch<React.SetStateAction<Bookmark[]>>;
-  fetchBookmarks: () => void;
+  fetchBookmarks: (options:fetchBookmarksOptions) => void;
   isLoading: boolean;
+  numNonPagedResults: number;
 };
+
+
+export type SortDirection = "ASC" | "DESC";
+export type SortBy = "created" | "url" | "domain" | "title";
+export type fetchBookmarksOptions = {
+  sortBy : SortBy
+  sortDirection : SortDirection ; 
+  page: number;
+  perPage: number;
+}
+
+
+function generateRequestParams(options:fetchBookmarksOptions):Record<string, any> {
+  const {sortBy, sortDirection, page, perPage} = options;
+  const offset = ( page - 1 ) * perPage;
+  
+  const filterString = `{
+    "skip" :${offset},
+    "limit": ${perPage},
+    "order": "${sortBy} ${sortDirection}"
+  }`
+  return {"filter":filterString}
+}
 
 export function useBookmarks(): useBookmarksReturnValue {
   const [bookmarks, setBookmarks] = useState([] as Bookmark[]);
   const { AuthenticationState } = useAuthentication();
   const [isLoading, setIsLoading] = useState(false);
-  const fetchBookmarks = () => {
+  const [numNonPagedResults, setNumNonPagedResult] = useState(0)
+  const fetchBookmarks = (fetchOptions:fetchBookmarksOptions) => {
     if (!AuthenticationState.isLoggedIn) return;
-    const options: ApiCallOptions = {
+    const params = generateRequestParams(fetchOptions)
+    const apiOptions: ApiCallOptions = {
       endpoint: "/bookmarks",
       method: "GET",
       headers: {
@@ -25,10 +52,12 @@ export function useBookmarks(): useBookmarksReturnValue {
       },
       successCallback: (response: any) => {
         setBookmarks(response.data.data);
+        setNumNonPagedResult(response.data.countAll)
       },
+      requestParams:params
     };
     setIsLoading(true);
-    makeApiCall(options);
+    makeApiCall(apiOptions, false, true);
     setIsLoading(false);
   };
 
@@ -37,5 +66,6 @@ export function useBookmarks(): useBookmarksReturnValue {
     setBookmarks,
     fetchBookmarks,
     isLoading,
+    numNonPagedResults
   };
 }

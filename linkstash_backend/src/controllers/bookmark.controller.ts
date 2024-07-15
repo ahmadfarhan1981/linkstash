@@ -47,11 +47,14 @@ export class BookmarkController {
     const resultFilter = builder.build();
     const allResultFilter: Filter<Bookmark> = JSON.parse(JSON.stringify(resultFilter));
     if (allResultFilter.limit) delete allResultFilter.limit;
+    if (allResultFilter.offset) delete allResultFilter.offset;
+    if (allResultFilter.skip) delete allResultFilter.skip;
 
     const all = await this.bookmarkRepository.find(allResultFilter);
+    const data = await this.bookmarkRepository.find(resultFilter)
     const returnValue = {
       countAll: all.length,
-      data: all,
+      data: data,
     };
     return returnValue;
   }

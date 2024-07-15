@@ -9,6 +9,10 @@ TODO
   * 
 * frontend
   * input components
+  * NextJS routing best practice
+    * loading.js https://nextjs.org/docs/app/building-your-application/routing/loading-ui-and-streaming
+    * use parallel modal for login https://nextjs.org/docs/app/building-your-application/routing/parallel-routes#modals
+    * 
   * archive button
   * view archive
   * better error handling

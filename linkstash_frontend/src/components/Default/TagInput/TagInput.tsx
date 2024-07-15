@@ -11,7 +11,7 @@ import {
   Text,
   TextField
 } from "react-aria-components";
-import { Key, useEffect, useRef, useState } from "react";
+import { Key, ReactNode, useEffect, useRef, useState } from "react";
 import { ListData, useListData } from "react-stately";
 import { MyTag, MyTagGroup } from "@/components";
 
@@ -32,7 +32,7 @@ export type TagInputProps = {
 
 export function TagInput(props: TagInputProps  ) {
   const { selectedTags, tagsToChooseFrom=[], maxWidthInPixel=150, inputLabel, selectedLabel, description } = props; //TODO default values
-  const gridListRef = useRef(null);
+  const gridListRef = useRef<HTMLInputElement>(null);
   const tagInput = useRef(null);
   const [tagListInput, setTagListInput] = useState<Key | null>("");
   const [isOpen, setIsOpen] = useState(false);
@@ -105,13 +105,13 @@ export function TagInput(props: TagInputProps  ) {
 
   return (
     <>
-      <div style={{width:maxWidthInPixel}} >      
+      <div style={{width:Number.parseInt(maxWidthInPixel.toString())}} >      
       <div id="tagListInputDiv">
       <label className={styles["form-label"]} >
           <TextField            
             ref={tagInput}
             onChange={handleTagInputChange}
-            value={tagListInput}
+            value={tagListInput?.toString()}
             onKeyDown={handleKeyDown}
           >
             {/* //TODO refactor style */}
