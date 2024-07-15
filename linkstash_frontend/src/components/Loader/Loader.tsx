@@ -11,7 +11,7 @@ export function Loader({
   text?: string;
   children: ReactNode;
 }): ReactNode {
-  if (isLoading) {
+  if (isLoading ) {
     return (
       <div className="w-auto items-center justify-between flex flex-col">
         <div className={styles["ball-loader"]/*.concat(" border-2")*/}>

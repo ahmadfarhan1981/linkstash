@@ -67,6 +67,7 @@ export function AuthenticationProvider({
 
     setIsPending(true);
     if (cookies.get(cookieTokenName)) {
+      
       const cookieToken = cookies.get(cookieTokenName);
 
       makeApiCall({
@@ -83,6 +84,8 @@ export function AuthenticationProvider({
           setIsPending(false);
         },
       });
+    }else{
+      setIsPending(false)
     }
   };
   // TODO remove useEffect. figure something out

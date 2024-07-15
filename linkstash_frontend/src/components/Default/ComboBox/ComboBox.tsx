@@ -5,15 +5,15 @@
 import {
   Button,
   ComboBox,
+  type ComboBoxProps,
   FieldError,
   Input,
   Label,
   ListBox,
   ListBoxItem,
+  type ListBoxItemProps,
   Popover,
   Text,
-  type ComboBoxProps,
-  type ListBoxItemProps,
   type ValidationResult,
 } from "react-aria-components";
 

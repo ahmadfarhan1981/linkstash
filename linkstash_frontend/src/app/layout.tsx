@@ -1,4 +1,5 @@
 import "./globals.css";
+import "../global_styles/react-aria_combobox.css"
 
 import {
   Header,
@@ -8,6 +9,7 @@ import {
 } from "@/components";
 import { Inter, Open_Sans } from "next/font/google";
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 const openSans = Open_Sans({
@@ -35,7 +37,9 @@ export default function RootLayout({
             <div className="left-spacer"></div>
             <div className="content">
               {/* //TODO fix loader. suspense? */}
+              <Suspense>{/** https://nextjs.org/docs/messages/missing-suspense-with-csr-bailout useSearchParams in /bookmarks */}
               <Loader isLoading={false}>{children}</Loader>
+              </Suspense>
             </div>
             <div className="right-spacer"></div>
           </div>

@@ -10,6 +10,7 @@ import {MySequence} from './sequence';
 import {AuthenticationComponent} from '@loopback/authentication';
 import {JWTAuthenticationComponent, UserServiceBindings} from '@loopback/authentication-jwt';
 import {BookmarkDataSource} from './datasources';
+import {HealthComponent} from '@loopback/health';
 
 export {ApplicationConfig};
 export class LinkstashApplication extends BootMixin(ServiceMixin(RepositoryMixin(RestApplication))) {
@@ -32,6 +33,9 @@ export class LinkstashApplication extends BootMixin(ServiceMixin(RepositoryMixin
       path: '/explorer',
     });
     this.component(RestExplorerComponent);
+
+    this.component(HealthComponent);
+    
 
     this.projectRoot = __dirname;
     // Customize @loopback/boot Booter Conventions here
