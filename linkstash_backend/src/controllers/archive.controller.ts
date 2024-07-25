@@ -7,6 +7,7 @@ import {
   Filter,
   FilterBuilder,
   Where,
+  WhereBuilder,
   repository,
 } from '@loopback/repository';
 import {
@@ -105,6 +106,30 @@ export class ArchiveController {
   ): Promise<Count> {
     return this.bookmarkRepository.archives(id).delete(where);
   }
+
+  @get('/bookmarks/{id}/archives/meta', {
+    responses: {
+      '200': {
+        description: 'Get number of archives of a bookmark',
+        content: {
+          'application/json': {
+            schema: CountSchema,
+          },
+        },
+      },
+    },
+  })
+  async findArchivesCount(
+    @param.path.number('id') id: number,
+    @repository(ArchiveRepository) archiveRepository: ArchiveRepository,
+    @param.query.object('filter') filter?: Where<Archive>,
+  ): Promise<Count> {
+    const builder = new WhereBuilder(filter).impose({bookmarkId: id});
+    const resultFilter = builder.build();
+    return archiveRepository.count(resultFilter)
+  }
+
+
 
   @del('/archives/{id}', {
     responses: {

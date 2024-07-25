@@ -7,3 +7,15 @@ export type Bookmark = {
   tagList?: string[];
   archive?: string;
 };
+
+export type Archive = {
+  "ArchiveId": string;
+  "Version": number;
+  "DateRetrieved": Date;
+  "LastChecked": Date,
+  "Hash": string
+  "Filesize": 10393,
+  "CollisionId": 0,
+  "Content": string
+  "bookmarkId": string
+}

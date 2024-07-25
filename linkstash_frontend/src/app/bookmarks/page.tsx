@@ -27,9 +27,26 @@ export default function Home() {
   const { AuthenticationState } = useAuthentication();
   const { bookmarks, fetchBookmarks, isLoading, numNonPagedResults } =
     useBookmarks();
-  const [maxPage, setMaxPage] = useState(0);
+  const [maxPage, setMaxPage] = useState<number>();
   const [pageSize, setPageSize] = useState<number>(10);
   const [filter, setFilter] = useState<string>("");
+  
+
+  
+
+
+  useEffect(() => {
+    const pageParam = searchParams.get("page");
+    const currentPage = pageParam ? Number.parseInt(pageParam) : 1
+    setCurrentPage(currentPage);
+    setUrlParam("page", currentPage.toString(), searchParams)
+  }, [searchParams.get("page")]);
+
+  useEffect(() => {
+    const perPage = searchParams.get("perPage");
+    setPageSize(perPage?perPage:"10");
+  }, [searchParams.get("perPage")]);
+
   useEffect(() => {
     {
       if (!AuthenticationState.isLoggedIn) return;
@@ -48,13 +65,13 @@ export default function Home() {
     pageSize,
     sortBy,
     sortDirection,
-    filter,
+    filter
   ]);
 
   useEffect(() => {
     {
       if (!AuthenticationState.isLoggedIn) return;
-      const lastPage =Math.ceil(numNonPagedResults / pageSize)
+      const lastPage = Math.max( Math.ceil(numNonPagedResults / pageSize), 1 )
       setMaxPage(lastPage);
       if(currentPage>lastPage)
         {
@@ -70,18 +87,18 @@ export default function Home() {
   ]);
 
 
-  useEffect(() => {
-    const page = searchParams.get("page");
-    setCurrentPage(page ? Number.parseInt(page) : 1);
-  }, [searchParams.get("page")]);
-
-  useEffect(() => {
-    const perPage = searchParams.get("perPage");
-    setPageSize(perPage?perPage:"10");
-  }, [searchParams.get("perPage")]);
+  
 
 
 
+    fetchBookmarks({
+      sortBy: sortBy,
+      sortDirection: sortDirection,
+      page: currentPage,
+      perPage: pageSize,
+      filter: filter,
+    })
+  
   return (
     <AuthenticatedSection>
       <Loader isLoading={isLoading} text="Loading bookmarks">

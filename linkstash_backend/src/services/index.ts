@@ -1,2 +1,2 @@
-export * from './link-stash-user.service';
+export * from './linkstash-bookmark.service';
 export * from './archive.service';

@@ -1,5 +1,5 @@
 import { ApiCallOptions, Bookmark } from "@/types";
-import { DEV_MOCK_RESPONSE, makeApiCall } from "@/scripts";
+import { DEV_MOCK_RESPONSE, EMPTY_FUNCTION, makeApiCall } from "@/scripts";
 import React, { useState } from "react";
 
 import { MOCK_BOOKMARKLIST_FULL_NOSORT_NOFILTER } from "@/scripts/dev_mode";
@@ -86,10 +86,12 @@ export function useBookmarks(): useBookmarksReturnValue {
     setIsLoading(false);
   };
 
+ 
   return {
     bookmarks,
     setBookmarks,
     fetchBookmarks,
+
     isLoading,
     numNonPagedResults
   };

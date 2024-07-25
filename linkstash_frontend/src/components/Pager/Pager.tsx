@@ -2,11 +2,10 @@
 "use client";
 
 import React, { ReactNode } from "react";
-import { useSearchParams } from "next/navigation";
 
 import Link from "next/link";
 import { setUrlParam } from "@/scripts";
-
+import { useSearchParams } from "next/navigation";
 
 export function Pager({
   currentPage,

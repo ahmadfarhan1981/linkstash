@@ -1,4 +1,4 @@
-import {Entity, hasMany, model, property} from '@loopback/repository';
+import {Count, Entity, hasMany, model, property} from '@loopback/repository';
 import {Archive} from './archive.model';
 
 @model()
@@ -39,6 +39,11 @@ export class Bookmark extends Entity {
     type: 'string',
   })
   userId: string;
+
+  @property({
+    type: 'object',
+  })
+  archiveCount: Count;
 
   @hasMany(() => Archive)
   archives: Archive[];

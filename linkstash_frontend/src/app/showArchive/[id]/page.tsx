@@ -1,59 +1,82 @@
 "use client";
 
-import { AuthenticatedSection, Loader } from "@/components";
-
-import { ApiCallOptions } from "@/types";
+import { AuthenticatedSection, BookmarkCard, Loader } from "@/components";
+import { formatDistanceToNow, formatRFC7231 } from "date-fns"
+import { ApiCallOptions, Archive, Bookmark } from "@/types";
 import { makeApiCall } from "@/scripts";
 import { useAuthentication } from "@/hooks";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 
 export default function Home({ params }: { params: { id: number } }) {
   const [isLoading, setIsLoading] = useState(true);
   const [archive, setArchive] = useState("");
   const { AuthenticationState } = useAuthentication();
 
-  const success = async (response: any) => {
-    const { Content } = response.data;
-    setArchive(Content);
-    setIsLoading(false);
-  };
-  const options: ApiCallOptions = {
-    endpoint: `/bookmarks/${params.id}/archive`,
-    method: "GET",
-    headers: {
-      Authorization: "Bearer ".concat(AuthenticationState.token),
-    },
-    body: {},
-    successCallback: success,
-    finallyCallback: () => {
-      setIsLoading(false);
-    },
-  };
-
-  makeApiCall(options);
-  const __html = archive;
+  const[a,setA]=useState<Archive>(null)
+  
+  
   // var __html = require('../../1/archive.html.archive');
-  var template = { __html: __html };
+  const template = { __html: archive };
+
+  const [bookmark, setBookmark] = useState<Bookmark>();
+  useEffect(() => {
+    {
+      if (!AuthenticationState.isLoggedIn) return;
+
+      const success = (response: any) => {
+        setBookmark(response.data);
+      };
+
+      const option: ApiCallOptions = {
+        endpoint: `/bookmarks/${params.id}`,
+        method: "GET",
+        headers: {
+          Authorization: "Bearer ".concat(AuthenticationState.token),
+        },
+        successCallback: success,
+      };
+      makeApiCall(option);
+
+      const getArchiveSuccess = async (response: any) => {
+        setA(response.data)
+        const { Content } = response.data;
+
+
+        setArchive(Content);
+        setIsLoading(false);
+      };
+      const getArchiveOptions: ApiCallOptions = {
+        endpoint: `/bookmarks/${params.id}/archive`,
+        method: "GET",
+        headers: {
+          Authorization: "Bearer ".concat(AuthenticationState.token),
+        },
+        body: {},
+        successCallback: getArchiveSuccess,
+        finallyCallback: () => {
+          setIsLoading(false);
+        },
+      };
+      makeApiCall(getArchiveOptions);
+    }
+  }, [AuthenticationState.isLoggedIn, AuthenticationState.token, params.id]);  
+  
   return (
     <>
       <AuthenticatedSection>
         <Loader isLoading={isLoading}>
+          
+          <div className="w-full">{false && bookmark && <BookmarkCard bookmarkData={bookmark!} ></BookmarkCard>}</div>
           <div>
-            <h1>Arvhive of website bla bla</h1>
+            <h1>Arvhive of &lsquo;<b>{bookmark?.title}</b>&rsquo;</h1>
           </div>
-          <p id="metadata">Added 6 December 2023, 10:19:30</p>{" "}
+          <p id="metadata">Retrieved {a && formatRFC7231(a.DateRetrieved)}</p>{" "}
           <p id="title" dir="auto">
-            https://tedium.co/2023/11/17/3m-floppy-disks-history/
+            {bookmark && bookmark.url}
           </p>{" "}
           <div id="links">
-            <a
-              href="https://tedium.co/2023/11/17/3m-floppy-disks-history/"
-              target="_blank"
-              rel="noopener"
-            >
-              View Original
-            </a>{" "}
-            <a href="bookmark/5/archive">View Archive</a>
+            {bookmark && <Link href={bookmark.url!} target="new">View original</Link>}
           </div>
           <div dangerouslySetInnerHTML={template} className="border-2"></div>
         </Loader>

@@ -3,18 +3,35 @@
 
 import { MyTag, MyTagGroup } from "@/components";
 import { formatDistanceToNow, formatRFC7231 } from "date-fns";
-import { Bookmark } from "@/types";
+import { ApiCallOptions, Bookmark } from "@/types";
 import Link from "next/link";
 import styles from "./styles.module.css";
+import { makeApiCall } from "@/scripts";
+import { useAuthentication } from "@/hooks";
 
-// function fetchCard(){
-//   const config:AxiosRequestConfig ={
-//     URl:""
-//   }
-// }
+
+
 
 export function BookmarkCard({ bookmarkData }: { bookmarkData: Bookmark }) {
   const emptyTag = <div className={styles["no-tags"]}>No tags</div>;
+  const { AuthenticationState } = useAuthentication();
+  function createArchive(){
+    const success = (response: any) => {
+      //asdasd
+    };
+    const option: ApiCallOptions = {
+      endpoint: `/bookmarks/${Number.parseInt(bookmarkData.id!)}/archive`,
+      method: "POST",
+      headers: {
+        Authorization: "Bearer ".concat(AuthenticationState.token),
+      },
+      successCallback: success,
+    };
+    makeApiCall(option);
+
+  }
+  
+
   return (
     <>
       <div className={styles["card"]}>
@@ -46,20 +63,7 @@ export function BookmarkCard({ bookmarkData }: { bookmarkData: Bookmark }) {
 
           <span className="separator">|</span>
 
-          <a href="/bookmarks/2281/edit?return_url=/bookmarks">Edit</a>
-
-          <button
-            className={styles["button"]}
-            type="submit"
-            name="archive"
-            value="2281"
-          >
-            Archive
-          </button>
-
-          <button data-type="submit" data-name="remove" data-value="2281">
-            Remove
-          </button>
+          Edit | <Link href="#" >Remove</Link> | Create Archive | <Link href={`showArchive/${bookmarkData.id}`}>View Archive</Link>
         </div>
       </div>
     </>
