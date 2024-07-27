@@ -83,4 +83,10 @@ code {
     @apply bg-white
   }
 
+
+
+  .react-icons{
+    @apply inline hover:text-linkstashPurple 
+  }
+
 }

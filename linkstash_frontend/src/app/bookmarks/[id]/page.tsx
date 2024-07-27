@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 
 import { makeApiCall } from "@/scripts";
 import styles from "../styles.module.css";
-import { useAuthentication } from "@/hooks";
+import { useAuthentication, useBookmarks } from "@/hooks";
 
 export default function Home({ params }: { params: { id: number } }) {
   const { AuthenticationState } = useAuthentication();
@@ -36,12 +36,15 @@ export default function Home({ params }: { params: { id: number } }) {
     }
   }, [AuthenticationState.isLoggedIn, AuthenticationState.token, params.id]);
 
+  const { deleteBookmark } =
+    useBookmarks();
+ //usebookmark
   return (
     <AuthenticatedSection>
       <div className={styles["bookmarks-page"]}>
         <div className={styles["bookmark-list"]}>
           <Loader isLoading={!bookmark} text="Loading bookmarks...">
-            <BookmarkCard bookmarkData={bookmark!}></BookmarkCard>
+            <BookmarkCard bookmarkData={bookmark!} onDelete={(id)=>{deleteBookmark(id)}} ></BookmarkCard>
           </Loader>
         </div>
         <div className={styles["tag-cloud"]}>

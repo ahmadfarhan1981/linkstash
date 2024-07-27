@@ -4,16 +4,17 @@ import { AuthenticatedSection, BookmarkCard, Loader } from "@/components";
 import { formatDistanceToNow, formatRFC7231 } from "date-fns"
 import { ApiCallOptions, Archive, Bookmark } from "@/types";
 import { makeApiCall } from "@/scripts";
-import { useAuthentication } from "@/hooks";
+import { useAuthentication, useBookmarks } from "@/hooks";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { BiSolidArchiveIn } from "react-icons/bi";
 
 export default function Home({ params }: { params: { id: number } }) {
   const [isLoading, setIsLoading] = useState(true);
   const [archive, setArchive] = useState("");
   const { AuthenticationState } = useAuthentication();
 
-  const[a,setA]=useState<Archive>(null)
+  const[a,setA]=useState<Archive|null>(null)
   
   
   // var __html = require('../../1/archive.html.archive');
@@ -61,13 +62,16 @@ export default function Home({ params }: { params: { id: number } }) {
       makeApiCall(getArchiveOptions);
     }
   }, [AuthenticationState.isLoggedIn, AuthenticationState.token, params.id]);  
-  
+
+  //TODO useBookmark
+  const { deleteBookmark } =
+    useBookmarks();
   return (
     <>
       <AuthenticatedSection>
         <Loader isLoading={isLoading}>
           
-          <div className="w-full">{false && bookmark && <BookmarkCard bookmarkData={bookmark!} ></BookmarkCard>}</div>
+          <div className="w-full">{false && bookmark && <BookmarkCard bookmarkData={bookmark!} onDelete={(id)=>{deleteBookmark(id)}} ></BookmarkCard>}</div>
           <div>
             <h1>Arvhive of &lsquo;<b>{bookmark?.title}</b>&rsquo;</h1>
           </div>

@@ -9,6 +9,7 @@ export type useBookmarksReturnValue = {
   bookmarks: Bookmark[];
   setBookmarks: React.Dispatch<React.SetStateAction<Bookmark[]>>;
   fetchBookmarks: (options:fetchBookmarksOptions) => void;
+  deleteBookmark: (bookmarkId:number)=>void
   isLoading: boolean;
   numNonPagedResults: number;
 };
@@ -76,7 +77,10 @@ export function useBookmarks(): useBookmarksReturnValue {
         Authorization: "Bearer ".concat(AuthenticationState.token),
       },
       successCallback: (response: any) => {
-        setBookmarks(response.data.data);
+        setBookmarks((oldState)=>{
+          const newState = response.data.data
+          return newState
+        });
         setNumNonPagedResult(response.data.countAll)
       },
       requestParams:params
@@ -86,12 +90,27 @@ export function useBookmarks(): useBookmarksReturnValue {
     setIsLoading(false);
   };
 
+  const deleteBookmark = (bookmarkId:number) => {
+    if (!AuthenticationState.isLoggedIn) return;
+    
+    const apiOptions: ApiCallOptions = {
+      endpoint: `/bookmarks/${bookmarkId}`,
+      method: "DELETE",
+      headers: {
+        Authorization: "Bearer ".concat(AuthenticationState.token),
+      },
+      successCallback: EMPTY_FUNCTION
+    };
+    setIsLoading(true);
+    makeApiCall(apiOptions, false);
+    setIsLoading(false);
+  };
  
   return {
     bookmarks,
     setBookmarks,
     fetchBookmarks,
-
+    deleteBookmark,
     isLoading,
     numNonPagedResults
   };

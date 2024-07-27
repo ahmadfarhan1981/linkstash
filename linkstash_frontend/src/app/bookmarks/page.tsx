@@ -25,17 +25,13 @@ export default function Home() {
     page ? Number.parseInt(page) : 1
   );
   const { AuthenticationState } = useAuthentication();
-  const { bookmarks, fetchBookmarks, isLoading, numNonPagedResults } =
+  const { bookmarks, fetchBookmarks, isLoading, numNonPagedResults, deleteBookmark } =
     useBookmarks();
-  const [maxPage, setMaxPage] = useState<number>();
+  const [maxPage, setMaxPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
   const [filter, setFilter] = useState<string>("");
   
-
-  
-
-
-  useEffect(() => {
+  useEffect(() => {  
     const pageParam = searchParams.get("page");
     const currentPage = pageParam ? Number.parseInt(pageParam) : 1
     setCurrentPage(currentPage);
@@ -44,7 +40,7 @@ export default function Home() {
 
   useEffect(() => {
     const perPage = searchParams.get("perPage");
-    setPageSize(perPage?perPage:"10");
+    setPageSize(Number.parseInt(perPage?perPage:"10"));
   }, [searchParams.get("perPage")]);
 
   useEffect(() => {
@@ -86,18 +82,6 @@ export default function Home() {
     pageSize,
   ]);
 
-
-  
-
-
-
-    fetchBookmarks({
-      sortBy: sortBy,
-      sortDirection: sortDirection,
-      page: currentPage,
-      perPage: pageSize,
-      filter: filter,
-    })
   
   return (
     <AuthenticatedSection>
@@ -125,7 +109,13 @@ export default function Home() {
             </div>
             <div>
               {bookmarks?.map((bookmark) => (
-                <BookmarkCard bookmarkData={bookmark} key={bookmark.id} />
+                <BookmarkCard bookmarkData={bookmark} onDelete={(id)=>{deleteBookmark(id);  fetchBookmarks({
+                  sortBy: sortBy,
+                  sortDirection: sortDirection,
+                  page: currentPage,
+                  perPage: pageSize,
+                  filter: filter,
+                });}} key={bookmark.id} />
               ))}
             </div>
             <div>

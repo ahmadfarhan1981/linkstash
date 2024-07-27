@@ -1,6 +1,10 @@
 TODO
 * global
   * LOGGING
+  * Integrations
+    * paperless-ngx
+    * ytdl/metube/etc
+    * 
   * darkmode +global
   * finalize color scheme
   * biome instead of eslint

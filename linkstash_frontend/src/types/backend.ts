@@ -6,6 +6,7 @@ export type Bookmark = {
   title?: string;
   tagList?: string[];
   archive?: string;
+  archiveCount: { count:number }
 };
 
 export type Archive = {

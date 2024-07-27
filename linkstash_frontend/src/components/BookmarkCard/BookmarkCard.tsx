@@ -6,13 +6,16 @@ import { formatDistanceToNow, formatRFC7231 } from "date-fns";
 import { ApiCallOptions, Bookmark } from "@/types";
 import Link from "next/link";
 import styles from "./styles.module.css";
-import { makeApiCall } from "@/scripts";
+import {  makeApiCall } from "@/scripts";
 import { useAuthentication } from "@/hooks";
+import { BiSolidArchiveIn, BiSolidEditAlt, BiSolidTrash } from "react-icons/bi";
+import { AiFillRead } from "react-icons/ai";
 
 
 
 
-export function BookmarkCard({ bookmarkData }: { bookmarkData: Bookmark }) {
+
+export function BookmarkCard({ bookmarkData, onDelete }: { bookmarkData: Bookmark, onDelete: (id:number)=>void }) {
   const emptyTag = <div className={styles["no-tags"]}>No tags</div>;
   const { AuthenticationState } = useAuthentication();
   function createArchive(){
@@ -36,9 +39,16 @@ export function BookmarkCard({ bookmarkData }: { bookmarkData: Bookmark }) {
     <>
       <div className={styles["card"]}>
         <div className={styles["title"]}>
+          
           <a href={bookmarkData.url} target="_blank" rel="noopener">
             {bookmarkData.title ? bookmarkData.title : bookmarkData.url}
           </a>
+          &nbsp;
+          {
+          bookmarkData.archiveCount.count
+          ? <Link href={`showArchive/${bookmarkData.id}`}><AiFillRead className="react-icons" aria-label="View archive"  title="View archive"/></Link> 
+          : <BiSolidArchiveIn className="react-icons" aria-label="Create archive"  title="Create archive" />
+          }
         </div>
 
         <div className={styles["description"]}>{bookmarkData.description}</div>
@@ -63,7 +73,15 @@ export function BookmarkCard({ bookmarkData }: { bookmarkData: Bookmark }) {
 
           <span className="separator">|</span>
 
-          Edit | <Link href="#" >Remove</Link> | Create Archive | <Link href={`showArchive/${bookmarkData.id}`}>View Archive</Link>
+          <BiSolidEditAlt className="react-icons" aria-label="Edit"  title="Edit"/> | 
+      
+      
+      
+              <Link href="#" onClick={(e)=>{e.preventDefault(); onDelete(Number.parseInt(bookmarkData.id!)) }} >
+                <BiSolidTrash className="react-icons" aria-label="Delete"  title="Delete" />
+              </Link>
+              
+           
         </div>
       </div>
     </>

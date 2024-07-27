@@ -269,6 +269,7 @@ export class BookmarkController {
 
 
   async unlinkAllTags(bookmark:Bookmark, userID:string, transaction:Transaction){
+    if(!bookmark.tagList) return
     await this.unlinkTagsFromBookmark(userID, bookmark.tagList!, bookmark.id!, transaction)
   }
 
