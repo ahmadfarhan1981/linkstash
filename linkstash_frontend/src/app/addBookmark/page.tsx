@@ -1,20 +1,27 @@
 "use client";
 
-import { ApiCallOptions, TagListItem } from "@/types";
 import {
   AuthenticatedSection,
   InputComponent,
   Loader,
   TagInput,
 } from "@/components";
-import { ChangeEvent, useEffect, useState } from "react";
 import { handleFormChange, makeApiCall } from "@/scripts/index";
+import { ApiCallOptions, TagListItem } from "@/types";
+import { ChangeEvent, useEffect, useState } from "react";
 
+import { useAuthentication } from "@/hooks/useAuthentication";
 import axios from "axios";
 import debounce from "lodash/debounce";
-import { useAuthentication } from "@/hooks/useAuthentication";
-import { useListData } from "react-stately";
 import { useRouter } from "next/navigation";
+import { useListData } from "react-stately";
+
+
+/**
+ * TODO only populate title and description after fetching url metadata if none is entered
+ * TODO indicator when fetching url metadata
+ *  *  
+ */
 
 export default function Home() {
   const router = useRouter();
@@ -75,7 +82,7 @@ export default function Home() {
     const { value } = event.target;
 
     if (formData.title || formData.description) return;
-
+    //TODO !! use makeAPICall()
     axios
       .get("/fetchUrlMetadata/?url=".concat(encodeURIComponent(value)))
       .then(function (response) {        
