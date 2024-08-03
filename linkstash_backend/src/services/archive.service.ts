@@ -8,6 +8,7 @@ import {createHash} from 'node:crypto';
 import fs from 'node:fs';
 import {Archive, Bookmark} from '../models';
 import {BookmarkRepository} from '../repositories';
+import {rimraf, rimrafSync} from 'rimraf';
 async function downloadResource(url: string, downloadLocation: string): Promise<{success: boolean; error: string}> {
   try {
     const response = await axios.get(url, {responseType: 'arraybuffer'});
@@ -30,6 +31,7 @@ async function downloadResource(url: string, downloadLocation: string): Promise<
   }
 }
 
+
 /**
  *
  * @param url the url as a string
@@ -44,6 +46,28 @@ function fileNameFromUrl(url: string): string {
     return matches[1];
   }
   return '';
+}
+
+
+type LocalAssestLocations ={
+  LocalPath: string
+  AccessURL:string
+}
+
+function getAssetLocations(bookmarkId:number, version:number):LocalAssestLocations{
+  return {
+    LocalPath: getLocalAssetPath(bookmarkId,version),
+    AccessURL: getLocalAssetURL(bookmarkId,version)
+  }
+}
+
+function getLocalAssetPath(bookmarkId:number, version:number):string{
+  return `public/archive/${bookmarkId}/assets/${version}/`;
+}
+function getLocalAssetURL(bookmarkId:number, version:number):string{
+  //TODO configurations
+  const host = 'http://localhost:3030';
+  return `${host}/archive/${bookmarkId}/assets/${version}/`;
 }
 
 @injectable({scope: BindingScope.TRANSIENT})
@@ -89,6 +113,8 @@ export class ArchiveService {
       // return true;
 
       const images = parsedDoc.window.document.querySelectorAll('img');
+      const assetLocations = getAssetLocations(bookmark.id!,version)
+      const downloadLocation = assetLocations.LocalPath
       /**
        * TODO rewrite the path of all resources ( images/pdfs etc)
        * fetch the resource and points the archive copy to the local relative path
@@ -98,14 +124,12 @@ export class ArchiveService {
       images.forEach( async img => {
         //some lazy loaded images uses the src data property to store the image source
         const imageSrc: string = img.src ? img.src : (img.dataset.src as string);
-        const downloadLocation = `public/archive/${bookmark.id}/assets/${version}/`;
         const {success} = await downloadResource(imageSrc, downloadLocation);
-        //TODO configurations
-        const host = 'http://localhost:3030';
+
         if (success) {
           //if downloaded the asset, then rewrite the path in the archive
           // TODO consider using abosolute path for the assets
-          const localImagePath = `${host}/archive/${bookmark.id}/assets/${version}/${fileNameFromUrl(imageSrc as string)}`;
+          const localImagePath = `${assetLocations.AccessURL}${fileNameFromUrl(imageSrc as string)}`
           img.src = localImagePath;
           img.dataset.src = localImagePath;
         }
@@ -131,5 +155,9 @@ export class ArchiveService {
       // eslint-disable-next-line no-console
       console.log(error);
     }
+  }
+  removeLocalAssets(bookmarkId:number, version:number){
+    const assetLocations = getAssetLocations(bookmarkId,version)
+    rimrafSync(assetLocations.LocalPath)
   }
 }

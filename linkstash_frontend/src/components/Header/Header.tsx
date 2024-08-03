@@ -21,7 +21,7 @@ export function Header(){
                 <span className="flex-[65%]"></span>
                 <span className={styles['items']}><Link href="/">Home</Link></span>
                 <span className={styles['items']}><Link href="/addBookmark">Add</Link></span>
-                <span className={styles['items']}><Link href="/bookmarks">Links</Link></span>
+                <span className={styles['items']}><Link href="/bookmarks" prefetch={false}>Links</Link></span>
                 <span className={styles['items']}><Link href="/login">Login</Link></span>
                 <span className={styles['items']}><Link href="/">Settings</Link></span>
             </span>

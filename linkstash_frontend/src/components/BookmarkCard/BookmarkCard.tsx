@@ -1,40 +1,19 @@
 /* eslint-disable github/a11y-no-title-attribute */
 "use client";
 
+import { ApiCallOptions, Bookmark } from "@/types";
+import { BiSolidArchiveIn, BiSolidEditAlt, BiSolidTrash } from "react-icons/bi";
 import { MyTag, MyTagGroup } from "@/components";
 import { formatDistanceToNow, formatRFC7231 } from "date-fns";
-import { ApiCallOptions, Bookmark } from "@/types";
-import Link from "next/link";
-import styles from "./styles.module.css";
-import {  makeApiCall } from "@/scripts";
-import { useAuthentication } from "@/hooks";
-import { BiSolidArchiveIn, BiSolidEditAlt, BiSolidTrash } from "react-icons/bi";
+
 import { AiFillRead } from "react-icons/ai";
+import Link from "next/link";
+import { makeApiCall } from "@/scripts";
+import styles from "./styles.module.css";
+import { useAuthentication } from "@/hooks";
 
-
-
-
-
-export function BookmarkCard({ bookmarkData, onDelete }: { bookmarkData: Bookmark, onDelete: (id:number)=>void }) {
-  const emptyTag = <div className={styles["no-tags"]}>No tags</div>;
-  const { AuthenticationState } = useAuthentication();
-  function createArchive(){
-    const success = (response: any) => {
-      //asdasd
-    };
-    const option: ApiCallOptions = {
-      endpoint: `/bookmarks/${Number.parseInt(bookmarkData.id!)}/archive`,
-      method: "POST",
-      headers: {
-        Authorization: "Bearer ".concat(AuthenticationState.token),
-      },
-      successCallback: success,
-    };
-    makeApiCall(option);
-
-  }
-  
-
+export function BookmarkCard({ bookmarkData, handleDelete, handleArchive }: { bookmarkData: Bookmark, handleDelete: (_id:number)=>void, handleArchive: (_id:number)=>void  }) {
+  const emptyTag = <div className={styles["no-tags"]}>No tags</div>;  
   return (
     <>
       <div className={styles["card"]}>
@@ -47,7 +26,7 @@ export function BookmarkCard({ bookmarkData, onDelete }: { bookmarkData: Bookmar
           {
           bookmarkData.archiveCount.count
           ? <Link href={`showArchive/${bookmarkData.id}`}><AiFillRead className="react-icons" aria-label="View archive"  title="View archive"/></Link> 
-          : <BiSolidArchiveIn className="react-icons" aria-label="Create archive"  title="Create archive" />
+          : <Link href="#" onClick={(e)=>{e.preventDefault(); handleArchive(Number.parseInt(bookmarkData.id!)) }} ><BiSolidArchiveIn className="react-icons" aria-label="Create archive"  title="Create archive" /></Link>
           }
         </div>
 
@@ -77,7 +56,7 @@ export function BookmarkCard({ bookmarkData, onDelete }: { bookmarkData: Bookmar
       
       
       
-              <Link href="#" onClick={(e)=>{e.preventDefault(); onDelete(Number.parseInt(bookmarkData.id!)) }} >
+              <Link href="#" onClick={(e)=>{e.preventDefault(); handleDelete(Number.parseInt(bookmarkData.id!)) }} >
                 <BiSolidTrash className="react-icons" aria-label="Delete"  title="Delete" />
               </Link>
               

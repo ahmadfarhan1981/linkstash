@@ -68,7 +68,7 @@ export class Archive extends Entity {
     jsonSchema: {
       readOnly: true,
     },
-    mysql: {dataType: 'TEXT'},
+    mysql: {dataType: 'LONGBLOB'},
   })
   Content: string;
 
@@ -78,7 +78,7 @@ export class Archive extends Entity {
     jsonSchema: {
       readOnly: true,
     },
-    mysql: {dataType: 'TEXT'},
+    mysql: {dataType: 'LONGBLOB'},
   })
   ContentBeforeProcess: string;
 

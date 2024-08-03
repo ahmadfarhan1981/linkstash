@@ -1,11 +1,14 @@
 TODO
 * global
   * LOGGING
+  * 
   * Integrations
     * paperless-ngx
     * ytdl/metube/etc
-    * 
+    * archivebox
   * darkmode +global
+  * refactor the naming of the react-aria components
+  * 
   * finalize color scheme
   * biome instead of eslint
   * group links by domain

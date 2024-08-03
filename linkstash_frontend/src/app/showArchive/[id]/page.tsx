@@ -7,7 +7,8 @@ import { makeApiCall } from "@/scripts";
 import { useAuthentication, useBookmarks } from "@/hooks";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { BiSolidArchiveIn } from "react-icons/bi";
+import { BiSolidArchiveIn, BiSolidTrashAlt } from "react-icons/bi";
+import { TfiNewWindow } from "react-icons/tfi";
 
 export default function Home({ params }: { params: { id: number } }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -72,15 +73,15 @@ export default function Home({ params }: { params: { id: number } }) {
         <Loader isLoading={isLoading}>
           
           <div className="w-full">{false && bookmark && <BookmarkCard bookmarkData={bookmark!} onDelete={(id)=>{deleteBookmark(id)}} ></BookmarkCard>}</div>
-          <div>
-            <h1>Arvhive of &lsquo;<b>{bookmark?.title}</b>&rsquo;</h1>
+          <div className="grid">
+            <h1>Archive of &lsquo;<b>{bookmark?.title}</b>&rsquo;<BiSolidTrashAlt className="react-icons text-black hover:cursor-pointer" aria-label="Delete archive"  title="Delete archive" /></h1> 
           </div>
           <p id="metadata">Retrieved {a && formatRFC7231(a.DateRetrieved)}</p>{" "}
           <p id="title" dir="auto">
             {bookmark && bookmark.url}
           </p>{" "}
           <div id="links">
-            {bookmark && <Link href={bookmark.url!} target="new">View original</Link>}
+            {bookmark && <a href={bookmark.url!} target="new">View original<TfiNewWindow className="react-icons align-baseline" aria-label="Open link in new window"  title="Open link in new window" /></a>}
           </div>
           <div dangerouslySetInnerHTML={template} className="border-2"></div>
         </Loader>

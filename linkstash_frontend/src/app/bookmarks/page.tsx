@@ -8,13 +8,17 @@ import {
   Pager,
   TagCloud,
 } from "@/components";
-import React, { useEffect, useState } from "react";
 import { SortBy, SortDirection, useBookmarks } from "@/hooks/useBookmarks";
+import { useEffect, useState } from "react";
 
-import styles from "./styles.module.css";
 import { useAuthentication } from "@/hooks";
+import {setUrlParam} from "@/scripts";
 import { useSearchParams } from "next/navigation";
-import { setUrlParam } from "@/scripts";
+import styles from "./styles.module.css";
+
+
+
+
 
 export default function Home() {
   const searchParams = useSearchParams();
@@ -25,7 +29,7 @@ export default function Home() {
     page ? Number.parseInt(page) : 1
   );
   const { AuthenticationState } = useAuthentication();
-  const { bookmarks, fetchBookmarks, isLoading, numNonPagedResults, deleteBookmark } =
+  const { bookmarks, fetchBookmarks, isLoading, numNonPagedResults, deleteBookmark, archiveBookmark } =
     useBookmarks();
   const [maxPage, setMaxPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
@@ -42,17 +46,19 @@ export default function Home() {
     const perPage = searchParams.get("perPage");
     setPageSize(Number.parseInt(perPage?perPage:"10"));
   }, [searchParams.get("perPage")]);
-
+  
+  const refetchData = () =>{ 
+    fetchBookmarks({
+    sortBy: sortBy,
+    sortDirection: sortDirection,
+    page: currentPage,
+    perPage: pageSize,
+    filter: filter,
+  });}
   useEffect(() => {
     {
       if (!AuthenticationState.isLoggedIn) return;
-      fetchBookmarks({
-        sortBy: sortBy,
-        sortDirection: sortDirection,
-        page: currentPage,
-        perPage: pageSize,
-        filter: filter,
-      });
+      refetchData();
     }
   }, [
     AuthenticationState.isLoggedIn,
@@ -82,7 +88,9 @@ export default function Home() {
     pageSize,
   ]);
 
-  
+  const handleArchive = (id:number)=>{ 
+    archiveBookmark(id, refetchData);      
+  }
   return (
     <AuthenticatedSection>
       <Loader isLoading={isLoading} text="Loading bookmarks">
@@ -109,13 +117,7 @@ export default function Home() {
             </div>
             <div>
               {bookmarks?.map((bookmark) => (
-                <BookmarkCard bookmarkData={bookmark} onDelete={(id)=>{deleteBookmark(id);  fetchBookmarks({
-                  sortBy: sortBy,
-                  sortDirection: sortDirection,
-                  page: currentPage,
-                  perPage: pageSize,
-                  filter: filter,
-                });}} key={bookmark.id} />
+                <BookmarkCard bookmarkData={bookmark} handleDelete={(id)=>{deleteBookmark(id, refetchData);}} handleArchive={handleArchive} key={bookmark.id} />
               ))}
             </div>
             <div>
