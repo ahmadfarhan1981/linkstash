@@ -9,9 +9,10 @@ Selfhosted, backend driven :bookmark:bookmarking and :book: read it later soluti
 - :tag
 # Installation
 asda
+create ```.env.local```
+
 # Configuration
 ads
-
 
 # Status
 ## Moving towards MVP

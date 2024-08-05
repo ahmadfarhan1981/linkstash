@@ -16,3 +16,4 @@ export const DEFAULT_HEADERS =  {
 }
 
 export const DEFAULT_TIMEOUT_IN_MILISECONDS = 3000
+

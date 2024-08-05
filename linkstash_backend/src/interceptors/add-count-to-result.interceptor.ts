@@ -40,12 +40,12 @@ export class AddCountToResultInterceptor implements Provider<Interceptor> {
       // Add pre-invocation logic here
       const result = await next();
       // Add post-invocation logic here
-      // console.log(invocationCtx.args);
+      console.log(invocationCtx.args);
       // const newResult = {
       //   count: result.length,
       //   data: result,
       // };
-      // console.log(`result= ${result}`);
+      console.log(`result= ${result}`);
       // return newResult;
       return result;
     } catch (err) {

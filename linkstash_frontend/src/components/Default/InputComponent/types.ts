@@ -69,6 +69,8 @@ export type AutocompleteType =
   | "photo"
   | "webauthn";
 
+export type InputComponentChangeEventHandler = ChangeEventHandler<HTMLInputElement> | ChangeEventHandler<HTMLTextAreaElement>
+
 export type InputConfig = {
   type: InputComponentType;
   id: string;
@@ -78,7 +80,7 @@ export type InputConfig = {
   name: string;
   value?: string;
   disabled?: boolean;
-  handleChange?: ChangeEventHandler<HTMLInputElement> | ChangeEventHandler<HTMLTextAreaElement>;
+  handleChange?: InputComponentChangeEventHandler ;
   required?: boolean;
   autocomplete?: AutocompleteType;
   autofocus?: boolean;
@@ -86,4 +88,5 @@ export type InputConfig = {
   className?: string[];
   pattern?: string;
   children?: React.ReactNode;
+  defaultValue?: string;
 };

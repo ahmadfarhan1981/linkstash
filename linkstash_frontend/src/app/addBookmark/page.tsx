@@ -2,36 +2,36 @@
 
 import { ApiCallOptions, TagListItem } from "@/types";
 import {
-  AuthenticatedSection,
-  InputComponent,
-  Loader,
-  TagInput,
+  BookmarkForm,
+  BookmarkFormData
 } from "@/components";
-import { ChangeEvent, useEffect, useState } from "react";
-import { handleFormChange, makeApiCall } from "@/scripts/index";
+import { useEffect, useState } from "react";
 
-import axios from "axios";
-import debounce from "lodash/debounce";
+import { makeApiCall } from "@/scripts/index";
 import { useAuthentication } from "@/hooks/useAuthentication";
 import { useListData } from "react-stately";
 import { useRouter } from "next/navigation";
 
+/**
+ * TODO indicator when fetching url metadata
+ *  *
+ */
+
 export default function Home() {
   const router = useRouter();
   const { AuthenticationState } = useAuthentication();
- 
+
   const [allTags, setAllTags] = useState<TagListItem[]>([]);
-  const [isTagFetched, setIsTagFetced] = useState(false);
+  const [isTagFetched, setIsTagFetched] = useState(false);
 
-
-
-  useEffect(()=>{
-    if (!AuthenticationState.isLoggedIn || isTagFetched) return
-    const success = async (response: any) => {      
-      const result = response.data.map( (element:TagListItem)=> { return {id:String(element.id), name:element.name} as TagListItem }  )      
-      setAllTags(result)
-      setIsTagFetced(true)
-      
+  useEffect(() => {
+    if (!AuthenticationState.isLoggedIn || isTagFetched) return;
+    const success = async (response: any) => {
+      const result = response.data.map((element: TagListItem) => {
+        return { id: String(element.id), name: element.name } as TagListItem;
+      });
+      setAllTags(result);
+      setIsTagFetched(true);
     };
     const options: ApiCallOptions = {
       endpoint: "/tags",
@@ -42,21 +42,10 @@ export default function Home() {
       successCallback: success,
     };
     makeApiCall(options, false, true);
-  },[AuthenticationState.isLoggedIn, AuthenticationState.token, isTagFetched])
+  }, [AuthenticationState.isLoggedIn, AuthenticationState.token, isTagFetched]);
 
-  async function addBookmark(form: FormData) {
-    //TODO bookmarklet layout
-    //TODO make the page more responsive when adding. (disable input while pending, splash screen before redirecting etc)
-
-    //TODO handle not entering the protocol at the beginning of the url (http:// or https://)
-    const postData: addBookmarkFormData = {
-      url: form.get("url")?.toString(),
-      title: form.get("title")?.toString(),
-      description: form.get("description")?.toString(),
-      tagList: tagList.items.map((tag:TagListItem)=>tag.name),
-    };
-    // eslint-disable-next-line no-unused-vars
-    const success = async (response: any) => {
+  const addBookmark = async (data: BookmarkFormData): Promise<void> =>  {
+    const success = async (_response: any) => {
       router.push("/bookmarks");
     };
     const options: ApiCallOptions = {
@@ -65,126 +54,26 @@ export default function Home() {
       headers: {
         Authorization: "Bearer ".concat(AuthenticationState.token),
       },
-      body: postData,
+      body: data,
       successCallback: success,
     };
     await makeApiCall(options);
   }
 
-  function handleURLChange(event: ChangeEvent<HTMLInputElement>) {
-    const { value } = event.target;
 
-    if (formData.title || formData.description) return;
 
-    axios
-      .get("/fetchUrlMetadata/?url=".concat(encodeURIComponent(value)))
-      .then(function (response) {        
-        const { ogTitle, ogDescription } = response.data.data;
-        setFormData((prevFormData: any) => ({
-          ...prevFormData,
-          title: ogTitle,
-          description: ogDescription,
-        }));
-      })
-      // eslint-disable-next-line no-unused-vars
-      .catch(function (error) {        
-        return;
-      });
-  }
+  const [formData, setFormData] = useState<BookmarkFormData>({});
 
-  const [formData, setFormData] = useState<addBookmarkFormData>({});
-
-  type addBookmarkFormData = {
-    url?: string;
-    title?: string;
-    description?: string;
-    tagList?: string[];
-  };
-
+  // TODO populate default tags for new bookmark
   const tagList = useListData({
     initialItems: [],
-    getKey: (item:TagListItem) => item.id,
+    getKey: (item: TagListItem) => item.id,
   });
-  
+
+    
   return (
     <>
-      <AuthenticatedSection>
-        <Loader isLoading={!isTagFetched}>
-        <form action={addBookmark}>
-          <div>
-            <InputComponent
-              label="URL"
-              autocomplete="off"
-              id="url"
-              name="url"
-              placeholder="URL"
-              handleChange={debounce(handleURLChange, 1000)}
-              type="url"
-            />
-          </div>
-
-          <div>
-            <InputComponent
-              type="text"
-              label="Title"
-              required={true}
-              placeholder="Title"
-              autocomplete="off"
-              name="title"
-              id="title"
-              value={formData.title}
-              handleChange={(
-                e:
-                  | ChangeEvent<HTMLInputElement>
-                  | ChangeEvent<HTMLTextAreaElement>
-              ) => handleFormChange(e, setFormData)}
-            />
-          </div>
-
-          <div>
-            <InputComponent
-              label="Description"
-              type="textarea"
-              placeholder="Description"
-              name="description"
-              autocomplete="off"
-              id="description"
-              value={formData.description}
-              handleChange={(
-                e:
-                  | ChangeEvent<HTMLTextAreaElement>
-                  | ChangeEvent<HTMLInputElement>
-              ) => handleFormChange(e, setFormData)}
-            />
-          </div>          
-          <div>
-          {isTagFetched && <TagInput 
-            selectedTags={tagList} 
-            tagsToChooseFrom={allTags} 
-            maxWidthInPixel={700} 
-            inputLabel={"Tags:"} 
-            selectedLabel={"Tags:"}
-            description="List of selected tags."
-            serializedTagsToChooseFrom={JSON.stringify(allTags)}
-            
-            />}
-          </div>
-
-          <div>
-            <input type="checkbox" name="private" id="private" />{" "}
-            <label className="display:inline" htmlFor="private">
-              private
-            </label>
-            <input type="checkbox" name="toread" id="toread" />{" "}
-            <label className="display:inline" htmlFor="toread">
-              read later
-            </label>
-            <input type="submit" value="add bookmark" />
-          </div>
-        </form>
-        {/* <input type="button" onClick={()=>{setShowHeaders(!showHeaders)}} value="click"></input> */}
-        </Loader>
-      </AuthenticatedSection>
+      <BookmarkForm formData={formData} isLoading={!isTagFetched} handleSubmit={addBookmark} setFormData={setFormData} tagList={tagList} allTags={allTags}></BookmarkForm>      
     </>
   );
 }

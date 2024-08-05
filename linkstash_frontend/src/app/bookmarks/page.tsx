@@ -8,12 +8,17 @@ import {
   Pager,
   TagCloud,
 } from "@/components";
-import React, { Suspense, useEffect, useState } from "react";
 import { SortBy, SortDirection, useBookmarks } from "@/hooks/useBookmarks";
+import { useEffect, useState } from "react";
 
-import styles from "./styles.module.css";
 import { useAuthentication } from "@/hooks";
+import {setUrlParam} from "@/scripts";
 import { useSearchParams } from "next/navigation";
+import styles from "./styles.module.css";
+
+
+
+
 
 export default function Home() {
   const searchParams = useSearchParams();
@@ -24,19 +29,36 @@ export default function Home() {
     page ? Number.parseInt(page) : 1
   );
   const { AuthenticationState } = useAuthentication();
-  const { bookmarks, fetchBookmarks, isLoading, numNonPagedResults } =
+  const { bookmarks, fetchBookmarks, isLoading, numNonPagedResults, deleteBookmark, archiveBookmark } =
     useBookmarks();
-  const [maxPage, setMaxPage] = useState(0);
-  const [pageSize, setPageSize] = useState<number>(3);
+  const [maxPage, setMaxPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(10);
+  const [filter, setFilter] = useState<string>("");
+  
+  useEffect(() => {  
+    const pageParam = searchParams.get("page");
+    const currentPage = pageParam ? Number.parseInt(pageParam) : 1
+    setCurrentPage(currentPage);
+    setUrlParam("page", currentPage.toString(), searchParams)
+  }, [searchParams.get("page")]);
+
+  useEffect(() => {
+    const perPage = searchParams.get("perPage");
+    setPageSize(Number.parseInt(perPage?perPage:"10"));
+  }, [searchParams.get("perPage")]);
+  
+  const refetchData = () =>{ 
+    fetchBookmarks({
+    sortBy: sortBy,
+    sortDirection: sortDirection,
+    page: currentPage,
+    perPage: pageSize,
+    filter: filter,
+  });}
   useEffect(() => {
     {
       if (!AuthenticationState.isLoggedIn) return;
-      fetchBookmarks({
-        sortBy: sortBy,
-        sortDirection: sortDirection,
-        page: currentPage,
-        perPage: pageSize,
-      });
+      refetchData();
     }
   }, [
     AuthenticationState.isLoggedIn,
@@ -45,12 +67,19 @@ export default function Home() {
     pageSize,
     sortBy,
     sortDirection,
+    filter
   ]);
 
   useEffect(() => {
     {
       if (!AuthenticationState.isLoggedIn) return;
-      setMaxPage(Math.ceil(numNonPagedResults / pageSize));
+      const lastPage = Math.max( Math.ceil(numNonPagedResults / pageSize), 1 )
+      setMaxPage(lastPage);
+      if(currentPage>lastPage)
+        {
+           setCurrentPage(lastPage)
+           setUrlParam("page", lastPage.toString(), searchParams)
+        }
     }
   }, [
     AuthenticationState.isLoggedIn,
@@ -58,14 +87,10 @@ export default function Home() {
     numNonPagedResults,
     pageSize,
   ]);
-  useEffect(() => {
-    const page = searchParams.get("page");
-    setCurrentPage(page ? Number.parseInt(page) : 1);
-  }, [searchParams.get("page")]);
 
-  //TODO paging
-  //TODO sorting
-  //TODO filtering
+  const handleArchive = (id:number)=>{ 
+    archiveBookmark(id, refetchData);      
+  }
   return (
     <AuthenticatedSection>
       <Loader isLoading={isLoading} text="Loading bookmarks">
@@ -73,9 +98,14 @@ export default function Home() {
           <div className={styles["bookmark-list"]}>
             <div className="">
               <BookmarksToolbar
+                sortBy={sortBy}
+                sortDirection={sortDirection}
+                pageSize={pageSize}
+                filter={filter}
                 setSortBy={setSortBy}
                 setSortDirection={setSortDirection}
                 setPageSize={setPageSize}
+                setFilter={setFilter}
               />
             </div>
             <div>
@@ -87,7 +117,7 @@ export default function Home() {
             </div>
             <div>
               {bookmarks?.map((bookmark) => (
-                <BookmarkCard bookmarkData={bookmark} key={bookmark.id} />
+                <BookmarkCard bookmarkData={bookmark} handleDelete={(id)=>{deleteBookmark(id, refetchData);}} handleArchive={handleArchive} key={bookmark.id} />
               ))}
             </div>
             <div>

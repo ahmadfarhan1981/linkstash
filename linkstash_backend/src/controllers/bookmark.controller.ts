@@ -1,13 +1,14 @@
 //#region Imports
 import {authenticate} from '@loopback/authentication';
-import {inject} from '@loopback/core';
-import {Filter, FilterBuilder, FilterExcludingWhere, IsolationLevel, Transaction, repository} from '@loopback/repository';
-import {Response, RestBindings, del, get, getModelSchemaRef, param, patch, post, requestBody, response} from '@loopback/rest';
+import {inject, service} from '@loopback/core';
+import {Count, Filter, FilterBuilder, FilterExcludingWhere, IsolationLevel, Transaction, repository} from '@loopback/repository';
+import {Response, RestBindings, del, get, getModelSchemaRef, operation, param, patch, post, requestBody, response} from '@loopback/rest';
 import {SecurityBindings, UserProfile, securityId} from '@loopback/security';
-import {Bookmark, BookmarkWithRelations, Tag} from '../models';
-import {BookmarkRepository, TagRepository, UserRepository} from '../repositories';
+import {Bookmark, BookmarkRelations, BookmarkWithRelations, Tag} from '../models';
+import {ArchiveRepository, BookmarkRepository, TagRepository, UserRepository} from '../repositories';
 import {bookmarkPatchSchema} from '../types';
-import {difference, remove} from 'lodash'
+import {difference, head, remove} from 'lodash'
+import {LinkStashBookmarkService} from '../services/linkstash-bookmark.service';
 //#endregion
 
 @authenticate('jwt')
@@ -16,6 +17,7 @@ export class BookmarkController {
     @repository(BookmarkRepository) public bookmarkRepository: BookmarkRepository,
     @repository(TagRepository) public tagRepository: TagRepository,
     @repository(UserRepository) public userRepository: UserRepository,
+    @service(LinkStashBookmarkService) public bookmarkService: LinkStashBookmarkService
   ) {}
 
 
@@ -42,7 +44,10 @@ export class BookmarkController {
       },
     },
   })
-  async find(@inject(SecurityBindings.USER) currentUserProfile: UserProfile, @param.filter(Bookmark) filter?: Filter<Bookmark>): Promise<Object> {
+  async find(@inject(SecurityBindings.USER) currentUserProfile: UserProfile,
+  @repository(ArchiveRepository) archiveRepository: ArchiveRepository,
+  @param.filter(Bookmark) filter?: Filter<Bookmark>
+              ): Promise<Object> {
     const builder = new FilterBuilder(filter).impose({userId: currentUserProfile[securityId]});
     const resultFilter = builder.build();
     const allResultFilter: Filter<Bookmark> = JSON.parse(JSON.stringify(resultFilter));
@@ -52,6 +57,9 @@ export class BookmarkController {
 
     const all = await this.bookmarkRepository.find(allResultFilter);
     const data = await this.bookmarkRepository.find(resultFilter)
+    //TODO getting archive count might be expensive
+    const addArchiveCountToBookmark = async (bookmark:Bookmark )=>{ bookmark.archiveCount = await this.bookmarkService.getBookmarkMeta(bookmark.id!, archiveRepository ) }
+    await Promise.all(data.map(addArchiveCountToBookmark))
     const returnValue = {
       countAll: all.length,
       data: data,
@@ -64,7 +72,7 @@ export class BookmarkController {
     description: 'Bookmark model instance',
     content: {
       'application/json': {
-        schema: getModelSchemaRef(Bookmark, {includeRelations: true}),
+        schema: getModelSchemaRef(Bookmark, {includeRelations: true}) ,
       },
     },
   })
@@ -72,12 +80,17 @@ export class BookmarkController {
     @param.path.number('id') id: number,
     @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
     @repository(UserRepository) userRepository: UserRepository,
+    @repository(ArchiveRepository) archiveRepository: ArchiveRepository,
     @inject(RestBindings.Http.RESPONSE) res: Response,
     @param.filter(Bookmark, {exclude: 'where'}) filter?: FilterExcludingWhere<Bookmark>,
   ): Promise<BookmarkWithRelations> {
     const combinedUserFilter = new FilterBuilder<Bookmark>(filter).impose({userId: currentUserProfile[securityId], id: id}).build();
     const results = await userRepository.bookmarks(currentUserProfile['securityId']).find(combinedUserFilter);
-    if (results.length > 0) return results[0];
+    if (results.length > 0){
+      const bookmark = results[0];
+      bookmark.archiveCount = await this.bookmarkService.getBookmarkMeta(bookmark.id!, archiveRepository )
+      return bookmark;
+    }
 
     res.status(404);
     throw new Error(`Entity not found: Bookmark with id ${id}`);
@@ -107,6 +120,8 @@ export class BookmarkController {
     };
     return returnValue;
   }
+
+
 
 
   //write actions
@@ -259,6 +274,7 @@ export class BookmarkController {
 
 
   async unlinkAllTags(bookmark:Bookmark, userID:string, transaction:Transaction){
+    if(!bookmark.tagList) return
     await this.unlinkTagsFromBookmark(userID, bookmark.tagList!, bookmark.id!, transaction)
   }
 

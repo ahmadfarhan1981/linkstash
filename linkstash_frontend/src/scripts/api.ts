@@ -10,7 +10,8 @@ import {
 import axios, { AxiosRequestConfig } from "axios";
 
 import { ApiCallOptions } from "@/types";
-
+// TODO refactor. this is a mess, move everything that can be done client side together, then only send everything to the server side, 
+//      only process the endpoints client side, then pass to server to get the backend url
 export async function makeApiCall(
   options: ApiCallOptions,
   async: boolean = false,
@@ -30,7 +31,7 @@ export async function makeApiCall(
     params: options.requestParams ? options.requestParams : EMPTY_PARAM,
   };
   if( printRequests ) console.log(JSON.stringify(config));
-  async ? apiFetchAsync(config, options) : apiFetchSync(config, options);
+  async ? apiFetchAsync(config, options) : await apiFetchSync(config, options);
 }
 
 async function apiFetchSync(

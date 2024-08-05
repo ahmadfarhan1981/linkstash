@@ -9,7 +9,7 @@
     "no-console": "warn",
     "no-duplicate-imports": ["error", { "includeExports": true }],
     "sort-imports": "error",
-    "no-unused-vars": "warn"
+    "no-unused-vars": ["warn", {"argsIgnorePattern": "^_"} ]
   },
   "env": {
     "browser": true

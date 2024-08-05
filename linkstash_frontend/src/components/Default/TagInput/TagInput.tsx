@@ -11,7 +11,7 @@ import {
   Text,
   TextField
 } from "react-aria-components";
-import { Key, ReactNode, useEffect, useRef, useState } from "react";
+import { Key, useEffect, useRef, useState } from "react";
 import { ListData, useListData } from "react-stately";
 import { MyTag, MyTagGroup } from "@/components";
 
@@ -25,7 +25,6 @@ export type TagInputProps = {
   inputLabel?: string;
   selectedLabel?: string;
   description: string;
-  serializedTagsToChooseFrom:string
 };
 
 
@@ -37,8 +36,7 @@ export function TagInput(props: TagInputProps  ) {
   const [tagListInput, setTagListInput] = useState<Key | null>("");
   const [isOpen, setIsOpen] = useState(false);
 
-  
-  
+   
   
   const handleTagInputChange = (value: string) => {
     setTagListInput(value);

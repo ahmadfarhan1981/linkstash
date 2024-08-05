@@ -6,4 +6,17 @@ export type Bookmark = {
   title?: string;
   tagList?: string[];
   archive?: string;
+  archiveCount: { count:number }
 };
+
+export type Archive = {
+  "ArchiveId": string;
+  "Version": number;
+  "DateRetrieved": Date;
+  "LastChecked": Date,
+  "Hash": string
+  "Filesize": 10393,
+  "CollisionId": 0,
+  "Content": string
+  "bookmarkId": string
+}

@@ -20,9 +20,13 @@
             "webRoot": "${workspaceFolder}",
             "pathMappings": [
                 {
+                    "url": "webpack-internal:///(app-pages-browser)/src/app/page.tsx",
+                    "path": "${workspaceFolder}/src/app/bookmarks/page.tsx"
+                },            
+                {
                     "url": "webpack://_n_e/src",
                     "path": "${workspaceFolder}/src"
-                },
+                }
             ]
         }
     ]
