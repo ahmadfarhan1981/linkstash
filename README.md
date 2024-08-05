@@ -16,14 +16,9 @@ ads
 
 # Status
 ## Moving towards MVP
-- Bookmark CRUD
 - tagging
-  - adding tags
   - view and filter by tags
-- bookmark archiving
 - docker deployment
 ## For the future
-- better configurability
 - backend scheduled tasks
-  - checking for changes
 - extendable frontend
