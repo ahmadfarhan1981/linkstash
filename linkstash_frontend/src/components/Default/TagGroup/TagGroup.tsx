@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef, useState } from "react";
 import {
   Button,
   Dialog,
@@ -13,8 +14,8 @@ import {
   TagProps,
   Text,
 } from "react-aria-components";
-import { useRef, useState } from "react";
 
+import { delay, now } from "lodash";
 import { useHover } from "react-aria";
 /**
  * Copied from https://react-spectrum.adobe.com/react-aria/TagGroup.html#reusable-wrappers
@@ -41,14 +42,27 @@ export function MyTagGroup<T extends object>({
 }: MyTagGroupProps<T>) {
   const triggerRef = useRef(null);
   const [showDescription, setShowDescription] = useState(false);
+
+  const [hoverStart, setHoverStart] = useState(now());
+  const checkLastHoverStart = (cooldown:number) =>{
+    const elapsed = now() - hoverStart
+    if ( elapsed > cooldown ) {
+      setShowDescription(false)
+    }else{
+      delay(checkLastHoverStart, cooldown - elapsed, cooldown)
+    }
+      
+  }
   const { hoverProps } = useHover({
     // eslint-disable-next-line no-unused-vars
     onHoverStart: () => {
+      setHoverStart(now())
       setShowDescription(true);
     },
     // eslint-disable-next-line no-unused-vars
     onHoverEnd: () => {
-      setShowDescription(false);
+      checkLastHoverStart(750)
+      //setShowDescription(false);
     },
   });
   return (

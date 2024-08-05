@@ -80,12 +80,17 @@ export class BookmarkController {
     @param.path.number('id') id: number,
     @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
     @repository(UserRepository) userRepository: UserRepository,
+    @repository(ArchiveRepository) archiveRepository: ArchiveRepository,
     @inject(RestBindings.Http.RESPONSE) res: Response,
     @param.filter(Bookmark, {exclude: 'where'}) filter?: FilterExcludingWhere<Bookmark>,
   ): Promise<BookmarkWithRelations> {
     const combinedUserFilter = new FilterBuilder<Bookmark>(filter).impose({userId: currentUserProfile[securityId], id: id}).build();
     const results = await userRepository.bookmarks(currentUserProfile['securityId']).find(combinedUserFilter);
-    if (results.length > 0) return results[0];
+    if (results.length > 0){
+      const bookmark = results[0];
+      bookmark.archiveCount = await this.bookmarkService.getBookmarkMeta(bookmark.id!, archiveRepository )
+      return bookmark;
+    }
 
     res.status(404);
     throw new Error(`Entity not found: Bookmark with id ${id}`);
