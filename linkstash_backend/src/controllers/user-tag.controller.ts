@@ -55,7 +55,6 @@ export class UserTagController {
     })
     tag: Omit<Tag, 'id' | 'userId'>,
   ): Promise<Omit<Tag, "id|'userId">> {
-    //TODO make this return Omit<Tag, "id|'userId">
     const existing = await this.userRepository.tags(currentUserProfile[securityId]).find({
       where: {name: tag.name},
     });

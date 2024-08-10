@@ -65,7 +65,6 @@ export default function Home({ params }: { params: { id: number } }) {
     }
   }, [AuthenticationState.isLoggedIn, AuthenticationState.token, params.id]);  
 
-  //TODO useBookmark
   const { deleteBookmark } =
     useBookmarks();
   return (

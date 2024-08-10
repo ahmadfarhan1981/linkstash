@@ -153,7 +153,6 @@ export class BookmarkController {
     })
     bookmark: Omit<Bookmark, 'id'>,
   ): Promise<Bookmark> {
-    //TODO currently non atomic, use transaction
     bookmark.userId = currentUserProfile[securityId];
     const transaction = await this.bookmarkRepository.beginTransaction(IsolationLevel.READ_COMMITTED)
     const result = await this.bookmarkRepository.create(bookmark, transaction);
