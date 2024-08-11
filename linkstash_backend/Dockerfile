@@ -1,5 +1,5 @@
 # Check out https://hub.docker.com/_/node to select a new base image
-FROM docker.io/library/node:18-slim
+FROM docker.io/library/node:20.11-slim
 
 # Set to a non-root built-in user `node`
 USER node
@@ -22,7 +22,7 @@ COPY --chown=node . .
 RUN npm run build
 
 # Bind to all network interfaces so that it can be mapped to the host OS
-ENV HOST=0.0.0.0 PORT=3000
+ENV HOST=0.0.0.0 PORT=3030
 
 EXPOSE ${PORT}
 CMD [ "node", "." ]

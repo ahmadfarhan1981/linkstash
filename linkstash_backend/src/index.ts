@@ -1,5 +1,6 @@
-import {ApplicationConfig, LinkstashApplication} from './application';
 
+import {ApplicationConfig, LinkstashApplication} from './application';
+import dotenv from 'dotenv'
 export * from './application';
 
 export async function main(options: ApplicationConfig = {}) {
@@ -15,6 +16,7 @@ export async function main(options: ApplicationConfig = {}) {
 }
 
 if (require.main === module) {
+  dotenv.config()
   // Run the application
   const config = {
     rest: {
