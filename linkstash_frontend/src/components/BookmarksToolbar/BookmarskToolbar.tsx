@@ -1,5 +1,6 @@
 "use client";
 
+import { BiSortDown, BiSortUp } from "react-icons/bi";
 import {
   Button,
   Label,
@@ -14,11 +15,10 @@ import { SortBy, SortDirection } from "@/hooks";
 
 import { InputComponent } from "../Default";
 import { Key } from "@react-types/shared"
-import { useListData } from "react-stately";
 import { debounce } from "lodash";
-import { useSearchParams } from "next/navigation";
 import { setUrlParam } from "@/scripts";
-import { BiSortDown, BiSortUp } from "react-icons/bi";
+import { useListData } from "react-stately";
+import { useSearchParams } from "next/navigation";
 
 const svgStyle: CSSProperties = {
   fontSize: "medium",
