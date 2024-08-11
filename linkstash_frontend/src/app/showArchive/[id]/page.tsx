@@ -1,14 +1,15 @@
 "use client";
 
-import { AuthenticatedSection, BookmarkCard, Loader } from "@/components";
-import { formatDistanceToNow, formatRFC7231 } from "date-fns"
 import { ApiCallOptions, Archive, Bookmark } from "@/types";
-import { makeApiCall } from "@/scripts";
+import { AuthenticatedSection, BookmarkCard, Loader } from "@/components";
+import { BiSolidArchiveIn, BiSolidTrashAlt } from "react-icons/bi";
+import { formatDistanceToNow, formatRFC7231 } from "date-fns"
 import { useAuthentication, useBookmarks } from "@/hooks";
 import { useEffect, useState } from "react";
+
 import Link from "next/link";
-import { BiSolidArchiveIn, BiSolidTrashAlt } from "react-icons/bi";
 import { TfiNewWindow } from "react-icons/tfi";
+import { makeApiCall } from "@/scripts";
 
 export default function Home({ params }: { params: { id: number } }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -72,7 +73,7 @@ export default function Home({ params }: { params: { id: number } }) {
       <AuthenticatedSection>
         <Loader isLoading={isLoading}>
           
-          <div className="w-full">{false && bookmark && <BookmarkCard bookmarkData={bookmark!} onDelete={(id)=>{deleteBookmark(id)}} ></BookmarkCard>}</div>
+          <div className="w-full">{false && bookmark && <BookmarkCard bookmarkData={bookmark!} handleDelete={(id)=>{deleteBookmark(id,()=>{})}} handleArchive={ (_id) => {}} ></BookmarkCard>}</div>
           <div className="grid">
             <h1>Archive of &lsquo;<b>{bookmark?.title}</b>&rsquo;<BiSolidTrashAlt className="react-icons text-black hover:cursor-pointer" aria-label="Delete archive"  title="Delete archive" /></h1> 
           </div>

@@ -11,14 +11,10 @@ import {
 import { SortBy, SortDirection, useBookmarks } from "@/hooks/useBookmarks";
 import { useEffect, useState } from "react";
 
-import { useAuthentication } from "@/hooks";
 import {setUrlParam} from "@/scripts";
-import { useSearchParams } from "next/navigation";
 import styles from "./styles.module.css";
-
-
-
-
+import { useAuthentication } from "@/hooks";
+import { useSearchParams } from "next/navigation";
 
 export default function Home() {
   const searchParams = useSearchParams();

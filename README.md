@@ -9,8 +9,17 @@ Selfhosted, backend driven :bookmark:bookmarking and :book: read it later soluti
 - :tag
 # Installation
 asda
+Frontend
 create ```.env.local```
 
+Backend
+create ```.env.local```
+
+Docker stuff
+Building locally
+Database
+- docker of mariadb example
+- 
 # Configuration
 ads
 

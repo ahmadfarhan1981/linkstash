@@ -2,21 +2,15 @@
 
 import { ApiCallOptions, Bookmark, TagListItem } from "@/types";
 import {
-  AuthenticatedSection,
   BookmarkForm,
   BookmarkFormData,
-  InputComponent,
-  Loader,
-  TagInput,
 } from "@/components";
-import { ChangeEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
-import { handleFormChange, makeApiCall } from "@/scripts";
-import { useListData } from "react-stately";
-import { useAuthentication } from "@/hooks";
-import axios from "axios";
-import { debounce } from "lodash";
+import { makeApiCall } from "@/scripts";
 import router from "next/router";
+import { useAuthentication } from "@/hooks";
+import { useListData } from "react-stately";
 
 export default function Home({ params }: { params: { id: number } }) {
   const { AuthenticationState } = useAuthentication();

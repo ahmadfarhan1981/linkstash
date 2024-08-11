@@ -1,0 +1,15 @@
+services:
+  server:
+    build:
+      context: .
+    image: linkstash_backend
+    environment:
+      DB_HOST: 192.168.1.19
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: example
+      DB_NAME: linkstash_backend
+      PORT: 3030
+    ports:
+      - 3030:3030
+

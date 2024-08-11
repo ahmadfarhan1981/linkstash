@@ -1,16 +1,14 @@
 /* eslint-disable github/a11y-no-title-attribute */
 "use client";
 
-import { MyTag, MyTagGroup } from "@/components";
-import { Bookmark } from "@/types";
-import { formatDistanceToNow, formatRFC7231 } from "date-fns";
 import { BiSolidArchiveIn, BiSolidEditAlt, BiSolidTrash } from "react-icons/bi";
+import { MyTag, MyTagGroup } from "@/components";
+import { formatDistanceToNow, formatRFC7231 } from "date-fns";
 
-import Link from "next/link";
 import { AiFillRead } from "react-icons/ai";
+import { Bookmark } from "@/types";
+import Link from "next/link";
 import styles from "./styles.module.css";
-
-
 
 //TODO compose the component 
 export function BookmarkCard({

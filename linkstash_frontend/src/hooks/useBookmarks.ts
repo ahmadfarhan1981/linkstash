@@ -1,5 +1,5 @@
-import { EMPTY_FUNCTION, makeApiCall } from "@/scripts";
 import { ApiCallOptions, Bookmark } from "@/types";
+import { EMPTY_FUNCTION, makeApiCall } from "@/scripts";
 import React, { useState } from "react";
 
 import { useAuthentication } from "@/hooks";

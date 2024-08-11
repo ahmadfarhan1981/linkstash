@@ -3,3 +3,7 @@ npm-debug.log
 /dist
 # Cache used by TypeScript's incremental build
 *.tsbuildinfo
+public/archive/*
+.vscode
+.env*
+mariadbdocker/*
