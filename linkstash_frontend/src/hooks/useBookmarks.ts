@@ -1,6 +1,7 @@
-import { ApiCallOptions, Bookmark } from "@/types";
-import { EMPTY_FUNCTION, makeApiCall } from "@/scripts";
+import { ApiCallOptions, Bookmark, TagListItem } from "@/types";
+import { EMPTY_FUNCTION, makeApiCall, whereStringBuilder } from "@/scripts";
 import React, { useState } from "react";
+import {ListData} from 'react-stately'
 
 import { useAuthentication } from "@/hooks";
 
@@ -23,41 +24,21 @@ export type fetchBookmarksOptions = {
   page: number;
   perPage: number;
   filter: string;
+  allTags: ListData<TagListItem>
+  anyTags: ListData<TagListItem>
 }
 
 
 function generateRequestParams(options:fetchBookmarksOptions):Record<string, any> {
-  const {sortBy, sortDirection, page, perPage, filter} = options;
-  const offset = ( page - 1 ) * perPage;
-  
-  const filterStringFilter =`
-  
-    ,"where": {
-        "or": [
-                {
-                    "title": {
-                        "like": "%${filter}%"
-                    }
-                },
-                {
-                    "url": {
-                        "like": "%${filter}%"
-                    }
-                },
-                {
-                    "description": {
-                        "like": "%${filter}%"
-                    }
-                }
-              ]
-              }`
-
+  const {sortBy, sortDirection, page, perPage, filter, anyTags, allTags} = options;
+  const offset = ( page - 1 ) * perPage;  
+  const filterStringFilter =`,${whereStringBuilder(filter, anyTags, allTags)}`
 
   const filterString = `{
     "skip" :${offset},
     "limit": ${perPage},
     "order": "${sortBy} ${sortDirection}"
-    ${filter?filterStringFilter:""}
+    ${filterStringFilter}
   }`
   return {"filter":filterString}
 }
@@ -67,6 +48,7 @@ export function useBookmarks(): useBookmarksReturnValue {
   const { AuthenticationState } = useAuthentication();
   const [isLoading, setIsLoading] = useState(false);
   const [numNonPagedResults, setNumNonPagedResult] = useState(0)
+
   const fetchBookmarks = (fetchOptions:fetchBookmarksOptions) => {
     if (!AuthenticationState.isLoggedIn) return;    
     const params = generateRequestParams(fetchOptions)    
@@ -77,7 +59,7 @@ export function useBookmarks(): useBookmarksReturnValue {
         Authorization: "Bearer ".concat(AuthenticationState.token),
       },
       successCallback: (response: any) => {        
-        setBookmarks((oldState)=>{
+        setBookmarks((_oldState)=>{
           const newState = response.data.data
           return newState
         });        

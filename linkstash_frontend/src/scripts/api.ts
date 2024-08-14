@@ -1,3 +1,4 @@
+import { ApiCallOptions, TagListItem } from "@/types";
 import {
   DEFAULT_FAILURE_CALLBACK,
   DEFAULT_FINALLY_CALLBACK,
@@ -8,8 +9,9 @@ import {
   getBackendURL,
 } from ".";
 import axios, { AxiosRequestConfig } from "axios";
+import {ListData} from 'react-stately'
 
-import { ApiCallOptions } from "@/types";
+
 // TODO refactor. this is a mess, move everything that can be done client side together, then only send everything to the server side, 
 //      only process the endpoints client side, then pass to server to get the backend url
 export async function makeApiCall(
@@ -68,4 +70,45 @@ function getFinallyCallback(options: ApiCallOptions) {
   return options.finallyCallback
     ? options.finallyCallback
     : DEFAULT_FINALLY_CALLBACK;
+}
+
+
+export function whereStringBuilder(filterBy:string, anyTagsList:ListData<TagListItem>, allTagsList:ListData<TagListItem>):string{
+  const generateFilterList = (currentValue:TagListItem):string => {return `{"tagList": {"regexp":"\\"${currentValue.name }\\""}}`}
+
+  const allTagsFilter = allTagsList.items.map(generateFilterList).join(",")
+  const anyTagsFilter = anyTagsList.items.map(generateFilterList).join(",")
+  const filterByFilter=filterBy ?`
+                {
+                    "title": {
+                        "like": "%${filterBy}%"
+                    }
+                },
+                {
+                    "url": {
+                        "like": "%${filterBy}%"
+                    }
+                },
+                {
+                    "description": {
+                        "like": "%${filterBy}%"
+                    }
+                }`:""
+
+  const whereString = `
+   "where":{
+      "and":[
+         {
+            "or": [{"and":[${allTagsFilter}]}, {"or":[${anyTagsFilter}]}]
+         },
+         {
+            "or":[
+                ${filterByFilter}
+              ]
+         }
+      ]
+   }
+
+`
+return whereString
 }

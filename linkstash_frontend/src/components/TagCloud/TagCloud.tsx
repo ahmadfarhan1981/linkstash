@@ -1,15 +1,24 @@
-"use client";
-import { useEffect, useState } from "react";
-import { useAuthentication } from "@/hooks";
-import { ApiCallOptions, TagListItem } from "@/types";
-import { makeApiCall } from "@/scripts";
-import { InputComponent, TagInput } from "@/components/Default";
-
-import {useListData} from 'react-stately'
 /* eslint-disable github/a11y-no-title-attribute */
-export function TagCloud() {
+"use client";
+
+import { ApiCallOptions, TagListItem } from "@/types";
+import { useEffect, useState } from "react";
+import {ListData} from 'react-stately'
+import { TagInput } from "@/components/Default";
+import { makeApiCall } from "@/scripts";
+import { useAuthentication } from "@/hooks";
+
+type TagCloudConfig = {
+    anyFilterTags: ListData<TagListItem>; 
+    allFilterTags: ListData<TagListItem>;
+}
+
+export function TagCloud( {
+  anyFilterTags,
+  allFilterTags,
+}: TagCloudConfig ) {
   const { AuthenticationState } = useAuthentication();
-  const [allTags, setAllTags] = useState();
+  const [allTags, setAllTags] = useState<TagListItem[]>([]);
   useEffect(() => {
     {
       if (!AuthenticationState.isLoggedIn) return;
@@ -30,15 +39,6 @@ export function TagCloud() {
     }
   }, [AuthenticationState.isLoggedIn, AuthenticationState.token]);
 
-  const allFilterTags = useListData({
-    initialItems: [],
-    getKey: (item: TagListItem) => item.id,
-  });
-  const anyFilterTags = useListData({
-    initialItems: [],
-    getKey: (item: TagListItem) => item.id,
-  });
-
   function FilterPane(){
     return ( <div id="filterpane">
       {allTags && allTags.length > 0  && <TagInput
@@ -56,8 +56,9 @@ export function TagCloud() {
                   inputLabel={"Include any tags"}
                   selectedLabel={"Any:"}
                   description="Filter must include at least one:"
-                />}
-      </div>)
+                />}                
+      </div>
+      )
   }
 
   const [showFilterPane, setShowFilterPane] = useState(false);
@@ -107,7 +108,7 @@ export function TagCloud() {
           ‧ <a href="/u:paan/tags/">manage</a>
         </p>
       </div>
-      <button onClick={()=>{setShowFilterPane((old)=>{return !old})}}>Show/hide</button>
+      <button className="button" onClick={()=>{setShowFilterPane((old)=>{return !old})}}>{showFilterPane?"Hide":"Show"} filter pane</button>
       {showFilterPane?<FilterPane></FilterPane>:null}
 
 
@@ -116,7 +117,7 @@ export function TagCloud() {
           allTags.map((tag) => {
             return (
               <>
-                <a href={`/tags/${tag.name}`} className="14.0.7 tag">
+                <a href={`/tags/${tag.name}`} onClick={(e)=>{e.preventDefault(); setShowFilterPane(true); allFilterTags.append(tag)}} className="">
                   {tag.name}
                   {`(${tag.bookmarkIds.length})`}{" "}
                 </a>{" "}
