@@ -8,11 +8,12 @@ import {
 import { useEffect, useState } from "react";
 
 import { makeApiCall } from "@/scripts";
-import router from "next/router";
 import { useAuthentication } from "@/hooks";
 import { useListData } from "react-stately";
+import { useRouter } from "next/navigation";
 
 export default function Home({ params }: { params: { id: number } }) {
+  const router = useRouter()
   const { AuthenticationState } = useAuthentication();
 
   const [allTags, setAllTags] = useState<TagListItem[]>([]);
@@ -105,7 +106,7 @@ export default function Home({ params }: { params: { id: number } }) {
     <>
       <BookmarkForm
         formData={formData}
-        isLoading={!isTagFetched && ! isBookmarkFetched}
+        isLoading={!isTagFetched || !isBookmarkFetched}
         handleSubmit={editBookmark}
         setFormData={setFormData}
         tagList={tagList}

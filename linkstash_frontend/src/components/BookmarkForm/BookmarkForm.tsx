@@ -124,7 +124,6 @@ export function BookmarkForm({
                 id="url"
                 name="url"
                 placeholder="URL"
-                //handleChange={debounce(handleURLChange, 1000)}
                 type="url"
                 handleChange={handleControlledURLInput}
                 value={formData?.url}
@@ -169,21 +168,12 @@ export function BookmarkForm({
               )}
             </div>
 
-            <div>
-              <input type="checkbox" name="private" id="private" />{" "}
-              <label className="display:inline" htmlFor="private">
-                private
-              </label>
-              <input type="checkbox" name="toread" id="toread" />{" "}
-              <label className="display:inline" htmlFor="toread">
-                read later
-              </label>
-              <input type="submit" value="add bookmark" />
+            <div>              
               <button
-                className="border-solid border-blac border-2"
+                className="submit-button"
                 type="submit"
               >
-                Submit
+                Add bookmark
               </button>
             </div>
           </form>

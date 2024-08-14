@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import {setUrlParam} from "@/scripts";
 import styles from "./styles.module.css";
 import { useAuthentication } from "@/hooks";
+import {useListData} from 'react-stately'
 import { useSearchParams } from "next/navigation";
 
 export default function Home() {
@@ -30,8 +31,17 @@ export default function Home() {
   const [maxPage, setMaxPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
   const [filter, setFilter] = useState<string>("");
-  
-  useEffect(() => {  
+
+  const allFilterTags = useListData({
+    initialItems: [],
+    getKey: (item: TagListItem) => item.id,
+  });
+  const anyFilterTags = useListData({
+    initialItems: [],
+    getKey: (item: TagListItem) => item.id,
+  });
+
+  useEffect(() => {     
     const pageParam = searchParams.get("page");
     const currentPage = pageParam ? Number.parseInt(pageParam) : 1
     setCurrentPage(currentPage);
@@ -50,6 +60,8 @@ export default function Home() {
     page: currentPage,
     perPage: pageSize,
     filter: filter,
+    anyTags: anyFilterTags,
+    allTags: allFilterTags
   });}
   useEffect(() => {
     {
@@ -63,7 +75,9 @@ export default function Home() {
     pageSize,
     sortBy,
     sortDirection,
-    filter
+    filter,
+    anyFilterTags.items,
+    allFilterTags.items,
   ]);
 
   useEffect(() => {
@@ -87,6 +101,7 @@ export default function Home() {
   const handleArchive = (id:number)=>{ 
     archiveBookmark(id, refetchData);      
   }
+
   return (
     <AuthenticatedSection>
       <Loader isLoading={isLoading} text="Loading bookmarks">
@@ -125,12 +140,10 @@ export default function Home() {
             </div>
           </div>
           <div className={styles["tag-cloud"]}>
-            <TagCloud />
+            <TagCloud allFilterTags={allFilterTags} anyFilterTags={anyFilterTags} />
           </div>
         </div>
       </Loader>
-    
-
     </AuthenticatedSection>
   );
 }
