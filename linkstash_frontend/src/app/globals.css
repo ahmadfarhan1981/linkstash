@@ -91,4 +91,27 @@ code {
     @apply inline hover:text-linkstashPurple 
   }
 
+  /* Archive related styles */
+  .readability{
+    @apply text-xl p-7 font-sans max-w-5xl 
+  }
+  .readability p{
+    @apply p-5
+  }
+  .readability a{
+    @apply text-blue-700 underline
+  }
+
+  .readability img{
+    @apply border-2 drop-shadow
+  }
+
+  .readability pre{
+    @apply border-2 drop-shadow bg-gray-300 font-mono
+  }
+  .readability code{
+    @apply bg-gray-300 text-black font-mono
+  }
+
+
 }
