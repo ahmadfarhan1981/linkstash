@@ -2,26 +2,28 @@
 
 import { ApiCallOptions, Archive, Bookmark } from "@/types";
 import { AuthenticatedSection, BookmarkCard, Loader } from "@/components";
-import { BiSolidArchiveIn, BiSolidTrashAlt } from "react-icons/bi";
-import { formatDistanceToNow, formatRFC7231 } from "date-fns"
 import { useAuthentication, useBookmarks } from "@/hooks";
 import { useEffect, useState } from "react";
 
-import Link from "next/link";
+import { BiSolidTrashAlt } from "react-icons/bi";
+import { Roboto } from "next/font/google";
 import { TfiNewWindow } from "react-icons/tfi";
+import { formatRFC7231 } from "date-fns"
 import { makeApiCall } from "@/scripts";
 
+const roboto = Roboto({
+  weight: "400",
+  subsets: ["latin", "latin-ext"],
+  style: ["italic", "normal"],
+});
 export default function Home({ params }: { params: { id: number } }) {
+  
   const [isLoading, setIsLoading] = useState(true);
-  const [archive, setArchive] = useState("");
+  const [archiveData, setArchiveData] = useState("");
   const { AuthenticationState } = useAuthentication();
 
-  const[a,setA]=useState<Archive|null>(null)
-  
-  
-  // var __html = require('../../1/archive.html.archive');
-  const template = { __html: archive };
-
+  const[archive,setArchive]=useState<Archive|null>(null)
+  const template = { __html: archiveData };
   const [bookmark, setBookmark] = useState<Bookmark>();
   useEffect(() => {
     {
@@ -42,11 +44,11 @@ export default function Home({ params }: { params: { id: number } }) {
       makeApiCall(option);
 
       const getArchiveSuccess = async (response: any) => {
-        setA(response.data)
+        setArchive(response.data)
         const { Content } = response.data;
 
 
-        setArchive(Content);
+        setArchiveData(Content);
         setIsLoading(false);
       };
       const getArchiveOptions: ApiCallOptions = {
@@ -67,6 +69,7 @@ export default function Home({ params }: { params: { id: number } }) {
 
   const { deleteBookmark } =
     useBookmarks();
+        
   return (
     <>
       <AuthenticatedSection>
@@ -76,14 +79,14 @@ export default function Home({ params }: { params: { id: number } }) {
           <div className="grid">
             <h1>Archive of &lsquo;<b>{bookmark?.title}</b>&rsquo;<BiSolidTrashAlt className="react-icons text-black hover:cursor-pointer" aria-label="Delete archive"  title="Delete archive" /></h1> 
           </div>
-          <p id="metadata">Retrieved {a && formatRFC7231(a.DateRetrieved)}</p>{" "}
+          <p id="metadata">Retrieved {archive && formatRFC7231(archive.DateRetrieved)}</p>{" "}
           <p id="title" dir="auto">
             {bookmark && bookmark.url}
           </p>{" "}
           <div id="links">
             {bookmark && <a href={bookmark.url!} target="new">View original<TfiNewWindow className="react-icons align-baseline" aria-label="Open link in new window"  title="Open link in new window" /></a>}
           </div>
-          <div dangerouslySetInnerHTML={template} className="border-2"></div>
+          <div dangerouslySetInnerHTML={template} className={`readability border-2 ${roboto.className}`}></div>
         </Loader>
       </AuthenticatedSection>
     </>
