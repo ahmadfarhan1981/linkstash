@@ -119,7 +119,7 @@ export function TagCloud( {
               <>
                 <a href={`/tags/${tag.name}`} onClick={(e)=>{e.preventDefault(); setShowFilterPane(true); allFilterTags.append(tag)}} className="">
                   {tag.name}
-                  {`(${tag.bookmarkIds.length})`}{" "}
+                  {tag.bookmarkIds?`(${tag.bookmarkIds.length})`:""}{" "}
                 </a>{" "}
                 &nbsp;
               </>
