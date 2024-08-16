@@ -9,7 +9,6 @@ import { useEffect, useState } from "react";
 
 import { makeApiCall } from "@/scripts";
 import { useAuthentication } from "@/hooks";
-import { useListData } from "react-stately";
 import { useRouter } from "next/navigation";
 
 export default function Home({ params }: { params: { id: number } }) {
@@ -20,11 +19,6 @@ export default function Home({ params }: { params: { id: number } }) {
   const [isTagFetched, setIsTagFetched] = useState(false);
   const [isBookmarkFetched, setIsBookmarkFetched] = useState(false);
   const [bookmark, setBookmark] = useState<Bookmark>();
-
-  const tagList = useListData({
-    initialItems: [],
-    getKey: (item: TagListItem) => item.id,
-  });
 
   useEffect(() => {
     {
@@ -55,10 +49,6 @@ export default function Home({ params }: { params: { id: number } }) {
       title: bookmark?.title,
       description: bookmark?.description,
       tagList: bookmark?.tagList,
-    });
-
-    bookmark?.tagList?.map((tag) => {
-      tagList.append({ id: tag, name: tag });
     });
   }, [bookmark, isBookmarkFetched]);
 
@@ -109,8 +99,8 @@ export default function Home({ params }: { params: { id: number } }) {
         isLoading={!isTagFetched || !isBookmarkFetched}
         handleSubmit={editBookmark}
         setFormData={setFormData}
-        tagList={tagList}
         allTags={allTags}
+        submitButtonText="Edit bookmark"
       ></BookmarkForm>
     </>
   );

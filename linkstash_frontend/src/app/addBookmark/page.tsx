@@ -9,7 +9,6 @@ import { useEffect, useState } from "react";
 
 import { makeApiCall } from "@/scripts/index";
 import { useAuthentication } from "@/hooks/useAuthentication";
-import { useListData } from "react-stately";
 import { useRouter } from "next/navigation";
 
 /**
@@ -62,18 +61,10 @@ export default function Home() {
 
 
 
-  const [formData, setFormData] = useState<BookmarkFormData>({});
-
-  // TODO populate default tags for new bookmark
-  const tagList = useListData({
-    initialItems: [],
-    getKey: (item: TagListItem) => item.id,
-  });
-
-    
+  const [formData, setFormData] = useState<BookmarkFormData>({});    
   return (
     <>
-      <BookmarkForm formData={formData} isLoading={!isTagFetched} handleSubmit={addBookmark} setFormData={setFormData} tagList={tagList} allTags={allTags}></BookmarkForm>      
+      <BookmarkForm submitButtonText="Add bookmark" formData={formData} isLoading={!isTagFetched} handleSubmit={addBookmark} setFormData={setFormData} allTags={allTags}></BookmarkForm>      
     </>
   );
 }

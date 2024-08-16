@@ -44,7 +44,7 @@ function generateRequestParams(options:fetchBookmarksOptions):Record<string, any
 }
 
 export function useBookmarks(): useBookmarksReturnValue {
-  const [bookmarks, setBookmarks] = useState([] as Bookmark[]);
+  const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
   const { AuthenticationState } = useAuthentication();
   const [isLoading, setIsLoading] = useState(false);
   const [numNonPagedResults, setNumNonPagedResult] = useState(0)
