@@ -1,14 +1,14 @@
 //#region Imports
 import {authenticate} from '@loopback/authentication';
 import {inject, service} from '@loopback/core';
-import {Count, Filter, FilterBuilder, FilterExcludingWhere, IsolationLevel, Transaction, repository} from '@loopback/repository';
-import {Response, RestBindings, del, get, getModelSchemaRef, operation, param, patch, post, requestBody, response} from '@loopback/rest';
+import {Filter, FilterBuilder, FilterExcludingWhere, IsolationLevel, Transaction, repository} from '@loopback/repository';
+import {Response, RestBindings, del, get, getModelSchemaRef, param, patch, post, requestBody, response} from '@loopback/rest';
 import {SecurityBindings, UserProfile, securityId} from '@loopback/security';
-import {Bookmark, BookmarkRelations, BookmarkWithRelations, Tag} from '../models';
+import {difference, remove, uniq} from 'lodash';
+import {Bookmark, BookmarkWithRelations, Tag} from '../models';
 import {ArchiveRepository, BookmarkRepository, TagRepository, UserRepository} from '../repositories';
-import {bookmarkPatchSchema} from '../types';
-import {difference, head, remove} from 'lodash'
 import {LinkStashBookmarkService} from '../services/linkstash-bookmark.service';
+import {bookmarkPatchSchema} from '../types';
 //#endregion
 
 @authenticate('jwt')
@@ -259,8 +259,10 @@ export class BookmarkController {
 
       if (existingTag.length === 1) {
         if(!(existingTag[0].bookmarkIds.includes(bookmarkId))){
-          existingTag[0].bookmarkIds.push(bookmarkId);
-          await this.tagRepository.updateById(existingTag[0].id, existingTag[0], transaction);
+          var bookmarkIds =  uniq(existingTag[0].bookmarkIds.slice())
+          bookmarkIds.push(bookmarkId)
+          const tagData:Partial<Omit<Tag, 'id' | 'numBookmarks' >> = { bookmarkIds: bookmarkIds };
+          await this.tagRepository.updateById(existingTag[0].id, tagData, transaction);          
         }else{
           // log if linked
           //exit
@@ -289,11 +291,13 @@ export class BookmarkController {
 
     if (existingTag.length === 1) {
       const tagToUpdate = existingTag[0]
-      remove(tagToUpdate.bookmarkIds, (element)=>{return element === bookmarkId})
       if(tagToUpdate.bookmarkIds.length===0){
         await this.tagRepository.deleteById(tagToUpdate.id)
       }else{
-        await this.tagRepository.updateById(tagToUpdate.id, tagToUpdate, transaction);
+        var bookmarkIds =  uniq(existingTag[0].bookmarkIds.slice())
+        remove(bookmarkIds, (element)=>{return element === bookmarkId})
+        const tagData:Partial<Omit<Tag, 'id' | 'numBookmarks' >> = {bookmarkIds: bookmarkIds };
+        await this.tagRepository.updateById(tagToUpdate.id, tagData, transaction);
       }
     }else{
       //log unexpected

@@ -35,11 +35,11 @@ export default function Home() {
 
   const allFilterTags = useListData({
     initialItems: [],
-    getKey: (item: TagListItem) => item.id,
+    getKey: (item: TagListItem) => item.name,
   });
   const anyFilterTags = useListData({
     initialItems: [],
-    getKey: (item: TagListItem) => item.id,
+    getKey: (item: TagListItem) => item.name,
   });
 
   useEffect(() => {     

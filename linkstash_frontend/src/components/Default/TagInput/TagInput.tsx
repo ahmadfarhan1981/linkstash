@@ -6,7 +6,6 @@ import {
   GridListItem,
   Input,
   Label,
-  Link,
   Popover,
   Text,
   TextField
@@ -30,7 +29,7 @@ export type TagInputProps = {
 
 
 export function TagInput(props: TagInputProps  ) {
-  const { selectedTags, tagsToChooseFrom=[], maxWidthInPixel=150, inputLabel, selectedLabel, description } = props; //TODO default values
+  const { selectedTags, tagsToChooseFrom=[], maxWidthInPixel=150, inputLabel, selectedLabel, description } = props; //TODO default values  
   const gridListRef = useRef<HTMLInputElement>(null);
   const tagInput = useRef(null);
   const [tagListInput, setTagListInput] = useState<Key | null>("");
@@ -47,24 +46,24 @@ export function TagInput(props: TagInputProps  ) {
     const partOfItem = filterText
       ? item.name.includes(filterText) //|| item.id.includes(filterText)
       : true;
-    const addedTag = selectedTags.getItem(item.id);
+    const addedTag = selectedTags.getItem(item.name);
     const result = partOfItem && !addedTag;
     return result;
     //return partOfItem
   };
 
   const filteredTagsToChooseFrom = useListData({
-    initialItems: tagsToChooseFrom,
-    getKey: (item) => item.id,
+    initialItems: tagsToChooseFrom.map((tag):TagListItem=>{return{id:tag.name, name:tag.name }}),
+    getKey: (item) => item.name,
     filter: filterTagList,
   });
 
   const clearTagListInput = () => {
     setTagListInput("");
   };
-  const appendToTaglist = (value: TagListItem) => {
-    if (value) {
-      if (!selectedTags.getItem(value.id)) selectedTags.append({ id: value.id, name: value.name });
+  const appendToTaglist = (value: TagListItem) => {    
+    if (value) {      
+      if (!selectedTags.getItem(value.name)) selectedTags.append({ id: value.name, name: value.name });
     }
   };
 
@@ -135,8 +134,8 @@ export function TagInput(props: TagInputProps  ) {
             id="existingTagGrid"
             aria-label="Existing tags that matches input"
             selectionMode="multiple"
-            onAction={(e) => {
-              const tag = tagsToChooseFrom.find((tag)=> tag.id == e.toString() )
+            onAction={(e) => {              
+              const tag = tagsToChooseFrom.find((tag)=> tag.name == e.toString() )
               if (tag) appendToTaglist( tag );
               setTagListInput("");
               setIsOpen(false);
@@ -149,7 +148,7 @@ export function TagInput(props: TagInputProps  ) {
                   "tag-autocomplete-item before:content-['#'] after:content-[' ']"
                 }
                 textValue={item.name}
-                id={item.id}
+                id={item.name}
               >
                 {item.name}
               </GridListItem>
@@ -166,14 +165,14 @@ export function TagInput(props: TagInputProps  ) {
           >            
             {selectedTags.items.map((tag) => (
               <MyTag
-                key={tag.id}
-                id={tag.id}
+                key={tag.name}
+                id={tag.name}
                 textValue={tag.name}
                 className={
                   "font-light underline inline bg-blue-100 mx-1 px-1 rounded  border-purple-200  border-2 before:content-['#'] after:content-[' '] before:font-medium hover:bg-purple-300"
                 }
               >
-                <Link href={`/tags/${tag}`}>{tag.name}</Link>
+                <a href={`/tags/${tag}`} onClick={(e)=>{e.preventDefault();selectedTags.remove(tag.name)}}>{tag.name}</a>
               </MyTag>
             ))}            
           </MyTagGroup>

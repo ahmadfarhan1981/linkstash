@@ -14,12 +14,13 @@ import {
   useEffect,
   useState,
 } from "react";
+import { debounce, uniq } from "lodash";
 
-import { ListData } from "react-stately";
 import { TagListItem } from "@/types";
 import axios from "axios";
-import { debounce } from "lodash";
 import { handleFormChange } from "@/scripts";
+import { useListData } from "react-stately";
+
 import styles from "./styles.module.css";
 
 export type BookmarkFormConfig = {
@@ -28,7 +29,7 @@ export type BookmarkFormConfig = {
   handleSubmit: (__bookmarkData: BookmarkFormData) => Promise<void>;
   formData: BookmarkFormData;
   setFormData: Dispatch<SetStateAction<BookmarkFormData>>;
-  tagList: ListData<TagListItem>;
+  submitButtonText: string;
 };
 
 export type BookmarkFormData = {
@@ -44,10 +45,12 @@ export function BookmarkForm({
   allTags,
   formData,
   setFormData,
-  tagList,
+  submitButtonText,
 }: BookmarkFormConfig) {
-  // const [formData, setFormData] = useState<BookmarkFormData>({});
-
+  const tagList = useListData({
+    initialItems: [],
+    getKey: (item: TagListItem) => item.name,
+  });
   const [lastUrlFetched, setLastUrlFetched] = useState("");
 
   // TODO indicator when fetching url metadata
@@ -70,32 +73,30 @@ export function BookmarkForm({
         }));
         setLastUrlFetched(value);
       })
-      // eslint-disable-next-line no-unused-vars
-      .catch(function (error) {
+      .catch(function (_error) {
+        // TODO logging
         return;
       });
   }
 
   useEffect(() => {
-    const tagListArray = tagList.items.map((tag: TagListItem) => tag.name);
-    setFormData((oldState) => {
-      return {
-        ...oldState,
-        tagList: tagListArray,
-      };
-    });
-  }, [setFormData, tagList.items]);
+    if(formData.tagList){
+        const keys = tagList.items.map((t)=>t.name)
+        keys.forEach((key)=>tagList.remove(key))
+        formData.tagList.forEach((tag: string) =>{tagList.append({ id: tag, name: tag} )} );
+    }    
+  }, [formData.tagList]);
 
   async function handleSubmitWrapper(form: FormData) {
     //TODO bookmarklet layout
     //TODO make the page more responsive when adding. (disable input while pending, splash screen before redirecting etc)
 
-    //TODO handle not entering the protocol at the beginning of the url (http:// or https://)
+    //TODO handle not entering the protocol at the beginning of the url (http:// or https://)    
     const postData: BookmarkFormData = {
       url: form.get("url")?.toString(),
       title: form.get("title")?.toString(),
       description: form.get("description")?.toString(),
-      tagList: tagList.items.map((tag: TagListItem) => tag.name),
+       tagList: uniq(tagList.items.map((tag: TagListItem) => tag.name)),
     };
 
     setFormData(postData);
@@ -172,9 +173,7 @@ export function BookmarkForm({
               <button
                 className="submit-button"
                 type="submit"
-              >
-                Add bookmark
-              </button>
+              >{submitButtonText}</button>
             </div>
           </form>
         </Loader>

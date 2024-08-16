@@ -9,6 +9,7 @@ import { AiFillRead } from "react-icons/ai";
 import { Bookmark } from "@/types";
 import Link from "next/link";
 import styles from "./styles.module.css";
+import { uniq } from "lodash";
 
 //TODO compose the component 
 export function BookmarkCard({
@@ -57,10 +58,10 @@ export function BookmarkCard({
         <div className={styles["description"]}>{bookmarkData.description}</div>
 
         <div>
-          <MyTagGroup label="Tags:" renderEmptyState={() => emptyTag}>
-            {bookmarkData.tagList?.map((tag) => (
-              <MyTag className={styles["tags"]} key={tag} id={tag}>
-                <Link href={`/tags/${tag}`}>{tag}</Link>
+          <MyTagGroup label="Tags:" id={`${bookmarkData.id!}-tagGroup`} renderEmptyState={() => emptyTag}>
+            {uniq(bookmarkData.tagList)?.map((tag) => (
+              <MyTag className={styles["tags"]} key={`${bookmarkData.id!}-${tag}`} id={`${bookmarkData.id!}-${tag}`}>
+                <Link onClick={(e)=>{e.preventDefault()}} href={`/tags/${tag}`}>{tag}</Link>
               </MyTag>
             ))}
           </MyTagGroup>

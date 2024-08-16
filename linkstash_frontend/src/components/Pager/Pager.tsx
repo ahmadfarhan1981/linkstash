@@ -20,8 +20,9 @@ export function Pager({
   const pages = [];
   for (let i = 1; i <= maxPages; i++) {
     pages.push(
-      <>
+      <React.Fragment key={`page_${i}`}>
         <Link
+          key={`page_${i}`}
           href={{
             pathname: "/bookmarks",
             query: {
@@ -42,7 +43,7 @@ export function Pager({
         >
           {i}
         </Link>{" "}
-      </>
+      </React.Fragment>
     );
   }
 
