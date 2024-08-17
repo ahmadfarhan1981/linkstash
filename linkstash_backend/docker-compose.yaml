@@ -12,4 +12,7 @@ services:
       PORT: 3030
     ports:
       - 3030:3030
+    volumes:
+      - ./config:/home/node/app/config
 
+# //needs to depends on DB in the prod dockercompose
