@@ -19,9 +19,8 @@ import { debounce, uniq } from "lodash";
 import { TagListItem } from "@/types";
 import axios from "axios";
 import { handleFormChange } from "@/scripts";
-import { useListData } from "react-stately";
-
 import styles from "./styles.module.css";
+import { useListData } from "react-stately";
 
 export type BookmarkFormConfig = {
   allTags: TagListItem[];

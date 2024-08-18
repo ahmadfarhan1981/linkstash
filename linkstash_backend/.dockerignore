@@ -6,4 +6,4 @@ npm-debug.log
 public/archive/*
 .vscode
 .env*
-mariadbdocker/*
+config/.migrated

@@ -2,14 +2,14 @@
   "name": "linkstash",
   "version": "0.0.1",
   "description": "Linkstash backend server",
+  "homepage": "http://linkstashapp.com",
   "keywords": [
-    "loopback-application",
-    "loopback"
+    "bookmarking"
   ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "engines": {
-    "node": "16 || 18 || 20"
+    "node": "~20.11.0"
   },
   "scripts": {
     "build": "lb-tsc",
@@ -40,10 +40,10 @@
   },
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/ahmadfarhan1981/linkstash.git"
   },
-  "author": "paan <paan.phone@gmail.com>",
-  "license": "",
+  "author": "paan <paan@linkstashapp.com>",
+  "license": "MIT",
   "files": [
     "README.md",
     "dist",
