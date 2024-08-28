@@ -130,4 +130,25 @@ export class UserController {
     await this.userRepository.userCredentials(savedUser.id).create({password});
     return savedUser;
   }
+
+  @authenticate('jwt')
+  @get('/users', {
+    responses: {
+      '200': {
+        content: {
+          'application/json': {
+            schema: {
+              type: 'array',
+              items: getModelSchemaRef(User, {includeRelations: false}),
+            },
+          },
+        },
+      }
+    },
+  })
+  async getUsers(
+    @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
+  ): Promise<User[]> {
+    return this.userRepository.find()
+  }
 }
