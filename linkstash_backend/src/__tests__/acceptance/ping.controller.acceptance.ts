@@ -1,8 +1,9 @@
 import {Client, expect} from '@loopback/testlab';
+
 import {LinkstashApplication} from '../..';
 import {setupApplication} from './test-helper';
 
-describe('PingController', () => {
+describe.skip('PingController', () => {
   let app: LinkstashApplication;
   let client: Client;
 

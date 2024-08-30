@@ -3,18 +3,13 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-import {User} from '../models';
+import {LinkStashUser} from '../models';
 import {UserRepository} from '../repositories';
 import {authenticate, TokenService} from '@loopback/authentication';
 import {
-  Credentials,
-  MyUserService,
   TokenServiceBindings,
-  // User,
-  // UserRepository,
   UserServiceBindings,
 } from '@loopback/authentication-jwt';
-// import {} from ''
 import {inject} from '@loopback/core';
 import {model, property, repository} from '@loopback/repository';
 import {
@@ -22,53 +17,30 @@ import {
   getModelSchemaRef,
   post,
   requestBody,
-  SchemaObject,
 } from '@loopback/rest';
-import {SecurityBindings, securityId, UserProfile} from '@loopback/security';
+import {SecurityBindings, securityId} from '@loopback/security';
 import {genSalt, hash} from 'bcryptjs';
 import _ from 'lodash';
+import {LinkStashUserService} from '../services';
+import {Credentials, CredentialsRequestBody, UserProfile} from '../types';
 
 @model()
-export class NewUserRequest extends User {
+export class NewUserRequest extends LinkStashUser {
   @property({
     type: 'string',
     required: true,
   })
   password: string;
 }
-
-const CredentialsSchema: SchemaObject = {
-  type: 'object',
-  required: ['email', 'password'],
-  properties: {
-    email: {
-      type: 'string',
-      format: 'email',
-    },
-    password: {
-      type: 'string',
-      minLength: 8,
-    },
-  },
-};
-
-export const CredentialsRequestBody = {
-  description: 'The input of login function',
-  required: true,
-  content: {
-    'application/json': {schema: CredentialsSchema},
-  },
-};
-
 export class UserController {
   constructor(
     @inject(TokenServiceBindings.TOKEN_SERVICE)
     public jwtService: TokenService,
     @inject(UserServiceBindings.USER_SERVICE)
-    public userService: MyUserService,
-    @inject(SecurityBindings.USER, {optional: true})
-    public user: UserProfile,
+    public userService: LinkStashUserService,
     @repository(UserRepository) protected userRepository: UserRepository,
+    @inject(SecurityBindings.USER, {optional: true})
+    public user: UserProfile | undefined,
   ) {}
 
   @post('/users/login', {
@@ -132,7 +104,7 @@ export class UserController {
         content: {
           'application/json': {
             schema: {
-              'x-ts-type': User,
+              'x-ts-type': LinkStashUser,
             },
           },
         },
@@ -150,14 +122,12 @@ export class UserController {
       },
     })
     newUserRequest: NewUserRequest,
-  ): Promise<User> {
+  ): Promise<LinkStashUser> {
     const password = await hash(newUserRequest.password, await genSalt());
     const savedUser = await this.userRepository.create(
       _.omit(newUserRequest, 'password'),
     );
-
     await this.userRepository.userCredentials(savedUser.id).create({password});
-
     return savedUser;
   }
 }

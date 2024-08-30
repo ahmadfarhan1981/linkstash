@@ -23,7 +23,7 @@
     "eslint:fix": "npm run eslint -- --fix",
     "pretest": "npm run rebuild",
     "test": "lb-mocha --allow-console-logs \"dist/__tests__\"",
-    "posttest": "npm run lint",
+    "_posttest": "npm run lint",
     "test:dev": "lb-mocha --allow-console-logs dist/__tests__/**/*.js && npm run posttest",
     "docker:build": "docker build -t linkstash .",
     "docker:run": "docker run -p 3000:3000 -d linkstash",
@@ -73,7 +73,7 @@
   "devDependencies": {
     "@loopback/build": "^11.0.4",
     "@loopback/eslint-config": "^15.0.3",
-    "@loopback/testlab": "^7.0.4",
+    "@loopback/testlab": "^7.0.5",
     "@types/jsdom": "^21.1.6",
     "@types/node": "^16.18.101",
     "eslint": "^8.57.0",

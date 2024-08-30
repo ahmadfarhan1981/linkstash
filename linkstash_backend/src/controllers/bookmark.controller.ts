@@ -259,10 +259,10 @@ export class BookmarkController {
 
       if (existingTag.length === 1) {
         if(!(existingTag[0].bookmarkIds.includes(bookmarkId))){
-          var bookmarkIds =  uniq(existingTag[0].bookmarkIds.slice())
+          const bookmarkIds =  uniq(existingTag[0].bookmarkIds.slice())
           bookmarkIds.push(bookmarkId)
           const tagData:Partial<Omit<Tag, 'id' | 'numBookmarks' >> = { bookmarkIds: bookmarkIds };
-          await this.tagRepository.updateById(existingTag[0].id, tagData, transaction);          
+          await this.tagRepository.updateById(existingTag[0].id, tagData, transaction);
         }else{
           // log if linked
           //exit
@@ -294,7 +294,7 @@ export class BookmarkController {
       if(tagToUpdate.bookmarkIds.length===0){
         await this.tagRepository.deleteById(tagToUpdate.id)
       }else{
-        var bookmarkIds =  uniq(existingTag[0].bookmarkIds.slice())
+        const bookmarkIds =  uniq(existingTag[0].bookmarkIds.slice())
         remove(bookmarkIds, (element)=>{return element === bookmarkId})
         const tagData:Partial<Omit<Tag, 'id' | 'numBookmarks' >> = {bookmarkIds: bookmarkIds };
         await this.tagRepository.updateById(tagToUpdate.id, tagData, transaction);

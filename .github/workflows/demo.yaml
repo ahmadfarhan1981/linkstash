@@ -1,0 +1,20 @@
+name: Gitea Actions Demo
+run-name: ${{ github.actor }} is testing out Gitea Actions 🚀
+on:
+  pull_request:
+    types: [labeled]
+jobs:
+  Explore-Gitea-Actions:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "${{ github.event.label.name }}"
+      - run: echo "Label added ${{ github.event.label.name }}"
+      - run: echo "${{ github.event.label.name }}"
+      - run: echo "${{ github.event.label.id }}"
+      - run: echo "${{ github.event.label.description }}"
+      - run: echo "${{ github.event.label.node_id }}"
+      - run: echo "${{ github.event.label.color }}"
+      - run: echo "${{ github.event.label.url }}"
+      - run: echo "${{ github.event.label }}"
+      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+      
