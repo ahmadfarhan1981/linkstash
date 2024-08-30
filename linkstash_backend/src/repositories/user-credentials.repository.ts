@@ -1,11 +1,6 @@
-// Copyright IBM Corp. and LoopBack contributors 2020. All Rights Reserved.
-// Node module: @loopback/authentication-jwt
-// This file is licensed under the MIT License.
-// License text available at https://opensource.org/licenses/MIT
-
 import {inject} from '@loopback/core';
-import {DefaultTransactionalRepository, juggler} from '@loopback/repository';
-import {UserServiceBindings} from '../keys';
+import {DefaultCrudRepository, DefaultTransactionalRepository} from '@loopback/repository';
+import {BookmarkDataSource} from '../datasources';
 import {UserCredentials, UserCredentialsRelations} from '../models';
 
 export class UserCredentialsRepository extends DefaultTransactionalRepository<
@@ -14,8 +9,7 @@ export class UserCredentialsRepository extends DefaultTransactionalRepository<
   UserCredentialsRelations
 > {
   constructor(
-    @inject(`datasources.${UserServiceBindings.DATASOURCE_NAME}`)
-    dataSource: juggler.DataSource,
+    @inject('datasources.bookmark') dataSource: BookmarkDataSource,
   ) {
     super(UserCredentials, dataSource);
   }

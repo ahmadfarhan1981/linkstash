@@ -1,5 +1,5 @@
 import {belongsTo, Entity, model, property} from '@loopback/repository';
-import {User} from '.';
+import {LinkStashUser} from '.';
 
 @model({settings: {strict: false}})
 export class RefreshToken extends Entity {
@@ -10,7 +10,7 @@ export class RefreshToken extends Entity {
   })
   id: number;
 
-  @belongsTo(() => User)
+  @belongsTo(() => LinkStashUser)
   userId: string;
 
   @property({

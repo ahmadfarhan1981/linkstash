@@ -1,18 +1,21 @@
-import {JWTAuthenticationComponent, UserRepository, UserServiceBindings} from '@loopback/authentication-jwt';
+
 import {RepositoryMixin, SchemaMigrationOptions} from '@loopback/repository';
 import {RestExplorerBindings, RestExplorerComponent} from '@loopback/rest-explorer';
 import {genSalt, hash} from 'bcryptjs';
 
-import {ApplicationConfig} from '@loopback/core';
 import {AuthenticationComponent} from '@loopback/authentication';
-import {BookmarkDataSource} from './datasources';
 import {BootMixin} from '@loopback/boot';
+import {ApplicationConfig, Binding} from '@loopback/core';
 import {HealthComponent} from '@loopback/health';
-import {MySequence} from './sequence';
 import {RestApplication} from '@loopback/rest';
 import {ServiceMixin} from '@loopback/service-proxy';
-import {TagRepository} from './repositories';
 import path from 'path';
+import {BookmarkDataSource} from './datasources';
+import {BookmarkRepository, TagRepository, UserCredentialsRepository, UserRepository} from './repositories';
+import {MySequence} from './sequence';
+import {LinkStashUserService} from './services';
+import { UserServiceBindings } from './bindings/UserService.binding';
+import { JWTAuthenticationComponent, TokenServiceBindings } from '@loopback/authentication-jwt';
 
 export {ApplicationConfig};
 export class LinkstashApplication extends BootMixin(ServiceMixin(RepositoryMixin(RestApplication))) {
@@ -30,7 +33,7 @@ export class LinkstashApplication extends BootMixin(ServiceMixin(RepositoryMixin
       console.log("Empty users table. Creating default user...")
       //await userRepo.create({email:"admin@linkstashapp.com", password:"password"})
       const password = await hash("password", await genSalt());
-      const savedUser = await userRepo.create({email:"admin@linkstashapp.com"});
+      const savedUser = await userRepo.create({username:"admin"});
       await userRepo.userCredentials(savedUser.id).create({password});
       console.log("User 'admin@linkstashapp.com' created.")
     }
@@ -77,7 +80,15 @@ export class LinkstashApplication extends BootMixin(ServiceMixin(RepositoryMixin
 
     // Bind datasource
     this.dataSource(BookmarkDataSource, UserServiceBindings.DATASOURCE_NAME);
+
+    //jwt related
+    this.bind(UserServiceBindings.USER_REPOSITORY).toClass(BookmarkRepository);
+    this.bind(TokenServiceBindings.TOKEN_SECRET).to("DP65JcIAXiD6vv0CmdtkOw8QA0OwJaiA")
+    this.bind(UserServiceBindings.USER_REPOSITORY).toClass(UserRepository)
+    this.bind(UserServiceBindings.USER_CREDENTIALS_REPOSITORY).toClass(UserCredentialsRepository)
+    this.bind(UserServiceBindings.USER_SERVICE).toClass(LinkStashUserService)
   }
+
 
   async migrateSchema(options?: SchemaMigrationOptions) {
     await super.migrateSchema(options); // 1. Run migration scripts provided by connectors

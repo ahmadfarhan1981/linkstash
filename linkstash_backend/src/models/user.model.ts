@@ -11,11 +11,13 @@ import {UserCredentials} from './user-credentials.model';
 @model({
   settings: {
     strict: false,
+    mysql:{
+      table:"User"
+    }
   },
+
 })
-export class User extends Entity {
-  // must keep it
-  // add id:string<UUID>
+export class LinkStashUser extends Entity {
   @property({
     type: 'string',
     id: true,
@@ -24,57 +26,29 @@ export class User extends Entity {
   })
   id: string;
 
-  @property({
+    @property({
     type: 'string',
-  })
-  realm?: string;
-
-  // must keep it
-  @property({
-    type: 'string',
+    required:true,
+    index: {
+      unique: true,
+    }
   })
   username?: string;
 
-  // must keep it
-  @hasMany(() => Bookmark)
+  @hasMany(() => Bookmark,{keyTo:'userId'})
   bookmarks: Bookmark[];
 
-  @hasMany(() => Tag)
+  @hasMany(() => Tag,{keyTo:'userId'})
   tags: Tag[];
 
-  @property({
-    type: 'string',
-    required: true,
-    index: {
-      unique: true,
-    },
-  })
-  email: string;
-
-  @property({
-    type: 'boolean',
-  })
-  emailVerified?: boolean;
-
-  @property({
-    type: 'string',
-  })
-  verificationToken?: string;
-
-  @hasOne(() => UserCredentials)
+  @hasOne(() => UserCredentials ,{keyTo:'userId'})
   userCredentials: UserCredentials;
 
-  // Indexer property to allow additional data
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [prop: string]: any;
-
-  constructor(data?: Partial<User>) {
+  constructor(data?: Partial<LinkStashUser>) {
     super(data);
   }
 }
-
 export interface UserRelations {
   // describe navigational properties here
 }
-
-export type UserWithRelations = User & UserRelations;
+export type LinkStashUserWithRelations = LinkStashUser & UserRelations;

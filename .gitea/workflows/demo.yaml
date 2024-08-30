@@ -2,11 +2,20 @@ name: Gitea Actions Demo
 run-name: ${{ gitea.actor }} is testing out Gitea Actions 🚀
 on:
   pull_request:
+    types: [labeled]
 jobs:
   Explore-Gitea-Actions:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "${{ JSON.stringify(gitea.event) }}"
+      - run: echo "${{ github.event.label.name }}"
+      - run: echo "Label added ${{ gitea.event.label.name }}"
+      - run: echo "${{ gitea.event.label.name }}"
+      - run: echo "${{ gitea.event.label.id }}"
+      - run: echo "${{ gitea.event.label.description }}"
+      - run: echo "${{ gitea.event.label.node_id }}"
+      - run: echo "${{ gitea.event.label.color }}"
+      - run: echo "${{ gitea.event.label.url }}"
+      - run: echo "${{ gitea.event.label }}"
       - run: echo "🎉 The job was automatically triggered by a ${{ gitea.event_name }} event."
       - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by Gitea!"
       - run: echo "🔎 The name of your branch is ${{ gitea.ref }} and your repository is ${{ gitea.repository }}."

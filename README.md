@@ -26,7 +26,7 @@ Access linkstash at: http://localhost:3000
 
 The default credential is:
 ```
-username: admin@linkstashapp.com
+username: admin
 password:password
 ```
 
