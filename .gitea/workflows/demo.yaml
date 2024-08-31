@@ -1,6 +1,6 @@
 name: Gitea Actions Demo
 run-name: ${{ gitea.actor }} is testing out Gitea Actions 🚀
-on: [push]
+on: workflow_dispatch
 
 jobs:
   Explore-Gitea-Actions:
