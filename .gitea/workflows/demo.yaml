@@ -3,8 +3,7 @@ run-name: ${{ gitea.actor }} is testing out Gitea Actions 🚀
 on:
   pull_request:
     types: [labeled]
-    paths:
-      - 'linkstash_backend/**'
+
 jobs:
   Explore-Gitea-Actions:
     runs-on: ubuntu-latest
