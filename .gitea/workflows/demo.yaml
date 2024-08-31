@@ -2,7 +2,7 @@ name: Gitea Actions Demo
 run-name: ${{ gitea.actor }} is testing out Gitea Actions 🚀
 on:
   pull_request:
-    types: [labeled]
+
 
 jobs:
   Explore-Gitea-Actions:
