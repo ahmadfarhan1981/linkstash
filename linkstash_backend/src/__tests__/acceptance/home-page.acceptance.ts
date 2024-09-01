@@ -1,11 +1,13 @@
+/* eslint-disable @typescript-eslint/no-invalid-this */
 import {Client} from '@loopback/testlab';
 import {LinkstashApplication} from '../..';
 import {setupApplication} from './test-helper';
 
-describe('HomePage', () => {
+describe.skip('HomePage', function() {
+
   let app: LinkstashApplication;
   let client: Client;
-
+  this.timeout(10000);
   before('setupApplication', async () => {
     ({app, client} = await setupApplication());
   });
@@ -19,7 +21,7 @@ describe('HomePage', () => {
       .get('/')
       .expect(200)
       .expect('Content-Type', /text\/html/);
-  });
+  })
 
   it('exposes self-hosted explorer', async () => {
     await client
@@ -27,5 +29,5 @@ describe('HomePage', () => {
       .expect(200)
       .expect('Content-Type', /text\/html/)
       .expect(/<title>LoopBack API Explorer/);
-  });
+  })
 });

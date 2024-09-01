@@ -1,0 +1,25 @@
+name: Test backend
+run-name: ${{ github.actor }} triggered test
+on:
+  workflow_dispatch
+jobs:
+  Explore-Gitea-Actions:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./linkstash_backed
+    # strategy:
+    #   matrix:
+    #     node-version: [18.x, 20.x, 22.x]
+    #     # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:          
+          cache: 'npm'
+          node-version-file : '.nvmrc'
+      - run: npm ci
+      - run: npm test
+
+      
