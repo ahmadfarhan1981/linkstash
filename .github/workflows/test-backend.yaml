@@ -3,7 +3,7 @@ run-name: ${{ github.actor }} triggered test
 on:
   workflow_dispatch
 jobs:
-  Explore-Gitea-Actions:
+  test_backend:
     runs-on: ubuntu-latest
     defaults:
       run:
