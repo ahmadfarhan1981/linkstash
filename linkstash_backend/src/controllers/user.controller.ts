@@ -139,7 +139,7 @@ export class UserController {
           'application/json': {
             schema: {
               type: 'array',
-              items: getModelSchemaRef(User, {includeRelations: false}),
+              items: getModelSchemaRef(LinkStashUser, {includeRelations: false}),
             },
           },
         },
@@ -148,7 +148,7 @@ export class UserController {
   })
   async getUsers(
     @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
-  ): Promise<User[]> {
+  ): Promise<LinkStashUser[]> {
     return this.userRepository.find()
   }
 }

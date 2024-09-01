@@ -20,3 +20,8 @@ export type Archive = {
   "Content": string
   "bookmarkId": string
 }
+
+export type User = {
+  "id":string;
+  "username": string;  
+}

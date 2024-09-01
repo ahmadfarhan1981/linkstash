@@ -43,8 +43,7 @@ export function AuthenticationProvider({
       setIsPending(false);
     };
     const body = JSON.stringify({
-      strategy: "local",
-      email: username,
+      username: username,
       password: password,
     });
     const options: ApiCallOptions = {
