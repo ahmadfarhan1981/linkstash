@@ -1,7 +1,6 @@
 import {LinkStashUser, UserCredentials} from '../../models';
-import {ArchiveRepository, BookmarkRepository, TagRepository, UserRepository} from '../../repositories';
+import {ArchiveRepository, BookmarkRepository, TagRepository, UserCredentialsRepository, UserRepository} from '../../repositories';
 
-import {UserCredentialsRepository} from '@loopback/authentication-jwt';
 import {Getter} from '@loopback/core';
 import {testdb} from '../fixtures/datasources/testing.datasource';
 
