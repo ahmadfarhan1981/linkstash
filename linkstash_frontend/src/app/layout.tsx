@@ -31,9 +31,9 @@ export default function RootLayout({
     <Providers>
       <html lang="en">
         <body className={openSans.className}>
-          <div className="screen">
-            <Header />
-            <UserNavigationBar />
+          <div className="border-dashed border-x-2 relative screen">
+            <Header />                        
+            <UserNavigationBar />            
             <div className="left-spacer"></div>
             <div className="content">
               {/* //TODO fix loader. suspense? */}
@@ -42,6 +42,7 @@ export default function RootLayout({
               </Suspense>
             </div>
             <div className="right-spacer"></div>
+            
           </div>
         </body>
       </html>

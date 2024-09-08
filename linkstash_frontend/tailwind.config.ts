@@ -9,7 +9,10 @@ const config: Config = {
   theme: {
     extend: {
       colors:{
-        linkstashPurple : "#C400B3"
+        linkstashPurple : "hsl(305 100 38)",
+        bookmarkCardBG: "hsl(214, 100%, 97%)",
+        primaryBackground: "hsl(0, 0%, 98%)",
+        primaryText: "hsl(0, 0%, 27%)"
       }
     },
   },

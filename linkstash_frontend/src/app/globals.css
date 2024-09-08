@@ -10,6 +10,8 @@
   --loader-width: 50px;
   --loader-animation-duration: 700ms;
   box-sizing: inherit;
+  color:theme('colors.primaryText');
+  background-color: theme('colors.primaryBackground');
 }
 
 body {
@@ -54,7 +56,7 @@ code {
   }
 
   a:hover{
-    @apply underline
+    @apply underline text-linkstashPurple 
   }
   
   .form-input{
@@ -113,5 +115,8 @@ code {
     @apply bg-gray-300 text-black font-mono
   }
 
+  .readability h1, h2, h3{
+    @apply font-bold
+  }
 
 }

@@ -1,6 +1,6 @@
 
 .card{
-    @apply mt-4 border-0 p-0  bg-blue-50 gap-0 shadow
+    @apply mt-4 border-0 p-0  bg-bookmarkCardBG gap-0 shadow
 }
 .title{
     @apply text-blue-600  gap-0 m-0 p-0 font-bold tracking-tighter
