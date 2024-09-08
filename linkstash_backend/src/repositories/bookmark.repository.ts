@@ -3,14 +3,14 @@ import {DefaultTransactionalRepository, HasManyRepositoryFactory, repository} fr
 import {BookmarkDataSource} from '../datasources';
 import {Archive, Bookmark, BookmarkRelations} from '../models';
 import {ArchiveRepository} from './archive.repository';
-import {UserRepository} from './user.repository';
+import {LinkstashUserRepository} from './linkstash-user.repository';
 
 export class BookmarkRepository extends DefaultTransactionalRepository<Bookmark, typeof Bookmark.prototype.id, BookmarkRelations> {
   public readonly archives: HasManyRepositoryFactory<Archive, typeof Bookmark.prototype.id>;
 
   constructor(
     @inject('datasources.bookmark') dataSource: BookmarkDataSource,
-    @repository.getter('UserRepository') protected userRepositoryGetter: Getter<UserRepository>,
+    @repository.getter('UserRepository') protected userRepositoryGetter: Getter<LinkstashUserRepository>,
     @repository.getter('ArchiveRepository') protected archiveRepositoryGetter: Getter<ArchiveRepository>,
   ) {
     super(Bookmark, dataSource);

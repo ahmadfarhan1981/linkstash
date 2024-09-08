@@ -6,7 +6,7 @@ import {Response, RestBindings, del, get, getModelSchemaRef, param, patch, post,
 import {SecurityBindings, UserProfile, securityId} from '@loopback/security';
 import {difference, remove, uniq} from 'lodash';
 import {Bookmark, BookmarkWithRelations, Tag} from '../models';
-import {ArchiveRepository, BookmarkRepository, TagRepository, UserRepository} from '../repositories';
+import {ArchiveRepository, BookmarkRepository, LinkstashUserRepository, TagRepository} from '../repositories';
 import {LinkStashBookmarkService} from '../services/linkstash-bookmark.service';
 import {bookmarkPatchSchema} from '../types';
 //#endregion
@@ -16,10 +16,9 @@ export class BookmarkController {
   constructor(
     @repository(BookmarkRepository) public bookmarkRepository: BookmarkRepository,
     @repository(TagRepository) public tagRepository: TagRepository,
-    @repository(UserRepository) public userRepository: UserRepository,
-    @service(LinkStashBookmarkService) public bookmarkService: LinkStashBookmarkService
+    @repository(LinkstashUserRepository) public userRepository: LinkstashUserRepository,
+    @service(LinkStashBookmarkService) public bookmarkService: LinkStashBookmarkService,
   ) {}
-
 
   //readonly actions
   /**
@@ -29,7 +28,6 @@ export class BookmarkController {
    * - findAll
    *
    */
-
 
   // @intercept('interceptors.AddCountToResultInterceptor')
   @get('/bookmarks')
@@ -44,10 +42,11 @@ export class BookmarkController {
       },
     },
   })
-  async find(@inject(SecurityBindings.USER) currentUserProfile: UserProfile,
-  @repository(ArchiveRepository) archiveRepository: ArchiveRepository,
-  @param.filter(Bookmark) filter?: Filter<Bookmark>
-              ): Promise<Object> {
+  async find(
+    @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
+    @repository(ArchiveRepository) archiveRepository: ArchiveRepository,
+    @param.filter(Bookmark) filter?: Filter<Bookmark>,
+  ): Promise<Object> {
     const builder = new FilterBuilder(filter).impose({userId: currentUserProfile[securityId]});
     const resultFilter = builder.build();
     const allResultFilter: Filter<Bookmark> = JSON.parse(JSON.stringify(resultFilter));
@@ -56,10 +55,12 @@ export class BookmarkController {
     if (allResultFilter.skip) delete allResultFilter.skip;
 
     const all = await this.bookmarkRepository.find(allResultFilter);
-    const data = await this.bookmarkRepository.find(resultFilter)
+    const data = await this.bookmarkRepository.find(resultFilter);
     //TODO getting archive count might be expensive
-    const addArchiveCountToBookmark = async (bookmark:Bookmark )=>{ bookmark.archiveCount = await this.bookmarkService.getBookmarkMeta(bookmark.id!, archiveRepository ) }
-    await Promise.all(data.map(addArchiveCountToBookmark))
+    const addArchiveCountToBookmark = async (bookmark: Bookmark) => {
+      bookmark.archiveCount = await this.bookmarkService.getBookmarkMeta(bookmark.id!, archiveRepository);
+    };
+    await Promise.all(data.map(addArchiveCountToBookmark));
     const returnValue = {
       countAll: all.length,
       data: data,
@@ -72,23 +73,23 @@ export class BookmarkController {
     description: 'Bookmark model instance',
     content: {
       'application/json': {
-        schema: getModelSchemaRef(Bookmark, {includeRelations: true}) ,
+        schema: getModelSchemaRef(Bookmark, {includeRelations: true}),
       },
     },
   })
   async findById(
     @param.path.number('id') id: number,
     @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
-    @repository(UserRepository) userRepository: UserRepository,
+    @repository(LinkstashUserRepository) userRepository: LinkstashUserRepository,
     @repository(ArchiveRepository) archiveRepository: ArchiveRepository,
     @inject(RestBindings.Http.RESPONSE) res: Response,
     @param.filter(Bookmark, {exclude: 'where'}) filter?: FilterExcludingWhere<Bookmark>,
   ): Promise<BookmarkWithRelations> {
     const combinedUserFilter = new FilterBuilder<Bookmark>(filter).impose({userId: currentUserProfile[securityId], id: id}).build();
     const results = await userRepository.bookmarks(currentUserProfile['securityId']).find(combinedUserFilter);
-    if (results.length > 0){
+    if (results.length > 0) {
       const bookmark = results[0];
-      bookmark.archiveCount = await this.bookmarkService.getBookmarkMeta(bookmark.id!, archiveRepository )
+      bookmark.archiveCount = await this.bookmarkService.getBookmarkMeta(bookmark.id!, archiveRepository);
       return bookmark;
     }
 
@@ -121,9 +122,6 @@ export class BookmarkController {
     return returnValue;
   }
 
-
-
-
   //write actions
   /**
    * readwrite actions
@@ -132,7 +130,6 @@ export class BookmarkController {
    * - deleteByID
    *
    */
-
 
   @post('/bookmarks')
   @response(200, {
@@ -154,10 +151,10 @@ export class BookmarkController {
     bookmark: Omit<Bookmark, 'id'>,
   ): Promise<Bookmark> {
     bookmark.userId = currentUserProfile[securityId];
-    const transaction = await this.bookmarkRepository.beginTransaction(IsolationLevel.READ_COMMITTED)
+    const transaction = await this.bookmarkRepository.beginTransaction(IsolationLevel.READ_COMMITTED);
     const result = await this.bookmarkRepository.create(bookmark, transaction);
-    await this.linkAllTags(result, currentUserProfile[securityId], transaction, true)
-    await transaction.commit()
+    await this.linkAllTags(result, currentUserProfile[securityId], transaction, true);
+    await transaction.commit();
     return result;
     //return this.userRepository.bookmarks(id).create(bookmark);
   }
@@ -183,25 +180,18 @@ export class BookmarkController {
     const existing = await this.userRepository.bookmarks(currentUserProfile['securityId']).find({where: {id: id}});
     // console.log(existing);
     if (existing.length > 0) {
-      const oldTags = existing[0].tagList!
-      const newTagsToAdd = difference(bookmark.tagList, oldTags )
-      const oldTagsToRemove = difference(oldTags, bookmark.tagList!)
+      const oldTags = existing[0].tagList!;
+      const newTagsToAdd = difference(bookmark.tagList, oldTags);
+      const oldTagsToRemove = difference(oldTags, bookmark.tagList!);
       const transaction = await this.bookmarkRepository.beginTransaction();
-      if(oldTagsToRemove.length> 0 ){
-        await this.unlinkTagsFromBookmark(currentUserProfile[securityId],
-                                          oldTagsToRemove,
-                                          id,
-                                          transaction)
+      if (oldTagsToRemove.length > 0) {
+        await this.unlinkTagsFromBookmark(currentUserProfile[securityId], oldTagsToRemove, id, transaction);
       }
-      if(newTagsToAdd.length > 0 ){
-        await this.linkTagsToBookmark(currentUserProfile[securityId],
-                                      newTagsToAdd,
-                                      id,
-                                      transaction,
-                                      true)
+      if (newTagsToAdd.length > 0) {
+        await this.linkTagsToBookmark(currentUserProfile[securityId], newTagsToAdd, id, transaction, true);
       }
       await this.bookmarkRepository.updateAll(bookmark, {id: id}, transaction);
-      await transaction.commit()
+      await transaction.commit();
     } else {
       res.status(404);
       throw new Error(`Entity not found: Bookmark with id ${id}`);
@@ -220,10 +210,10 @@ export class BookmarkController {
     const existing = await this.userRepository.bookmarks(currentUserProfile[securityId]).find({where: {id: id}});
     if (existing.length > 0) {
       //TODO transaction
-      const transaction = await this.bookmarkRepository.beginTransaction(IsolationLevel.READ_COMMITTED)
-      await this.unlinkAllTags(existing[0],currentUserProfile[securityId], transaction)
+      const transaction = await this.bookmarkRepository.beginTransaction(IsolationLevel.READ_COMMITTED);
+      await this.unlinkAllTags(existing[0], currentUserProfile[securityId], transaction);
       await this.bookmarkRepository.deleteById(id);
-      await transaction.commit()
+      await transaction.commit();
     } else {
       res.status(404);
       throw new Error(`Entity not found: Bookmark with id ${id}`);
@@ -233,75 +223,75 @@ export class BookmarkController {
   }
 
   // helper functions
-  async linkAllTags(bookmark:Bookmark, userID:string, transaction:Transaction, createNonExisting:boolean = false){
-    await this.linkTagsToBookmark(userID, bookmark.tagList!, bookmark.id!, transaction, createNonExisting)
+  async linkAllTags(bookmark: Bookmark, userID: string, transaction: Transaction, createNonExisting: boolean = false) {
+    await this.linkTagsToBookmark(userID, bookmark.tagList!, bookmark.id!, transaction, createNonExisting);
   }
-  async linkTagsToBookmark(userId:string, tags:string[], bookmarkId:number, transaction:Transaction, createNonExisting:boolean = false){
-    for(const tag of tags){
-      await this.linkTagToBookmark(userId, tag, bookmarkId, transaction, createNonExisting)
+  async linkTagsToBookmark(userId: string, tags: string[], bookmarkId: number, transaction: Transaction, createNonExisting: boolean = false) {
+    for (const tag of tags) {
+      await this.linkTagToBookmark(userId, tag, bookmarkId, transaction, createNonExisting);
     }
   }
 
-  async linkTagToBookmark(userId:string, tag:string, bookmarkId:number, transaction:Transaction, createNonExisting:boolean = false){
+  async linkTagToBookmark(userId: string, tag: string, bookmarkId: number, transaction: Transaction, createNonExisting: boolean = false) {
     const filter = new FilterBuilder<Tag>().impose({name: tag}).build();
-    const existingTag:Tag[] = await this.userRepository.tags(userId).find(filter, transaction);
-      if(existingTag.length === 0){
-        if(createNonExisting){
-          //create
-          const newTag: Partial<Omit<Tag, 'id'>> = {name: tag, bookmarkIds: [bookmarkId]};
+    const existingTag: Tag[] = await this.userRepository.tags(userId).find(filter, transaction);
+    if (existingTag.length === 0) {
+      if (createNonExisting) {
+        //create
+        const newTag: Partial<Omit<Tag, 'id'>> = {name: tag, bookmarkIds: [bookmarkId]};
         await this.userRepository.tags(userId).create(newTag, transaction);
-        }else{
-          //log exists
-          //exit
-          return
-        }
+      } else {
+        //log exists
+        //exit
+        return;
       }
-
-      if (existingTag.length === 1) {
-        if(!(existingTag[0].bookmarkIds.includes(bookmarkId))){
-          const bookmarkIds =  uniq(existingTag[0].bookmarkIds.slice())
-          bookmarkIds.push(bookmarkId)
-          const tagData:Partial<Omit<Tag, 'id' | 'numBookmarks' >> = { bookmarkIds: bookmarkIds };
-          await this.tagRepository.updateById(existingTag[0].id, tagData, transaction);
-        }else{
-          // log if linked
-          //exit
-          return
-        }
-      }else{
-      //log unexpected more than 1 tag
-      }
-  }
-
-
-  async unlinkAllTags(bookmark:Bookmark, userID:string, transaction:Transaction){
-    if(!bookmark.tagList) return
-    await this.unlinkTagsFromBookmark(userID, bookmark.tagList!, bookmark.id!, transaction)
-  }
-
-  async unlinkTagsFromBookmark(userId:string, tags:string[], bookmarkId:number, transaction:Transaction){
-    for(const tag of tags){
-      await this.unlinkTagFromBookmark(userId, tag, bookmarkId, transaction)
     }
-  }
-
-  async unlinkTagFromBookmark(userId:string, tag:string, bookmarkId:number, transaction:Transaction){
-    const filter = new FilterBuilder<Tag>().impose({name: tag}).build();
-    const existingTag:Tag[] = await this.userRepository.tags(userId).find(filter, transaction);
 
     if (existingTag.length === 1) {
-      const tagToUpdate = existingTag[0]
-      if(tagToUpdate.bookmarkIds.length===0){
-        await this.tagRepository.deleteById(tagToUpdate.id)
-      }else{
-        const bookmarkIds =  uniq(existingTag[0].bookmarkIds.slice())
-        remove(bookmarkIds, (element)=>{return element === bookmarkId})
-        const tagData:Partial<Omit<Tag, 'id' | 'numBookmarks' >> = {bookmarkIds: bookmarkIds };
+      if (!existingTag[0].bookmarkIds.includes(bookmarkId)) {
+        const bookmarkIds = uniq(existingTag[0].bookmarkIds.slice());
+        bookmarkIds.push(bookmarkId);
+        const tagData: Partial<Omit<Tag, 'id' | 'numBookmarks'>> = {bookmarkIds: bookmarkIds};
+        await this.tagRepository.updateById(existingTag[0].id, tagData, transaction);
+      } else {
+        // log if linked
+        //exit
+        return;
+      }
+    } else {
+      //log unexpected more than 1 tag
+    }
+  }
+
+  async unlinkAllTags(bookmark: Bookmark, userID: string, transaction: Transaction) {
+    if (!bookmark.tagList) return;
+    await this.unlinkTagsFromBookmark(userID, bookmark.tagList!, bookmark.id!, transaction);
+  }
+
+  async unlinkTagsFromBookmark(userId: string, tags: string[], bookmarkId: number, transaction: Transaction) {
+    for (const tag of tags) {
+      await this.unlinkTagFromBookmark(userId, tag, bookmarkId, transaction);
+    }
+  }
+
+  async unlinkTagFromBookmark(userId: string, tag: string, bookmarkId: number, transaction: Transaction) {
+    const filter = new FilterBuilder<Tag>().impose({name: tag}).build();
+    const existingTag: Tag[] = await this.userRepository.tags(userId).find(filter, transaction);
+
+    if (existingTag.length === 1) {
+      const tagToUpdate = existingTag[0];
+      if (tagToUpdate.bookmarkIds.length === 0) {
+        await this.tagRepository.deleteById(tagToUpdate.id);
+      } else {
+        const bookmarkIds = uniq(existingTag[0].bookmarkIds.slice());
+        remove(bookmarkIds, element => {
+          return element === bookmarkId;
+        });
+        const tagData: Partial<Omit<Tag, 'id' | 'numBookmarks'>> = {bookmarkIds: bookmarkIds};
         await this.tagRepository.updateById(tagToUpdate.id, tagData, transaction);
       }
-    }else{
+    } else {
       //log unexpected
     }
   }
-
 }

@@ -1,20 +1,22 @@
-import {LinkStashUser, UserCredentials} from '../../models';
-import {ArchiveRepository, BookmarkRepository, TagRepository, UserCredentialsRepository, UserRepository} from '../../repositories';
+import {LinkstashUser, UserCredentials} from '../../models';
+import {ArchiveRepository, BookmarkRepository, LinkstashUserRepository, TagRepository, UserCredentialsRepository, UserSettingsRepository} from '../../repositories';
 
 import {Getter} from '@loopback/core';
 import {testdb} from '../fixtures/datasources/testing.datasource';
 
 export async function givenEmptyDatabase() {
-  let user: UserRepository;
+  let user: LinkstashUserRepository;
   let tag: TagRepository;
   let credentials: UserCredentialsRepository;
   let bookmark: BookmarkRepository;
   let archive: ArchiveRepository;
-  user = new UserRepository(
+  let settings: UserSettingsRepository;
+  user = new LinkstashUserRepository(
     testdb,
     async () => credentials,
     async () => bookmark,
     async () => tag,
+    async () => settings,
   );
   tag = new TagRepository(
     testdb,
@@ -38,8 +40,8 @@ export async function givenEmptyDatabase() {
   return {user, tag, credentials, bookmark, archive};
 }
 
-export function givenUserData(data?: Partial<LinkStashUser>) {
-  const defaultUserData: LinkStashUser = new LinkStashUser({
+export function givenUserData(data?: Partial<LinkstashUser>) {
+  const defaultUserData: LinkstashUser = new LinkstashUser({
     username: 'a.username',
     id: 'f9048fc2-a3ec-45eb-8c93-23606df07cf0',
   });
@@ -55,11 +57,11 @@ export function givenCredentialData(data?: Partial<UserCredentials>) {
   return Object.assign(defaultCredentialsData, data);
 }
 
-export async function givenUser(credentials: Getter<UserCredentialsRepository>, bookmark: Getter<BookmarkRepository>, tag: Getter<TagRepository>, data?: Partial<LinkStashUser>) {
-  return new UserRepository(testdb, credentials, bookmark, tag).create(givenUserData(data));
+export async function givenUser(credentials: Getter<UserCredentialsRepository>, bookmark: Getter<BookmarkRepository>, tag: Getter<TagRepository>, settings:Getter<UserSettingsRepository>, data?: Partial<LinkstashUser>) {
+  return new LinkstashUserRepository(testdb, credentials, bookmark, tag, settings).create(givenUserData(data));
 }
 
-export async function givenAppendUser(userRepo: UserRepository, data?: Partial<LinkStashUser>) {
+export async function givenAppendUser(userRepo: LinkstashUserRepository, data?: Partial<LinkstashUser>) {
   const user = givenUserData(data);
   return userRepo.create(user);
 }

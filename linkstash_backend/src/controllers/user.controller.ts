@@ -3,8 +3,6 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-import {LinkStashUser} from '../models';
-import {UserRepository} from '../repositories';
 import {authenticate, TokenService} from '@loopback/authentication';
 import {
   TokenServiceBindings,
@@ -21,16 +19,32 @@ import {
 import {SecurityBindings, securityId} from '@loopback/security';
 import {genSalt, hash} from 'bcryptjs';
 import _ from 'lodash';
+import {LinkstashUser} from '../models';
+import {LinkstashUserRepository} from '../repositories';
 import {LinkStashUserService} from '../services';
 import {Credentials, CredentialsRequestBody, UserProfile} from '../types';
 
 @model()
-export class NewUserRequest extends LinkStashUser {
+export class NewUserRequest extends LinkstashUser {
   @property({
     type: 'string',
     required: true,
   })
   password: string;
+}
+
+export class ChangePasswordRequest{
+  @property({
+    type: 'string',
+    required: true,
+  })
+  newPassword: string;
+
+  @property({
+    type: 'string',
+    required: true,
+  })
+  userId : string;
 }
 export class UserController {
   constructor(
@@ -38,7 +52,7 @@ export class UserController {
     public jwtService: TokenService,
     @inject(UserServiceBindings.USER_SERVICE)
     public userService: LinkStashUserService,
-    @repository(UserRepository) protected userRepository: UserRepository,
+    @repository(LinkstashUserRepository) protected userRepository: LinkstashUserRepository,
     @inject(SecurityBindings.USER, {optional: true})
     public user: UserProfile | undefined,
   ) {}
@@ -104,7 +118,7 @@ export class UserController {
         content: {
           'application/json': {
             schema: {
-              'x-ts-type': LinkStashUser,
+              'x-ts-type': LinkstashUser,
             },
           },
         },
@@ -122,7 +136,7 @@ export class UserController {
       },
     })
     newUserRequest: NewUserRequest,
-  ): Promise<LinkStashUser> {
+  ): Promise<LinkstashUser> {
     const password = await hash(newUserRequest.password, await genSalt());
     const savedUser = await this.userRepository.create(
       _.omit(newUserRequest, 'password'),
@@ -139,7 +153,7 @@ export class UserController {
           'application/json': {
             schema: {
               type: 'array',
-              items: getModelSchemaRef(LinkStashUser, {includeRelations: false}),
+              items: getModelSchemaRef(LinkstashUser, {includeRelations: false}),
             },
           },
         },
@@ -148,7 +162,47 @@ export class UserController {
   })
   async getUsers(
     @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
-  ): Promise<LinkStashUser[]> {
+  ): Promise<LinkstashUser[]> {
+
     return this.userRepository.find()
   }
+
+  @authenticate('jwt')
+  @get('/change-password', {
+    responses: {
+      '200': {
+        content: {
+          'application/json': {
+            schema: {
+              type: 'array',
+              items: getModelSchemaRef(LinkstashUser, {includeRelations: false}),
+            },
+          },
+        },
+      }
+    },
+  })
+  async changePassword(
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: getModelSchemaRef(ChangePasswordRequest, {
+            title: 'Change password details',
+          }),
+        },
+      },
+    })
+    changePasswordRequest: ChangePasswordRequest,
+    @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
+  ): Promise<LinkstashUser[]> {
+    const isUserAdmin = true;
+    if(changePasswordRequest.userId === currentUserProfile[securityId] || isUserAdmin){
+      console.log("as")
+    }
+    return this.userRepository.find()
+  }
+
+
+
+
 }
