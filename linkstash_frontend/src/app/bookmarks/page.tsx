@@ -106,7 +106,7 @@ export default function Home() {
   return (
     <AuthenticatedSection>
       <Loader isLoading={isLoading} text="Loading bookmarks">
-        <div className={styles["bookmarks-page"]}>
+        <div className={styles["bookmarks-page"] }>
           <div className={styles["bookmark-list"]}>
             <div className="">
               <BookmarksToolbar
@@ -140,8 +140,10 @@ export default function Home() {
               />
             </div>
           </div>
-          <div className={styles["tag-cloud"]}>
+          <div className="relative">
+          <div className={styles["tag-cloud"] + " sticky top-16" }>
             <TagCloud allFilterTags={allFilterTags} anyFilterTags={anyFilterTags} />
+          </div>
           </div>
         </div>
       </Loader>

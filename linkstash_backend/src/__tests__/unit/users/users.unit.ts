@@ -60,5 +60,9 @@ describe('Controller (unit)', () => {
     describe('/signup', () => {
       it('creates new user on signup');
     });
+    describe('/change-password', () => {
+      it('allows user change own password');
+      it('allows user to change any password if user is an user admin');
+    });
   });
 });

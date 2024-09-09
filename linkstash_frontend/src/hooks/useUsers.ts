@@ -1,7 +1,7 @@
-import { ApiCallOptions, Bookmark, TagListItem, User } from "@/types";
-import { EMPTY_FUNCTION, makeApiCall, whereStringBuilder } from "@/scripts";
+import { ApiCallOptions, User } from "@/types";
+import { makeApiCall } from "@/scripts";
 import React, { useState } from "react";
-import {ListData} from 'react-stately'
+
 
 import { useAuthentication } from "@/hooks";
 
@@ -9,10 +9,7 @@ export type useUsersReturnValue = {
   users: User[];
   setUsers: React.Dispatch<React.SetStateAction<User[]>>;
   fetchUsers: (options:fetchUsersOptions) => void;
-  deleteBookmark: (bookmarkId:number, onSuccess:()=>void)=>void
-  archiveBookmark: (bookmarkId:number, onSuccess: ()=>void)=>void
   isLoading: boolean;
-  numNonPagedResults: number;
 };
 
 
@@ -25,21 +22,6 @@ export type fetchUsersOptions = {
 //   perPage: number;
 //   filter: string;
 }
-
-
-// function generateRequestParams(options:fetchUsersOptions):Record<string, any> {
-//   const {sortBy, sortDirection, page, perPage, filter, anyTags, allTags} = options;
-//   const offset = ( page - 1 ) * perPage;  
-//   const filterStringFilter =`,${whereStringBuilder(filter, anyTags, allTags)}`
-
-//   const filterString = `{
-//     "skip" :${offset},
-//     "limit": ${perPage},
-//     "order": "${sortBy} ${sortDirection}"
-//     ${filterStringFilter}
-//   }`
-//   return {"filter":filterString}
-// }
 
 export function useUsers(): useUsersReturnValue {
   const [users, setUsers] = useState<User[]>([]);
@@ -107,9 +89,7 @@ export function useUsers(): useUsersReturnValue {
   return {
     users: users,
     setUsers: setUsers,
-    fetchUsers,
-    // deleteBookmark,
-    // archiveBookmark,
+    fetchUsers,    
     isLoading    
   };
 }

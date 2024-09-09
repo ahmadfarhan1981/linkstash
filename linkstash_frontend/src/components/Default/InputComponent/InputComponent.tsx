@@ -3,8 +3,10 @@ import React, { ChangeEvent, ChangeEventHandler } from "react";
 import { InputConfig } from './types'
 import styles from "./InputComponent.module.css";
 
-export function InputComponent(
-  config: InputConfig = {
+
+//TODO prop types
+export function InputComponent(  
+  config: InputConfig & ( React.HTMLProps<HTMLInputElement> & React.HTMLProps<HTMLTextAreaElement> ) = {
     type: "text",
     id: "",
     name: "",
@@ -17,6 +19,7 @@ export function InputComponent(
     labelWidth: 90,
     labelAuto: false,
     defaultValue: "",
+    className: "",          
   }
 ) {
   const {
@@ -34,31 +37,34 @@ export function InputComponent(
     pattern,
     labelWidth,
     labelAuto,
-    defaultValue
+    defaultValue,
+    className,
+    ... props    
   } = config;
 
   
-  // if(!handleOnInvalid) 
+  
 
-  if(type==="textarea")  return (
+  if(type==="textarea") 
+    { return (
     <label className={styles["form-label"]}>
     <span className="inline-block mr-2 w-[90px] align-top">{label}{" "}</span>
-    <textarea      
+    <textarea
       name={name}        
       autoFocus={autofocus}
       autoComplete={autocomplete}
       placeholder={placeholder}
-      className={styles["form-input"].concat(" form-input")}
+      className={styles["form-input"].concat(" form-input ").concat( className? className : "" )}
       required={required}
       id={id}
-      onChange={handleChange as ChangeEventHandler<HTMLTextAreaElement>}
+      onChange={(handleChange as ChangeEventHandler<HTMLTextAreaElement>)}
       disabled= {disabled }
       value={value}
       defaultValue={defaultValue}
-      
+      {...props}        
     />
   </label>);
-
+    }
   return (
     <>
     <label className={styles["form-label"]} >
@@ -69,14 +75,15 @@ export function InputComponent(
         autoFocus={autofocus}
         autoComplete={autocomplete}
         placeholder={placeholder}
-        className={styles["form-input"].concat(" form-input")}
+        className={styles["form-input"].concat(" form-input ").concat( className? className : "" )}
         required={required}
         id={id}
-        onChange={handleChange as ChangeEventHandler<HTMLInputElement>}
+        onChange={handleChange as React.ChangeEventHandler<HTMLInputElement>}
         disabled= {disabled }
         value={value}
         pattern={pattern}
         defaultValue={defaultValue}
+        {...props}    
         // onKeyDown={(e=>console.log( e))}
         // onInvalid={e=>(e.target as HTMLInputElement).setCustomValidity('arroooooo')}
        

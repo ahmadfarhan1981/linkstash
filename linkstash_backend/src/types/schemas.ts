@@ -17,8 +17,30 @@ const CredentialsSchema: SchemaObject = {
     },
     password: {
       type: 'string',
-      minLength: 8,
+      // minLength: 8,
     },
+  },
+};
+
+const ChangePasswordSchema: SchemaObject = {
+  type: 'object',
+  required: ['userId', 'newPassword'],
+  properties: {
+    userId: {
+      type: 'string',
+    },
+    newPassword: {
+      type: 'string',
+      // minLength: 8,
+    },
+  },
+};
+
+export const ChangePasswordRequestBody = {
+  description: 'The input of change password',
+  required: true,
+  content: {
+    'application/json': {schema: ChangePasswordSchema},
   },
 };
 
@@ -29,6 +51,5 @@ export const CredentialsRequestBody = {
     'application/json': {schema: CredentialsSchema},
   },
 };
-
 
 export const bookmarkPatchSchema = getModelSchemaRef(Bookmark, {title: 'Bookmark patch schema', partial: true, exclude: ['userId', 'id']});
