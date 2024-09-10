@@ -11,6 +11,13 @@ export class Archive extends Entity {
   ArchiveId: string;
 
   @property({
+    type: 'string',
+    required: true,
+    index: true
+  })
+  UserId: string;
+
+  @property({
     type: 'number',
     required: true,
     jsonSchema: {

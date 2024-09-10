@@ -5,15 +5,15 @@
 
 import {authenticate, TokenService} from '@loopback/authentication';
 import {TokenServiceBindings, UserServiceBindings} from '@loopback/authentication-jwt';
-import {inject} from '@loopback/core';
-import {model, property, repository} from '@loopback/repository';
-import {get, getModelSchemaRef, HttpErrors, post, requestBody} from '@loopback/rest';
+import {inject, service} from '@loopback/core';
+import {IsolationLevel, model, property, repository} from '@loopback/repository';
+import {del, get, getModelSchemaRef, HttpErrors, param, post, requestBody, Response, response, RestBindings} from '@loopback/rest';
 import {SecurityBindings, securityId} from '@loopback/security';
 import {genSalt, hash} from 'bcryptjs';
 import _ from 'lodash';
 import {LinkstashUser} from '../models';
-import {LinkstashUserRepository} from '../repositories';
-import {LinkStashUserService} from '../services';
+import {ArchiveRepository, LinkstashUserRepository, UserCredentialsRepository, UserPermissionsRepository} from '../repositories';
+import {ArchiveService, LinkStashUserService} from '../services';
 import {ChangePasswordRequestBody, Credentials, CredentialsRequestBody, UserProfile} from '../types';
 
 @model()
@@ -128,10 +128,10 @@ export class UserController {
     newUserRequest: NewUserRequest,
   ): Promise<LinkstashUser> {
     const password = await hash(newUserRequest.password, await genSalt());
-    const transaction = await this.userRepository.beginTransaction()
+    const transaction = await this.userRepository.beginTransaction();
     const savedUser = await this.userRepository.create(_.omit(newUserRequest, 'password'), transaction);
     await this.userRepository.userCredentials(savedUser.id).create({password}, transaction);
-    await this.userRepository.userSettings(savedUser.id).create({isUserAdmin:false}, transaction)
+    await this.userRepository.userPermissions(savedUser.id).create({isUserAdmin: false}, transaction);
     await transaction.commit();
     return savedUser;
   }
@@ -162,16 +162,60 @@ export class UserController {
     },
   })
   async changePassword(
-    @requestBody(ChangePasswordRequestBody)changePasswordRequest: ChangePasswordRequest,
+    @requestBody(ChangePasswordRequestBody) changePasswordRequest: ChangePasswordRequest,
     @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
   ): Promise<undefined> {
     const currentUserId = currentUserProfile[securityId];
-    const isUserAdmin = (await this.userRepository.userSettings(currentUserId).get()).isUserAdmin;
+    const isUserAdmin = (await this.userRepository.userPermissions(currentUserId).get()).isUserAdmin;
     const newPassword = await hash(changePasswordRequest.newPassword, await genSalt());
     if (changePasswordRequest.userId === currentUserProfile[securityId] || isUserAdmin) {
       await this.userRepository.userCredentials(changePasswordRequest.userId).patch({password: newPassword});
     } else {
       throw new HttpErrors.Forbidden('Unauthorized');
     }
+  }
+
+  @authenticate('jwt')
+  @del('/users/{id}')
+  @response(204, {
+    description: 'User DELETE success',
+  })
+  async deleteById(
+    @param.path.string('id') id: string,
+    @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
+    @inject(RestBindings.Http.RESPONSE) res: Response,
+    @repository(ArchiveRepository) archiveRepository: ArchiveRepository,
+    @service(ArchiveService) archiveService: ArchiveService,
+    @repository(UserCredentialsRepository) credentialsRepository: UserCredentialsRepository,
+    @repository(UserPermissionsRepository) permissionsRepository: UserPermissionsRepository,
+  ): Promise<void> {
+    const existing = await this.userRepository.findById(id);
+    if (existing) {
+      /**
+       * TODO figure out safer way to do deletion.
+       *
+       * This is optimistic, it assumes nothing will go wrong during deletion.
+       *
+       * Currently it has to be before the transaction becuase it still query the DB to get all
+       * the asset that needs to be deleted.
+       *
+       * Need to cache it somewhere so that we can delete it after transaction is completed
+       *
+       **/
+      await archiveService.removeLocalAssetByUser(id);
+      const transaction = await this.userRepository.beginTransaction(IsolationLevel.READ_COMMITTED);
+      await this.userRepository.bookmarks(id).delete({}, {transaction});
+      await this.userRepository.tags(id).delete({}, {transaction});
+      await archiveRepository.deleteAll({UserId: id}, transaction);
+      await credentialsRepository.deleteAll({userId: id}, transaction);
+      await permissionsRepository.deleteAll({userId: id}, transaction);
+      await this.userRepository.deleteById(id, {transaction});
+      await transaction.commit();
+    } else {
+      res.status(404);
+      throw new Error(`Entity not found: User with id ${id}`);
+    }
+
+    //await this.bookmarkRepository.deleteById(id);
   }
 }

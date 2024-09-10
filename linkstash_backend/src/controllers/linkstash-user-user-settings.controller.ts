@@ -1,30 +1,10 @@
-import {
-  Count,
-  CountSchema,
-  Filter,
-  repository,
-  Where,
-} from '@loopback/repository';
-import {
-  del,
-  get,
-  getModelSchemaRef,
-  getWhereSchemaFor,
-  param,
-  patch,
-  post,
-  requestBody,
-} from '@loopback/rest';
-import {
-  LinkstashUser,
-  UserSettings,
-} from '../models';
+import {Count, CountSchema, Filter, repository, Where} from '@loopback/repository';
+import {del, get, getModelSchemaRef, getWhereSchemaFor, param, patch, post, requestBody} from '@loopback/rest';
+import {LinkstashUser, UserPermissions} from '../models';
 import {LinkstashUserRepository} from '../repositories';
 
 export class LinkstashUserUserSettingsController {
-  constructor(
-    @repository(LinkstashUserRepository) protected linkstashUserRepository: LinkstashUserRepository,
-  ) { }
+  constructor(@repository(LinkstashUserRepository) protected linkstashUserRepository: LinkstashUserRepository) {}
 
   @get('/linkstash-users/{id}/user-settings', {
     responses: {
@@ -32,24 +12,21 @@ export class LinkstashUserUserSettingsController {
         description: 'LinkstashUser has one UserSettings',
         content: {
           'application/json': {
-            schema: getModelSchemaRef(UserSettings),
+            schema: getModelSchemaRef(UserPermissions),
           },
         },
       },
     },
   })
-  async get(
-    @param.path.string('id') id: string,
-    @param.query.object('filter') filter?: Filter<UserSettings>,
-  ): Promise<UserSettings> {
-    return this.linkstashUserRepository.userSettings(id).get(filter);
+  async get(@param.path.string('id') id: string, @param.query.object('filter') filter?: Filter<UserPermissions>): Promise<UserPermissions> {
+    return this.linkstashUserRepository.userPermissions(id).get(filter);
   }
 
   @post('/linkstash-users/{id}/user-settings', {
     responses: {
       '200': {
         description: 'LinkstashUser model instance',
-        content: {'application/json': {schema: getModelSchemaRef(UserSettings)}},
+        content: {'application/json': {schema: getModelSchemaRef(UserPermissions)}},
       },
     },
   })
@@ -58,15 +35,16 @@ export class LinkstashUserUserSettingsController {
     @requestBody({
       content: {
         'application/json': {
-          schema: getModelSchemaRef(UserSettings, {
+          schema: getModelSchemaRef(UserPermissions, {
             title: 'NewUserSettingsInLinkstashUser',
-            exclude: ['userId']
+            exclude: ['userId'],
           }),
         },
       },
-    }) userSettings: Omit<UserSettings, 'UserId'>,
-  ): Promise<UserSettings> {
-    return this.linkstashUserRepository.userSettings(id).create(userSettings);
+    })
+    userSettings: Omit<UserPermissions, 'UserId'>,
+  ): Promise<UserPermissions> {
+    return this.linkstashUserRepository.userPermissions(id).create(userSettings);
   }
 
   @patch('/linkstash-users/{id}/user-settings', {
@@ -82,14 +60,14 @@ export class LinkstashUserUserSettingsController {
     @requestBody({
       content: {
         'application/json': {
-          schema: getModelSchemaRef(UserSettings, {partial: true}),
+          schema: getModelSchemaRef(UserPermissions, {partial: true}),
         },
       },
     })
-    userSettings: Partial<UserSettings>,
-    @param.query.object('where', getWhereSchemaFor(UserSettings)) where?: Where<UserSettings>,
+    userSettings: Partial<UserPermissions>,
+    @param.query.object('where', getWhereSchemaFor(UserPermissions)) where?: Where<UserPermissions>,
   ): Promise<Count> {
-    return this.linkstashUserRepository.userSettings(id).patch(userSettings, where);
+    return this.linkstashUserRepository.userPermissions(id).patch(userSettings, where);
   }
 
   @del('/linkstash-users/{id}/user-settings', {
@@ -100,10 +78,7 @@ export class LinkstashUserUserSettingsController {
       },
     },
   })
-  async delete(
-    @param.path.string('id') id: string,
-    @param.query.object('where', getWhereSchemaFor(UserSettings)) where?: Where<UserSettings>,
-  ): Promise<Count> {
-    return this.linkstashUserRepository.userSettings(id).delete(where);
+  async delete(@param.path.string('id') id: string, @param.query.object('where', getWhereSchemaFor(UserPermissions)) where?: Where<UserPermissions>): Promise<Count> {
+    return this.linkstashUserRepository.userPermissions(id).delete(where);
   }
 }

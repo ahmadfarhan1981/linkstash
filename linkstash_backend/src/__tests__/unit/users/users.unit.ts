@@ -64,5 +64,10 @@ describe('Controller (unit)', () => {
       it('allows user change own password');
       it('allows user to change any password if user is an user admin');
     });
+    describe('DEL /user/${id}', () => {
+      it('deletes user')
+      it('doesnt leave any bookmarks, tags, archive, credentials and permissions behind for deleted users');
+    });
+
   });
 });

@@ -1,7 +1,7 @@
 import {Entity, model, property} from '@loopback/repository';
 
 @model()
-export class UserSettings extends Entity {
+export class UserPermissions extends Entity {
   @property({
     type: 'boolean',
     required: true,
@@ -19,13 +19,13 @@ export class UserSettings extends Entity {
   })
   userId: string;
 
-  constructor(data?: Partial<UserSettings>) {
+  constructor(data?: Partial<UserPermissions>) {
     super(data);
   }
 }
 
-export interface UserSettingsRelations {
+export interface UserPermissionsRelations {
   // describe navigational properties here
 }
 
-export type UserSettingsWithRelations = UserSettings & UserSettingsRelations;
+export type UserPermissionsWithRelations = UserPermissions & UserPermissionsRelations;

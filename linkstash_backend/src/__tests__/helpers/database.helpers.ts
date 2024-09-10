@@ -1,5 +1,5 @@
 import {LinkstashUser, UserCredentials} from '../../models';
-import {ArchiveRepository, BookmarkRepository, LinkstashUserRepository, TagRepository, UserCredentialsRepository, UserSettingsRepository} from '../../repositories';
+import {ArchiveRepository, BookmarkRepository, LinkstashUserRepository, TagRepository, UserCredentialsRepository, UserPermissionsRepository} from '../../repositories';
 
 import {Getter} from '@loopback/core';
 import {testdb} from '../fixtures/datasources/testing.datasource';
@@ -10,13 +10,13 @@ export async function givenEmptyDatabase() {
   let credentials: UserCredentialsRepository;
   let bookmark: BookmarkRepository;
   let archive: ArchiveRepository;
-  let settings: UserSettingsRepository;
+  let permissions: UserPermissionsRepository;
   user = new LinkstashUserRepository(
     testdb,
     async () => credentials,
     async () => bookmark,
     async () => tag,
-    async () => settings,
+    async () => permissions,
   );
   tag = new TagRepository(
     testdb,
@@ -57,7 +57,7 @@ export function givenCredentialData(data?: Partial<UserCredentials>) {
   return Object.assign(defaultCredentialsData, data);
 }
 
-export async function givenUser(credentials: Getter<UserCredentialsRepository>, bookmark: Getter<BookmarkRepository>, tag: Getter<TagRepository>, settings:Getter<UserSettingsRepository>, data?: Partial<LinkstashUser>) {
+export async function givenUser(credentials: Getter<UserCredentialsRepository>, bookmark: Getter<BookmarkRepository>, tag: Getter<TagRepository>, settings:Getter<UserPermissionsRepository>, data?: Partial<LinkstashUser>) {
   return new LinkstashUserRepository(testdb, credentials, bookmark, tag, settings).create(givenUserData(data));
 }
 

@@ -6,11 +6,11 @@
 import {Getter, inject} from '@loopback/core';
 import {DefaultTransactionalRepository, HasManyRepositoryFactory, HasOneRepositoryFactory, juggler, repository} from '@loopback/repository';
 import {UserServiceBindings} from '../bindings/UserService.binding';
-import {Bookmark, LinkstashUser, Tag, UserCredentials, UserRelations, UserSettings} from '../models';
+import {Bookmark, LinkstashUser, Tag, UserCredentials, UserPermissions, UserRelations} from '../models';
 import {BookmarkRepository} from './bookmark.repository';
 import {TagRepository} from './tag.repository';
 import {UserCredentialsRepository} from './user-credentials.repository';
-import {UserSettingsRepository} from './user-settings.repository';
+import {UserPermissionsRepository} from './user-permissions.repository';
 
 export class LinkstashUserRepository extends DefaultTransactionalRepository<LinkstashUser, typeof LinkstashUser.prototype.id, UserRelations> {
   public readonly userCredentials: HasOneRepositoryFactory<UserCredentials, typeof LinkstashUser.prototype.id>;
@@ -19,17 +19,18 @@ export class LinkstashUserRepository extends DefaultTransactionalRepository<Link
 
   public readonly tags: HasManyRepositoryFactory<Tag, typeof LinkstashUser.prototype.id>;
 
-  public readonly userSettings: HasOneRepositoryFactory<UserSettings, typeof LinkstashUser.prototype.id>;
+  public readonly userPermissions: HasOneRepositoryFactory<UserPermissions, typeof LinkstashUser.prototype.id>;
 
   constructor(
     @inject(`datasources.${UserServiceBindings.DATASOURCE_NAME}`) dataSource: juggler.DataSource,
     @repository.getter('UserCredentialsRepository') protected userCredentialsRepositoryGetter: Getter<UserCredentialsRepository>,
     @repository.getter('BookmarkRepository') protected bookmarkRepositoryGetter: Getter<BookmarkRepository>,
-    @repository.getter('TagRepository') protected tagRepositoryGetter: Getter<TagRepository>, @repository.getter('UserSettingsRepository') protected userSettingsRepositoryGetter: Getter<UserSettingsRepository>,
+    @repository.getter('TagRepository') protected tagRepositoryGetter: Getter<TagRepository>,
+    @repository.getter('UserPermissionsRepository') protected userPermissionsRepositoryGetter: Getter<UserPermissionsRepository>,
   ) {
     super(LinkstashUser, dataSource);
-    this.userSettings = this.createHasOneRepositoryFactoryFor('userSettings', userSettingsRepositoryGetter);
-    this.registerInclusionResolver('userSettings', this.userSettings.inclusionResolver);
+    this.userPermissions = this.createHasOneRepositoryFactoryFor('userPermissions', userPermissionsRepositoryGetter);
+    this.registerInclusionResolver('userPermissions', this.userPermissions.inclusionResolver);
 
     this.bookmarks = this.createHasManyRepositoryFactoryFor('bookmarks', bookmarkRepositoryGetter);
     this.registerInclusionResolver('bookmarks', this.bookmarks.inclusionResolver);

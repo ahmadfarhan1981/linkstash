@@ -4,4 +4,4 @@ export * from './bookmark.repository';
 export * from './linkstash-user.repository';
 export * from './tag.repository';
 export * from './user-credentials.repository';
-export * from './user-settings.repository';
+export * from './user-permissions.repository';

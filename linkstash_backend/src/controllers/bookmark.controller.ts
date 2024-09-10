@@ -9,6 +9,7 @@ import {Bookmark, BookmarkWithRelations, Tag} from '../models';
 import {ArchiveRepository, BookmarkRepository, LinkstashUserRepository, TagRepository} from '../repositories';
 import {LinkStashBookmarkService} from '../services/linkstash-bookmark.service';
 import {bookmarkPatchSchema} from '../types';
+import {ArchiveService} from '../services';
 //#endregion
 
 @authenticate('jwt')
@@ -206,13 +207,25 @@ export class BookmarkController {
     @param.path.number('id') id: number,
     @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
     @inject(RestBindings.Http.RESPONSE) res: Response,
+    @service(ArchiveService) archiveService : ArchiveService,
+    @repository(ArchiveRepository) archiveRepository : ArchiveRepository,
   ): Promise<void> {
     const existing = await this.userRepository.bookmarks(currentUserProfile[securityId]).find({where: {id: id}});
     if (existing.length > 0) {
-      //TODO transaction
+      /**
+       * TODO figure out safer way to do deletion.
+       *
+       * Currently it has to be before the transaction becuase it still query the DB to get all
+       * the asset that needs to be deleted.
+       *
+       * Need to cache it somewhere so that we can delete it after transaction is completed
+       *
+       **/
+      await archiveService.removeLocalAssetByBookmark(id);
       const transaction = await this.bookmarkRepository.beginTransaction(IsolationLevel.READ_COMMITTED);
       await this.unlinkAllTags(existing[0], currentUserProfile[securityId], transaction);
-      await this.bookmarkRepository.deleteById(id);
+      await archiveRepository.deleteAll({bookmarkId:id}, transaction)
+      await this.bookmarkRepository.deleteById(id, transaction);
       await transaction.commit();
     } else {
       res.status(404);

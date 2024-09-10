@@ -7,8 +7,9 @@ import {JSDOM} from 'jsdom';
 import {createHash} from 'node:crypto';
 import fs from 'node:fs';
 import {Archive, Bookmark} from '../models';
-import {BookmarkRepository} from '../repositories';
-import {rimraf, rimrafSync} from 'rimraf';
+import {ArchiveRepository, BookmarkRepository} from '../repositories';
+import {rimrafSync} from 'rimraf';
+import {DataObject} from '@loopback/repository';
 async function downloadResource(url: string, downloadLocation: string): Promise<{success: boolean; error: string}> {
   try {
     const response = await axios.get(url, {responseType: 'arraybuffer'});
@@ -76,6 +77,8 @@ export class ArchiveService {
     /* Add @inject to inject parameters */
     @repository(BookmarkRepository)
     private bookmarkRepository: BookmarkRepository,
+    @repository(ArchiveRepository)
+    private archiveRepository: ArchiveRepository,
   ) {}
 
   /*
@@ -136,8 +139,9 @@ export class ArchiveService {
       });
 
       const contentToWrite = parsedDoc.serialize();
-      const archive = {
+      const archive:DataObject<Archive> = {
         ArchiveId: `${bookmark.id}-${version}`,
+        UserId: bookmark.userId,
         Content: contentToWrite,
         ContentBeforeProcess: contentBeforePost,
         Hash: hash,
@@ -160,4 +164,21 @@ export class ArchiveService {
     const assetLocations = getAssetLocations(bookmarkId,version)
     rimrafSync(assetLocations.LocalPath)
   }
+
+
+  async removeLocalAssetByUser(userId:string){
+    const archives = await this.archiveRepository.find({where:{UserId:userId}})
+    for( const archive of archives){
+      this.removeLocalAssets( archive.bookmarkId, archive.Version)
+    }
+  }
+
+
+  async removeLocalAssetByBookmark(bookmarkId:number){
+    const archives = await this.archiveRepository.find({where:{bookmarkId:bookmarkId}})
+    for( const archive of archives){
+      this.removeLocalAssets( archive.bookmarkId, archive.Version)
+    }
+  }
+
 }

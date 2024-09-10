@@ -7,11 +7,10 @@ import {Entity, hasMany, hasOne, model, property} from '@loopback/repository';
 import {Bookmark} from './bookmark.model';
 import {Tag} from './tag.model';
 import {UserCredentials} from './user-credentials.model';
-import {UserSettings} from './user-settings.model';
+import {UserPermissions} from './user-permissions.model';
 
 @model({
-  settings: {
-  },
+  settings: {},
 })
 export class LinkstashUser extends Entity {
   @property({
@@ -40,8 +39,8 @@ export class LinkstashUser extends Entity {
   @hasOne(() => UserCredentials, {keyTo: 'userId'})
   userCredentials: UserCredentials;
 
-  @hasOne(() => UserSettings, {keyTo: 'userId'})
-  userSettings: UserSettings;
+  @hasOne(() => UserPermissions, {keyTo: 'userId'})
+  userPermissions: UserPermissions;
 
   constructor(data?: Partial<LinkstashUser>) {
     super(data);

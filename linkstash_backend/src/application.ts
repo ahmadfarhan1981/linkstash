@@ -34,7 +34,7 @@ export class LinkstashApplication extends BootMixin(ServiceMixin(RepositoryMixin
       const password = await hash('password', await genSalt());
       const savedUser = await userRepo.create({username: 'admin'});
       await userRepo.userCredentials(savedUser.id).create({password});
-      await userRepo.userSettings(savedUser.id).create({isUserAdmin: true});
+      await userRepo.userPermissions(savedUser.id).create({isUserAdmin: true});
       console.log("User 'admin' created.");
     }
   }
