@@ -33,7 +33,7 @@ export const LinkStashDialog: React.FC<DialogProps> & {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center backdrop-blur-sm z-50">
       <div ref={dialogRef} className="bg-white p-4 rounded-lg">
         {children}
       </div>

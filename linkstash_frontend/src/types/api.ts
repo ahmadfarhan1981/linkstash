@@ -8,6 +8,9 @@ export type ApiEndpoint =
   | `/bookmarks/${number}`
   | '/tags'
   | '/users'
+  | `/users/${string}`
+  | '/change-password'
+  | '/signup'
 export type ApiMethod = "GET" | "POST" | "DELETE" | "PATCH" | "PUT";
 export type ApiCallOptions = {
   endpoint: ApiEndpoint;

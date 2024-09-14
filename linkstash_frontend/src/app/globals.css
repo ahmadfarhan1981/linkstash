@@ -34,6 +34,133 @@ code {
 }
 
 
+
+  /* Original version from 'react-confirm-alert/src/react-confirm-alert.css' */
+  body.react-confirm-alert-body-element {
+    overflow: hidden;
+  }
+  
+  .react-confirm-alert-blur {
+    filter: url(#gaussian-blur);
+    filter: blur(2px);
+    -webkit-filter: blur(2px);
+  }
+  
+  .react-confirm-alert-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 99;
+    background: rgba(255, 255, 255, 0.9);
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flex;
+    display: -o-flex;
+    display: flex;
+    justify-content: center;
+    -ms-align-items: center;
+    align-items: center;
+    opacity: 0;
+    -webkit-animation: react-confirm-alert-fadeIn 0.05s 0.02s forwards;
+    -moz-animation: react-confirm-alert-fadeIn 0.05s 0.02s forwards;
+    -o-animation: react-confirm-alert-fadeIn 0.05s 0.02s forwards;
+    animation: react-confirm-alert-fadeIn 0.05s 0.02s forwards;
+  }
+  
+  .react-confirm-alert-body {
+    /* font-family: Arial, Helvetica, sans-serif; */
+    font-weight: 600;
+    width: 400px;
+    padding: 30px;
+    text-align: left;
+    background: theme('colors.white');
+    border-radius: 10px;
+    box-shadow: 0 20px 75px rgba(0, 0, 0, 0.13);
+    color: #666;
+  }
+  
+  .react-confirm-alert-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  
+  .react-confirm-alert-body > h1 {
+    margin-top: 0;
+  }
+  
+  .react-confirm-alert-body > h3 {
+    margin: 0;
+    font-size: 16px;
+  }
+  
+  .react-confirm-alert-button-group {
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flex;
+    display: -o-flex;
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 20px;
+  }
+  
+  .react-confirm-alert-button-group > button {
+    outline: none;
+    background: var(--primary-color);
+    border: none;
+    display: inline-block;
+    padding: 6px 18px;
+    color:var(--text-on-primary);
+    margin-right: 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  
+  @-webkit-keyframes react-confirm-alert-fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  @-moz-keyframes react-confirm-alert-fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  @-o-keyframes react-confirm-alert-fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  @keyframes react-confirm-alert-fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  /* END REACT CONFIRM CSS */
+
+
+
+
+
 @layer components{
   .tag-autocomplete-item{
     @apply hover:cursor-pointer font-light bg-blue-100 mx-1 px-1 rounded border-purple-200  border-2 before:font-medium hover:bg-purple-300
@@ -70,6 +197,11 @@ code {
   .submit-button{
     @apply bg-linkstashPurple text-white py-1 px-3 rounded
   } 
+
+  .small-button{
+    @apply bg-linkstashPurple text-white px-3 rounded
+  } 
+
   .button{
     @apply text-linkstashPurple px-1 rounded
   } 
@@ -118,5 +250,4 @@ code {
   .readability h1, h2, h3{
     @apply font-bold
   }
-
 }

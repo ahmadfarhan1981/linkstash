@@ -156,7 +156,7 @@ export class UserController {
   }
 
   @authenticate('jwt')
-  @get('/change-password', {
+  @post('/change-password', {
     responses: {
       '204': {},
     },
