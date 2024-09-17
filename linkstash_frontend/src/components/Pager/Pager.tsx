@@ -37,8 +37,8 @@ export function Pager({
           id={`page_${i}`}
           className={
             i === currentPage
-              ? "text-linkstashPurple font-bold "
-              : "text-linkstashPurple underline underline-offset-1"
+              ? "text-accent font-bold "
+              : "text-accent underline underline-offset-1"
           }
         >
           {i}

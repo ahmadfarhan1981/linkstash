@@ -10,7 +10,7 @@ import {
 } from "react-aria-components";
 
 
-import { AuthenticatedSection, InputComponent, LinkStashDialog } from "@/components";
+import { AuthenticatedSection, ConfirmActionButton, InputComponent, LinkStashDialog } from "@/components";
 import { useAuthentication, useUsers } from "@/hooks";
 import React, { useEffect, useState } from "react";
 import { User } from "@/types";
@@ -61,52 +61,51 @@ export default function Home() {
 
   }
 
+ 
+
   const handlePasswordSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (selectedUser) {
-      
+    e.preventDefault();        
+    if (selectedUser) {      
       const form = e.currentTarget as HTMLFormElement;
-      const newPasswordInput = form.newPassword as HTMLInputElement;
-      
-      handlePasswordChange(selectedUser.id, newPasswordInput.value)
-      
+      const newPasswordInput = form.newPassword as HTMLInputElement;      
+      handlePasswordChange(selectedUser.id, newPasswordInput.value)      
     }
+    setIsDeleteUserdModalOpen(false);
   };
 
   const ChangePasswordDialog = () => (
     <LinkStashDialog isOpen={isChangePasswordModalOpen} onClose={() => setIsChangePasswordModalOpen(false)}>
       <LinkStashDialog.Title>Change Password</LinkStashDialog.Title>
-      <LinkStashDialog.Content>
-        <form onSubmit={handlePasswordSubmit}>
+      <form onSubmit={handlePasswordSubmit}>
+      <LinkStashDialog.Content>        
             <InputComponent
               type="password"
               id="newPassword"
               name="newPassword"
+              minLength={3}
               label={`New password for ${selectedUser?.username}`}
               labelAuto = {true}
               placeholder="New password"
               className="w-full p-2 border rounded"
               required
-            />          
-        </form>
+            />                  
         </LinkStashDialog.Content>
         <LinkStashDialog.Actions>
             <button
               type="button"
               onClick={() => setIsChangePasswordModalOpen(false)}
-              className="px-4 py-2 mr-2 bg-gray-200 rounded"
+              className="button mr-4 "
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 text-white rounded"
-              style={{ backgroundColor: "hsl(305, 100%, 38%)" }}
+              className="button accent-button"              
             >
               Change Password
             </button>
           </LinkStashDialog.Actions>
+        </form>
     </LinkStashDialog>
   );
 
@@ -114,28 +113,24 @@ export default function Home() {
 
     <LinkStashDialog isOpen={isDeleteUserdModalOpen} onClose={() => setIsDeleteUserdModalOpen(false)}>
       <LinkStashDialog.Title>Change Password</LinkStashDialog.Title>
+      <form action={(_data)=>{handleDeleteUser(user!.id)}}>
       <LinkStashDialog.Content>
-        <form onSubmit={handlePasswordSubmit}>
+        
             Aryou sure you want to delete {user?.username}
-        </form>
+        
         </LinkStashDialog.Content>
         <LinkStashDialog.Actions>
+          <ConfirmActionButton type="submit" className="mr-4">Yes</ConfirmActionButton> 
+            
             <button
               type="button"
-              
-              className="px-4 py-2 mr-2 bg-gray-200 rounded"
-              onClick={()=>{handleDeleteUser(user?.id)}}
-            >
-              Yes
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 mr-2 bg-gray-200 rounded"
-              onClick={() => setIsDeleteUserdModalOpen(false)}
+              className="px-4 py-2 mr-2 bg-gray-200 rounded"              
+              onClick={()=>{setIsDeleteUserdModalOpen(false)}}
             >
               No
             </button>
           </LinkStashDialog.Actions>
+        </form>
     </LinkStashDialog>
   );
 
@@ -175,14 +170,13 @@ export default function Home() {
             <button
               type="button"
               onClick={() => setIsNewUserModalOpen(false)}
-              className="px-4 py-2 mr-2 bg-gray-200 rounded"
+              className="button mr-4"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 text-white rounded"
-              style={{ backgroundColor: "hsl(305, 100%, 38%)" }}
+              className="button accent-button"              
             >
               OK
             </button>
@@ -231,38 +225,16 @@ export default function Home() {
     )
   }
 
-
-  const confirmDelete= (userId:string)=>{
-    const options = {
-      title: 'Delete user?',
-      message: 'Confirm delet user?',
-      buttons: [
-        {
-          label: 'Yes',
-          onClick: () => handleDeleteUser(userId)
-        },
-        {
-          label: 'No',
-          onClick: EMPTY_FUNCTION
-        }
-      ],
-      closeOnEscape: true,
-      closeOnClickOutside: true,
-      keyCodeForClose: [8, 32],  
-    };
-    
-    confirmAlert(options);
-  }
-
   return (
     <>    
       <AuthenticatedSection>
+        
         <ConfirmDeleteDialog user={selectedUser}/>
         <NewUserDialog />
-        <ChangePasswordDialog />
-        <div>User list</div>
-        {/* <progress value={75} max={100}></progress> */}
-        <div className="w-full grid py-2"><button className="submit-button place-self-end " onClick={()=>setIsNewUserModalOpen(true)}>Add user</button></div>
+        <ChangePasswordDialog />         
+        <div>User list</div>          
+        <div className="w-full grid py-2"><button className="button accent-button place-self-end " onClick={()=>setIsNewUserModalOpen(true)}>Add user</button></div>
+       
         <Table
           aria-label="Users"
           className={"border-[1px] border-black border-solid w-full"}
@@ -281,7 +253,7 @@ export default function Home() {
             {users.map((user: User) => (
               <Row
                 key={user.id}
-                className={"even:bg-slate-200 odd:bg-white text-linkstashPurple"}
+                className={"even:bg-slate-200 odd:bg-white text-accent"}
               >
                 <Cell className={""}>
                   <abbr title="This is a username">{user.username}</abbr>
@@ -290,17 +262,15 @@ export default function Home() {
                   <details>
                     <summary>Actions</summary>
                     <div className="*:m-1  *:rounded-lg ">
-                      <button
-                        // className=" submit-button bg-[hsl(305,100%,38%)] hover:bg-[hsl(305,100%,43%)] text-white border-black border-[1px]  hover:scale-110"
-                        className="small-button bg-primaryBackground drop-shadow text-primaryText border-black border-[1px]  hover:scale-105 "
+                      <button                        
+                        className="button small-button"
                         onClick={() => showPasswordChangeDialog(user)}
                       >
                         Change password
                       </button>
-                      <button
-                        // className=" submit-button bg-[hsl(305,100%,38%)] hover:bg-[hsl(305,100%,43%)] text-white border-black border-[1px]  hover:scale-110"
-                        className="small-button bg-primaryBackground text-primaryText border-black border-[1px] drop-shadow hover:scale-105"
-                        onClick={() => showPasswordChangeDialog(user)}
+                      <button                        
+                        className="button small-button"
+                        onClick={() => alert("To be implemented")}
                       >
                         Permissions
                       </button>
@@ -310,7 +280,7 @@ export default function Home() {
                           setSelectedUser(user);
                           setIsDeleteUserdModalOpen(true)
                         }
-                        } className="small-button bg-red-500 drop-shadow hover:bg-red-600 text-[FFFFFF]  hover:scale-105 border-black border-[1px]">
+                        } className="small-button-original bg-red-600 drop-shadow hover:bg-red-600 text-[FFFFFF]  hover:scale-105 border-black border-[1px]">
                         Delete user
                       </button>
                     </div>

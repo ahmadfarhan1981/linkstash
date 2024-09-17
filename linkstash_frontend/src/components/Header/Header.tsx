@@ -14,8 +14,8 @@ export function Header(){
             className="span-width w-full
             bg-white
                     border-[1px] 
-                    border-linkstashPurple 
-                    text-linkstashPurple 
+                    border-accent 
+                    text-accent 
                     sticky  
                     top-0                                  
 

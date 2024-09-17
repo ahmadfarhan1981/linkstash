@@ -9,10 +9,16 @@ const config: Config = {
   theme: {
     extend: {
       colors:{
-        linkstashPurple : "hsl(305 100 38)",
-        bookmarkCardBG: "hsl(214, 100%, 97%)",
-        primaryBackground: "hsl(0, 0%, 98%)",
-        primaryText: "hsl(0, 0%, 27%)"
+        'accent': "hsl(305, 100%, 38%)",
+        'accent-hover': "hsl(305, 100%, 43%)",
+        'card-background': "hsl(214, 100%, 97%)",
+        'primary-background': "hsl(0, 0%, 97%)",
+        'primary-background-hover': "hsl(0, 0%, 100%)",
+        'primary-text': "hsl(0, 0%, 27%)",
+        'alert-background': "hsl(0, 72%, 50%)",
+        'alert-background-hover': "hsl(0, 84%, 60%)",
+        'alert-text': "hsl(0, 100%, 100%)"
+
       }
     },
   },

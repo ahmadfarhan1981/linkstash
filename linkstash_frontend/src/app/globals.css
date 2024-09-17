@@ -10,8 +10,8 @@
   --loader-width: 50px;
   --loader-animation-duration: 700ms;
   box-sizing: inherit;
-  color:theme('colors.primaryText');
-  background-color: theme('colors.primaryBackground');
+  color:theme('colors.primary-text');
+  background-color: theme('colors.primary-background');
 }
 
 body {
@@ -25,7 +25,7 @@ body {
 }
 
 h1{
-  color: theme('colors.linkstashPurple');
+  color: theme('colors.accent');
 }
 
 code {
@@ -33,132 +33,51 @@ code {
     monospace;
 }
 
+/* button:disabled:hover:after {
+  position: absolute;
+  top: 0;
+  left: 75%;
+  width: 100%;
+  content: attr(title);
+  background-color: #ffa;
+  color: #000;
+  line-height: 1.4em;
+  border: 1px solid #000;
+} */
 
 
-  /* Original version from 'react-confirm-alert/src/react-confirm-alert.css' */
-  body.react-confirm-alert-body-element {
-    overflow: hidden;
-  }
-  
-  .react-confirm-alert-blur {
-    filter: url(#gaussian-blur);
-    filter: blur(2px);
-    -webkit-filter: blur(2px);
-  }
-  
-  .react-confirm-alert-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 99;
-    background: rgba(255, 255, 255, 0.9);
-    display: -webkit-flex;
-    display: -moz-flex;
-    display: -ms-flex;
-    display: -o-flex;
-    display: flex;
-    justify-content: center;
-    -ms-align-items: center;
-    align-items: center;
-    opacity: 0;
-    -webkit-animation: react-confirm-alert-fadeIn 0.05s 0.02s forwards;
-    -moz-animation: react-confirm-alert-fadeIn 0.05s 0.02s forwards;
-    -o-animation: react-confirm-alert-fadeIn 0.05s 0.02s forwards;
-    animation: react-confirm-alert-fadeIn 0.05s 0.02s forwards;
-  }
-  
-  .react-confirm-alert-body {
-    /* font-family: Arial, Helvetica, sans-serif; */
-    font-weight: 600;
-    width: 400px;
-    padding: 30px;
-    text-align: left;
-    background: theme('colors.white');
-    border-radius: 10px;
-    box-shadow: 0 20px 75px rgba(0, 0, 0, 0.13);
-    color: #666;
-  }
-  
-  .react-confirm-alert-svg {
+ 
+  /* Ripple effect when button is disabled */
+  .ripple-effect::after {
+    content: '';
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 24%; /* Start from bottom */
+    left: -74%;   /* Start from left */
+    width: 200%;
+    height: 200%;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+    transform: translate(0, 0) scale(0); /* Start ripple from bottom left */
+    animation: ripple-animation 0.4s ease-out ;
+    /* animation-iteration-count: infinite; */
+    
   }
   
-  .react-confirm-alert-body > h1 {
-    margin-top: 0;
-  }
-  
-  .react-confirm-alert-body > h3 {
-    margin: 0;
-    font-size: 16px;
-  }
-  
-  .react-confirm-alert-button-group {
-    display: -webkit-flex;
-    display: -moz-flex;
-    display: -ms-flex;
-    display: -o-flex;
-    display: flex;
-    justify-content: flex-start;
-    margin-top: 20px;
-  }
-  
-  .react-confirm-alert-button-group > button {
-    outline: none;
-    background: var(--primary-color);
-    border: none;
-    display: inline-block;
-    padding: 6px 18px;
-    color:var(--text-on-primary);
-    margin-right: 10px;
-    border-radius: 5px;
-    font-size: 12px;
-    cursor: pointer;
-  }
-  
-  @-webkit-keyframes react-confirm-alert-fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
+  @keyframes ripple-animation {
+    0% {
+      transform: translate(0, 0) scale(0); /* Start at bottom left */
       opacity: 1;
     }
-  }
-  
-  @-moz-keyframes react-confirm-alert-fadeIn {
-    from {
+    50% {
+      transform: translate(0, 0) scale(0.5); /* Start at bottom left */
+      opacity: 0.9;
+    }
+    100% {
+      transform: translate(0, 0) scale(1.5); /* Expand the ripple */
       opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-  
-  @-o-keyframes react-confirm-alert-fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
     }
   }
   
-  @keyframes react-confirm-alert-fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-
-  /* END REACT CONFIRM CSS */
-
-
-
 
 
 @layer components{
@@ -183,7 +102,7 @@ code {
   }
 
   a:hover{
-    @apply underline text-linkstashPurple 
+    @apply underline text-accent 
   }
   
   .form-input{
@@ -195,16 +114,31 @@ code {
   } 
 
   .submit-button{
-    @apply bg-linkstashPurple text-white py-1 px-3 rounded
+    @apply bg-accent text-white py-1 px-3 rounded shadow 
   } 
 
-  .small-button{
-    @apply bg-linkstashPurple text-white px-3 rounded
+  .small-button-original{
+    @apply bg-accent text-white px-3 rounded
   } 
+
+  
 
   .button{
-    @apply text-linkstashPurple px-1 rounded
+    @apply px-3 py-1 rounded text-primary-text border-[1px] border-black shadow hover:shadow-lg bg-primary-background hover:bg-primary-background-hover hover:scale-105 
   } 
+
+  .small-button {
+    @apply py-0
+  }
+
+  .accent-button {
+    @apply bg-accent hover:bg-accent-hover text-white
+  }
+
+  .alert-button {
+    @apply bg-alert-background hover:bg-alert-background-hover text-white
+  }
+
   .content{
     @apply flex flex-col items-center justify-between 
   }
@@ -222,7 +156,7 @@ code {
 
 
   .react-icons{
-    @apply inline hover:text-linkstashPurple 
+    @apply inline hover:text-accent 
   }
 
   /* Archive related styles */
