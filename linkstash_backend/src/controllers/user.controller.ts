@@ -13,7 +13,7 @@ import {genSalt, hash} from 'bcryptjs';
 import _ from 'lodash';
 import {LinkstashUser} from '../models';
 import {ArchiveRepository, LinkstashUserRepository, UserCredentialsRepository, UserPermissionsRepository} from '../repositories';
-import {ArchiveService, LinkStashUserService} from '../services';
+import {ArchiveService, LinkStashUserService, PermissionsService} from '../services';
 import {ChangePasswordRequestBody, Credentials, CredentialsRequestBody, UserProfile} from '../types';
 
 @model()
@@ -151,8 +151,11 @@ export class UserController {
       },
     },
   })
-  async getUsers(@inject(SecurityBindings.USER) currentUserProfile: UserProfile): Promise<LinkstashUser[]> {
-    return this.userRepository.find();
+  async getUsers(@inject(SecurityBindings.USER) currentUserProfile: UserProfile, @service(PermissionsService) permissionsService : PermissionsService): Promise<LinkstashUser[]> {
+    const isUserAdmin = await permissionsService.isUserAdmin(currentUserProfile[securityId])
+    if(isUserAdmin)
+      return this.userRepository.find();
+    return [await this.userRepository.findById(currentUserProfile[securityId])]
   }
 
   @authenticate('jwt')
@@ -188,7 +191,9 @@ export class UserController {
     @service(ArchiveService) archiveService: ArchiveService,
     @repository(UserCredentialsRepository) credentialsRepository: UserCredentialsRepository,
     @repository(UserPermissionsRepository) permissionsRepository: UserPermissionsRepository,
+    @service(PermissionsService) permissionsService : PermissionsService,
   ): Promise<void> {
+    await permissionsService.chcekIsAllowed(currentUserProfile[securityId], "" )
     const existing = await this.userRepository.findById(id);
     if (existing) {
       /**

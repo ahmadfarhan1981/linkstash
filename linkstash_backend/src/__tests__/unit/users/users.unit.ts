@@ -58,16 +58,32 @@ describe('Controller (unit)', () => {
       });
     });
     describe('/signup', () => {
-      it('creates new user on signup');
+      it('creates new user on signup', async () => {
+        // Memory db don't support transactions. Restriction in loopback.
+        // const userService = new LinkStashUserService(userRepo);
+        // const userController = new UserController(
+        //   new JWTService(TokenServiceConstants.TOKEN_SECRET_VALUE, TokenServiceConstants.TOKEN_EXPIRES_IN_VALUE),
+        //   userService,
+        //   userRepo,
+        //   undefined,
+        // );
+        // const correctPassword = "c0rect_passW0rD%$*&"
+        // const signupRequest = givenNewUserRequest({password:correctPassword})
+        // await (userController.signUp(signupRequest))
+        // const givenInvalidCrendentialsWithWrongPassword: Credentials = {password:"wrong_password" , username: signupRequest.username! };
+        // await expect(userController.login(givenInvalidCrendentialsWithWrongPassword)).rejectedWith('Invalid email or password.');
+        // const givenCrendentials: Credentials = {password:signupRequest.password , username: signupRequest.username! };
+        // const result = await userController.login(givenCrendentials);
+        // expect(result.token).to.not.empty();
+      });
     });
     describe('/change-password', () => {
       it('allows user change own password');
       it('allows user to change any password if user is an user admin');
     });
     describe('DEL /user/${id}', () => {
-      it('deletes user')
+      it('deletes user');
       it('doesnt leave any bookmarks, tags, archive, credentials and permissions behind for deleted users');
     });
-
   });
 });
