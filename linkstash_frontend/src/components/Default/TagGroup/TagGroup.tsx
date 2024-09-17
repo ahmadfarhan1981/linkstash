@@ -69,7 +69,7 @@ export function MyTagGroup<T extends object>({
   return (
     <TagGroup {...props}>
       {description && (
-        <span className="text-linkstashPurple" ref={triggerRef} {...hoverProps}>
+        <span className="text-accent" ref={triggerRef} {...hoverProps}>
           {String.fromCharCode(8505)}
         </span>
       )}
@@ -82,7 +82,7 @@ export function MyTagGroup<T extends object>({
         triggerRef={triggerRef}
         className={"popover"}
       >
-        <Dialog className="bg-linkstashPurple text-white py-1 px-3 rounded">
+        <Dialog className="bg-accent text-white py-1 px-3 rounded">
           {description && <Text slot="description">{description}</Text>}
         </Dialog>
       </Popover>

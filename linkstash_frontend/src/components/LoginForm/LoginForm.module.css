@@ -12,5 +12,5 @@
 }
 
 .submit-button{
-  @apply bg-linkstashPurple text-white py-1 px-3 w-24 rounded
+  @apply bg-accent text-white py-1 px-3 w-24 rounded
 } 

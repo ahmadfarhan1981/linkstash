@@ -27,7 +27,7 @@
     "test:dev": "lb-mocha --allow-console-logs dist/__tests__/**/*.js && npm run posttest",
     "docker:build": "docker build -t linkstash .",
     "docker:run": "docker run -p 3000:3000 -d linkstash",
-    "premigrate": "npm run build",
+    "premigrate": "npm run rebuild",
     "migrate": "node ./dist/migrate",
     "preopenapi-spec": "npm run build",
     "openapi-spec": "node ./dist/openapi-spec",

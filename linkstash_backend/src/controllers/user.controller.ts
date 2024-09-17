@@ -3,34 +3,40 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-import {LinkStashUser} from '../models';
-import {UserRepository} from '../repositories';
 import {authenticate, TokenService} from '@loopback/authentication';
-import {
-  TokenServiceBindings,
-  UserServiceBindings,
-} from '@loopback/authentication-jwt';
-import {inject} from '@loopback/core';
-import {model, property, repository} from '@loopback/repository';
-import {
-  get,
-  getModelSchemaRef,
-  post,
-  requestBody,
-} from '@loopback/rest';
+import {TokenServiceBindings, UserServiceBindings} from '@loopback/authentication-jwt';
+import {inject, service} from '@loopback/core';
+import {IsolationLevel, model, property, repository} from '@loopback/repository';
+import {del, get, getModelSchemaRef, HttpErrors, param, post, requestBody, Response, response, RestBindings} from '@loopback/rest';
 import {SecurityBindings, securityId} from '@loopback/security';
 import {genSalt, hash} from 'bcryptjs';
 import _ from 'lodash';
-import {LinkStashUserService} from '../services';
-import {Credentials, CredentialsRequestBody, UserProfile} from '../types';
+import {LinkstashUser} from '../models';
+import {ArchiveRepository, LinkstashUserRepository, UserCredentialsRepository, UserPermissionsRepository} from '../repositories';
+import {ArchiveService, LinkStashUserService, PermissionsService} from '../services';
+import {ChangePasswordRequestBody, Credentials, CredentialsRequestBody, UserProfile} from '../types';
 
 @model()
-export class NewUserRequest extends LinkStashUser {
+export class NewUserRequest extends LinkstashUser {
   @property({
     type: 'string',
     required: true,
   })
   password: string;
+}
+
+export class ChangePasswordRequest {
+  @property({
+    type: 'string',
+    required: true,
+  })
+  newPassword: string;
+
+  @property({
+    type: 'string',
+    required: true,
+  })
+  userId: string;
 }
 export class UserController {
   constructor(
@@ -38,7 +44,7 @@ export class UserController {
     public jwtService: TokenService,
     @inject(UserServiceBindings.USER_SERVICE)
     public userService: LinkStashUserService,
-    @repository(UserRepository) protected userRepository: UserRepository,
+    @repository(LinkstashUserRepository) protected userRepository: LinkstashUserRepository,
     @inject(SecurityBindings.USER, {optional: true})
     public user: UserProfile | undefined,
   ) {}
@@ -62,9 +68,7 @@ export class UserController {
       },
     },
   })
-  async login(
-    @requestBody(CredentialsRequestBody) credentials: Credentials,
-  ): Promise<{token: string}> {
+  async login(@requestBody(CredentialsRequestBody) credentials: Credentials): Promise<{token: string}> {
     // ensure the user exists, and the password is correct
     const user = await this.userService.verifyCredentials(credentials);
     // convert a User object into a UserProfile object (reduced set of properties)
@@ -104,7 +108,7 @@ export class UserController {
         content: {
           'application/json': {
             schema: {
-              'x-ts-type': LinkStashUser,
+              'x-ts-type': LinkstashUser,
             },
           },
         },
@@ -122,12 +126,101 @@ export class UserController {
       },
     })
     newUserRequest: NewUserRequest,
-  ): Promise<LinkStashUser> {
+  ): Promise<LinkstashUser> {
     const password = await hash(newUserRequest.password, await genSalt());
-    const savedUser = await this.userRepository.create(
-      _.omit(newUserRequest, 'password'),
-    );
-    await this.userRepository.userCredentials(savedUser.id).create({password});
+    const transaction = await this.userRepository.beginTransaction();
+    const savedUser = await this.userRepository.create(_.omit(newUserRequest, 'password'), transaction);
+    await this.userRepository.userCredentials(savedUser.id).create({password}, transaction);
+    await this.userRepository.userPermissions(savedUser.id).create({isUserAdmin: false}, transaction);
+    await transaction.commit();
     return savedUser;
+  }
+
+  @authenticate('jwt')
+  @get('/users', {
+    responses: {
+      '200': {
+        content: {
+          'application/json': {
+            schema: {
+              type: 'array',
+              items: getModelSchemaRef(LinkstashUser, {includeRelations: false}),
+            },
+          },
+        },
+      },
+    },
+  })
+  async getUsers(@inject(SecurityBindings.USER) currentUserProfile: UserProfile, @service(PermissionsService) permissionsService : PermissionsService): Promise<LinkstashUser[]> {
+    const isUserAdmin = await permissionsService.isUserAdmin(currentUserProfile[securityId])
+    if(isUserAdmin)
+      return this.userRepository.find();
+    return [await this.userRepository.findById(currentUserProfile[securityId])]
+  }
+
+  @authenticate('jwt')
+  @post('/change-password', {
+    responses: {
+      '204': {},
+    },
+  })
+  async changePassword(
+    @requestBody(ChangePasswordRequestBody) changePasswordRequest: ChangePasswordRequest,
+    @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
+  ): Promise<undefined> {
+    const currentUserId = currentUserProfile[securityId];
+    const isUserAdmin = (await this.userRepository.userPermissions(currentUserId).get()).isUserAdmin;
+    const newPassword = await hash(changePasswordRequest.newPassword, await genSalt());
+    if (changePasswordRequest.userId === currentUserProfile[securityId] || isUserAdmin) {
+      await this.userRepository.userCredentials(changePasswordRequest.userId).patch({password: newPassword});
+    } else {
+      throw new HttpErrors.Forbidden('Unauthorized');
+    }
+  }
+
+  @authenticate('jwt')
+  @del('/users/{id}')
+  @response(204, {
+    description: 'User DELETE success',
+  })
+  async deleteById(
+    @param.path.string('id') id: string,
+    @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
+    @inject(RestBindings.Http.RESPONSE) res: Response,
+    @repository(ArchiveRepository) archiveRepository: ArchiveRepository,
+    @service(ArchiveService) archiveService: ArchiveService,
+    @repository(UserCredentialsRepository) credentialsRepository: UserCredentialsRepository,
+    @repository(UserPermissionsRepository) permissionsRepository: UserPermissionsRepository,
+    @service(PermissionsService) permissionsService : PermissionsService,
+  ): Promise<void> {
+    await permissionsService.chcekIsAllowed(currentUserProfile[securityId], "" )
+    const existing = await this.userRepository.findById(id);
+    if (existing) {
+      /**
+       * TODO figure out safer way to do deletion.
+       *
+       * This is optimistic, it assumes nothing will go wrong during deletion.
+       *
+       * Currently it has to be before the transaction becuase it still query the DB to get all
+       * the asset that needs to be deleted.
+       *
+       * Need to cache it somewhere so that we can delete it after transaction is completed
+       *
+       **/
+      await archiveService.removeLocalAssetByUser(id);
+      const transaction = await this.userRepository.beginTransaction(IsolationLevel.READ_COMMITTED);
+      await this.userRepository.bookmarks(id).delete({}, {transaction});
+      await this.userRepository.tags(id).delete({}, {transaction});
+      await archiveRepository.deleteAll({UserId: id}, transaction);
+      await credentialsRepository.deleteAll({userId: id}, transaction);
+      await permissionsRepository.deleteAll({userId: id}, transaction);
+      await this.userRepository.deleteById(id, {transaction});
+      await transaction.commit();
+    } else {
+      res.status(404);
+      throw new Error(`Entity not found: User with id ${id}`);
+    }
+
+    //await this.bookmarkRepository.deleteById(id);
   }
 }

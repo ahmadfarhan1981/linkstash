@@ -7,17 +7,12 @@ import {Entity, hasMany, hasOne, model, property} from '@loopback/repository';
 import {Bookmark} from './bookmark.model';
 import {Tag} from './tag.model';
 import {UserCredentials} from './user-credentials.model';
+import {UserPermissions} from './user-permissions.model';
 
 @model({
-  settings: {
-    strict: false,
-    mysql:{
-      table:"User"
-    }
-  },
-
+  settings: {},
 })
-export class LinkStashUser extends Entity {
+export class LinkstashUser extends Entity {
   @property({
     type: 'string',
     id: true,
@@ -26,29 +21,32 @@ export class LinkStashUser extends Entity {
   })
   id: string;
 
-    @property({
+  @property({
     type: 'string',
-    required:true,
+    required: true,
     index: {
       unique: true,
-    }
+    },
   })
   username?: string;
 
-  @hasMany(() => Bookmark,{keyTo:'userId'})
+  @hasMany(() => Bookmark, {keyTo: 'userId'})
   bookmarks: Bookmark[];
 
-  @hasMany(() => Tag,{keyTo:'userId'})
+  @hasMany(() => Tag, {keyTo: 'userId'})
   tags: Tag[];
 
-  @hasOne(() => UserCredentials ,{keyTo:'userId'})
+  @hasOne(() => UserCredentials, {keyTo: 'userId'})
   userCredentials: UserCredentials;
 
-  constructor(data?: Partial<LinkStashUser>) {
+  @hasOne(() => UserPermissions, {keyTo: 'userId'})
+  userPermissions: UserPermissions;
+
+  constructor(data?: Partial<LinkstashUser>) {
     super(data);
   }
 }
 export interface UserRelations {
   // describe navigational properties here
 }
-export type LinkStashUserWithRelations = LinkStashUser & UserRelations;
+export type LinkStashUserWithRelations = LinkstashUser & UserRelations;

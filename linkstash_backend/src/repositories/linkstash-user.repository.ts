@@ -5,28 +5,32 @@
 
 import {Getter, inject} from '@loopback/core';
 import {DefaultTransactionalRepository, HasManyRepositoryFactory, HasOneRepositoryFactory, juggler, repository} from '@loopback/repository';
-import {Bookmark, Tag, LinkStashUser, UserCredentials, UserRelations} from '../models';
+import {UserServiceBindings} from '../bindings/UserService.binding';
+import {Bookmark, LinkstashUser, Tag, UserCredentials, UserPermissions, UserRelations} from '../models';
 import {BookmarkRepository} from './bookmark.repository';
 import {TagRepository} from './tag.repository';
-import {UserServiceBindings} from '../bindings/UserService.binding';
 import {UserCredentialsRepository} from './user-credentials.repository';
+import {UserPermissionsRepository} from './user-permissions.repository';
 
+export class LinkstashUserRepository extends DefaultTransactionalRepository<LinkstashUser, typeof LinkstashUser.prototype.id, UserRelations> {
+  public readonly userCredentials: HasOneRepositoryFactory<UserCredentials, typeof LinkstashUser.prototype.id>;
 
+  public readonly bookmarks: HasManyRepositoryFactory<Bookmark, typeof LinkstashUser.prototype.id>;
 
-export class UserRepository extends DefaultTransactionalRepository<LinkStashUser, typeof LinkStashUser.prototype.id, UserRelations> {
-  public readonly userCredentials: HasOneRepositoryFactory<UserCredentials, typeof LinkStashUser.prototype.id>;
+  public readonly tags: HasManyRepositoryFactory<Tag, typeof LinkstashUser.prototype.id>;
 
-  public readonly bookmarks: HasManyRepositoryFactory<Bookmark, typeof LinkStashUser.prototype.id>;
-
-  public readonly tags: HasManyRepositoryFactory<Tag, typeof LinkStashUser.prototype.id>;
+  public readonly userPermissions: HasOneRepositoryFactory<UserPermissions, typeof LinkstashUser.prototype.id>;
 
   constructor(
     @inject(`datasources.${UserServiceBindings.DATASOURCE_NAME}`) dataSource: juggler.DataSource,
     @repository.getter('UserCredentialsRepository') protected userCredentialsRepositoryGetter: Getter<UserCredentialsRepository>,
     @repository.getter('BookmarkRepository') protected bookmarkRepositoryGetter: Getter<BookmarkRepository>,
     @repository.getter('TagRepository') protected tagRepositoryGetter: Getter<TagRepository>,
+    @repository.getter('UserPermissionsRepository') protected userPermissionsRepositoryGetter: Getter<UserPermissionsRepository>,
   ) {
-    super(LinkStashUser, dataSource);
+    super(LinkstashUser, dataSource);
+    this.userPermissions = this.createHasOneRepositoryFactoryFor('userPermissions', userPermissionsRepositoryGetter);
+    this.registerInclusionResolver('userPermissions', this.userPermissions.inclusionResolver);
 
     this.bookmarks = this.createHasManyRepositoryFactoryFor('bookmarks', bookmarkRepositoryGetter);
     this.registerInclusionResolver('bookmarks', this.bookmarks.inclusionResolver);
@@ -38,7 +42,7 @@ export class UserRepository extends DefaultTransactionalRepository<LinkStashUser
     this.registerInclusionResolver('userCredentials', this.userCredentials.inclusionResolver);
   }
 
-  async findCredentials(userId: typeof LinkStashUser.prototype.id): Promise<UserCredentials | undefined> {
+  async findCredentials(userId: typeof LinkstashUser.prototype.id): Promise<UserCredentials | undefined> {
     return this.userCredentials(userId)
       .get()
       .catch(err => {

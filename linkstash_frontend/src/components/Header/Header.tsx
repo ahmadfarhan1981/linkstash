@@ -9,12 +9,16 @@ export function Header(){
     const {showHeaders} = ApplicationContext
 
     if(!showHeaders) return (<></>)
-    return (
+    return (        
         <div
-            className="span-width flex flex-row w-100vw 
+            className="span-width w-full
+            bg-white
                     border-[1px] 
-                    border-linkstashPurple 
-                    text-linkstashPurple 
+                    border-accent 
+                    text-accent 
+                    sticky  
+                    top-0                                  
+
                     "
         >
             <span className="flex flex-[100%] flex-row w-100vw" >
@@ -23,7 +27,7 @@ export function Header(){
                 <span className={styles['items']}><Link href="/addBookmark">Add</Link></span>
                 <span className={styles['items']}><Link href="/bookmarks" prefetch={false}>Links</Link></span>
                 <span className={styles['items']}><Link href="/login">Login</Link></span>
-                <span className={styles['items']}><Link href="/">Settings</Link></span>
+                <span className={styles['items']}><Link href="/settings">Settings</Link></span>
             </span>
             
         </div>

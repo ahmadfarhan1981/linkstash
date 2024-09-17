@@ -20,39 +20,6 @@ import { setUrlParam } from "@/scripts";
 import { useListData } from "react-stately";
 import { useSearchParams } from "next/navigation";
 
-const svgStyle: CSSProperties = {
-  fontSize: "medium",
-  fontStyle: "normal",
-  fontVariant: "normal",
-  fontWeight: "normal",
-  fontStretch: "normal",
-  textIndent: "0",
-  textAlign: "start",
-  textDecoration: "none",
-  lineHeight: "normal",
-  letterSpacing: "normal",
-  wordSpacing: "normal",
-  textTransform: "none",
-  direction: "ltr",
-  //blockProgression: 'tb',
-  //writingMode: 'lr-tb',
-  textAnchor: "start",
-  baselineShift: "baseline",
-  opacity: "1",
-  color: "#C400B3",
-  fill: "#C400B3",
-  fillOpacity: "1",
-  stroke: "none",
-  strokeWidth: "1.99999988000000010",
-  marker: "none",
-  visibility: "visible",
-  display: "inline",
-  overflow: "visible",
-  //enableBackground: 'accumulate',
-  fontFamily: "Sans",
-  // -inkscape-font-specification is not a standard CSS property and is specific to Inkscape
-};
-
 export type SortListItem = {
   id: string;
   name: string;
@@ -86,21 +53,21 @@ export function BookmarksToolbar({
       {
         id: "created DESC",
         name: "Date added",
-        icon: <BiSortDown className="inline text-linkstashPurple" />,
+        icon: <BiSortDown className="inline text-accent" />,
         sortBy: "created",
         sortDirection: "DESC",
       },
       {
         id: "created ASC",
         name: "Date added",
-        icon: <BiSortUp className="inline text-linkstashPurple"/>,
+        icon: <BiSortUp className="inline text-accent"/>,
         sortBy: "created",
         sortDirection: "ASC",
       },
       {
         id: "title ASC",
         name: "Title",
-        icon: <BiSortUp className="inline text-linkstashPurple"/>,
+        icon: <BiSortUp className="inline text-accent"/>,
         sortBy: "title",
         sortDirection: "ASC",
       },

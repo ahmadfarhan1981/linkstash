@@ -5,12 +5,12 @@ import {SecurityBindings, securityId, UserProfile} from '@loopback/security';
 import {authenticate} from '@loopback/authentication';
 import {inject} from '@loopback/core';
 import {Tag} from '../models';
-import {UserRepository} from '../repositories';
+import {LinkstashUserRepository} from '../repositories';
 import {newTagSchema} from '../types/';
 
 @authenticate('jwt')
 export class UserTagController {
-  constructor(@repository(UserRepository) protected userRepository: UserRepository) {}
+  constructor(@repository(LinkstashUserRepository) protected userRepository: LinkstashUserRepository) {}
 
   @get('/tags', {
     responses: {

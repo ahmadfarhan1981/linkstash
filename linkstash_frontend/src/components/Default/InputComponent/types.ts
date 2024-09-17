@@ -85,7 +85,7 @@ export type InputConfig = {
   autocomplete?: AutocompleteType;
   autofocus?: boolean;
   placeholder?: string;
-  className?: string[];
+  className?: string;
   pattern?: string;
   children?: React.ReactNode;
   defaultValue?: string;

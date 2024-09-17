@@ -170,7 +170,7 @@ export function BookmarkForm({
 
             <div>              
               <button
-                className="submit-button"
+                className="button accent-button"
                 type="submit"
               >{submitButtonText}</button>
             </div>

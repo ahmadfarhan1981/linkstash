@@ -8,14 +8,14 @@ import {repository} from '@loopback/repository';
 import {HttpErrors} from '@loopback/rest';
 import {securityId} from '@loopback/security';
 import {compare} from 'bcryptjs';
-import {LinkStashUser, LinkStashUserWithRelations} from '../models';
-import {UserRepository} from '../repositories';
+import {LinkstashUser, LinkStashUserWithRelations} from '../models';
+import {LinkstashUserRepository} from '../repositories';
 import {Credentials, UserProfile} from '../types';
 
-export class LinkStashUserService implements UserService<LinkStashUser, Credentials> {
-  constructor(@repository(UserRepository) public userRepository: UserRepository) {}
+export class LinkStashUserService implements UserService<LinkstashUser, Credentials> {
+  constructor(@repository(LinkstashUserRepository) public userRepository: LinkstashUserRepository) {}
 
-  async verifyCredentials(credentials: Credentials): Promise<LinkStashUser> {
+  async verifyCredentials(credentials: Credentials): Promise<LinkstashUser> {
     const invalidCredentialsError = 'Invalid email or password.';
     const foundUser = await this.userRepository.findOne({
       where: {username: credentials.username},
@@ -38,7 +38,7 @@ export class LinkStashUserService implements UserService<LinkStashUser, Credenti
     return foundUser;
   }
 
-  convertToUserProfile(user: LinkStashUser): UserProfile {
+  convertToUserProfile(user: LinkstashUser): UserProfile {
     return {
       [securityId]: user.id.toString(),
       name: user.username,
@@ -47,7 +47,7 @@ export class LinkStashUserService implements UserService<LinkStashUser, Credenti
   }
 
   //function to find user by id
-  async findUserById(id: string): Promise<LinkStashUser & LinkStashUserWithRelations> {
+  async findUserById(id: string): Promise<LinkstashUser & LinkStashUserWithRelations> {
     const userNotfound = 'invalid User';
     const foundUser = await this.userRepository.findOne({
       where: {id: id},
