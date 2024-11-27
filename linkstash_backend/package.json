@@ -67,7 +67,7 @@
     "jsdom": "^24.0.0",
     "lodash": "^4.17.21",
     "loopback-connector-mysql": "^5.4.4",
-    "loopback-connector-rest": "^5.0.1",
+    "loopback-connector-rest": "^5.0.2",
     "multer": "^1.4.5-lts.1",
     "rimraf": "^5.0.10",
     "tslib": "^2.0.0"
