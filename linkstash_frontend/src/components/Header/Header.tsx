@@ -17,12 +17,13 @@ export function Header(){
                     border-accent 
                     text-accent 
                     sticky  
-                    top-0                                  
+                    top-0
+                    z-50                              
 
                     "
         >
             <span className="flex flex-[100%] flex-row w-100vw" >
-                <span className="flex-[65%]"></span>
+                <span className="flex-[65%]"></span>                
                 <span className={styles['items']}><Link href="/">Home</Link></span>
                 <span className={styles['items']}><Link href="/addBookmark">Add</Link></span>
                 <span className={styles['items']}><Link href="/bookmarks" prefetch={false}>Links</Link></span>

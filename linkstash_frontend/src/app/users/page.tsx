@@ -224,7 +224,7 @@ export default function Home() {
       }
     )
   }
-
+  //TODO: extract into user table component
   return (
     <>    
       <AuthenticatedSection>

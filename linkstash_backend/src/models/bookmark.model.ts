@@ -13,11 +13,17 @@ export class Bookmark extends Entity {
   @property({
     type: 'string',
     required: true,
+    mysql: {
+      dataType: 'TEXT',
+    },
   })
   url: string;
 
   @property({
     type: 'string',
+    mysql: {
+      dataType: 'TEXT',
+    },
   })
   description?: string;
 

@@ -11,6 +11,7 @@ export type ApiEndpoint =
   | `/users/${string}`
   | '/change-password'
   | '/signup'
+  | '/import'
 export type ApiMethod = "GET" | "POST" | "DELETE" | "PATCH" | "PUT";
 export type ApiCallOptions = {
   endpoint: ApiEndpoint;

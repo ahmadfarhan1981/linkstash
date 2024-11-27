@@ -7,7 +7,7 @@ import {LinkstashUserRepository} from '../repositories';
 import {inject, service} from '@loopback/core';
 import {UserProfile} from '../types';
 import {SecurityBindings, securityId} from '@loopback/security';
-import {PermissionsService} from '../services';
+import {Linkding, PermissionsService} from '../services';
 
 export class PermissionsController {
   constructor(@repository(LinkstashUserRepository) protected linkstashUserRepository: LinkstashUserRepository) {}
@@ -80,6 +80,28 @@ export class PermissionsController {
     const result = await this.linkstashUserRepository.userPermissions(currentUserProfile[securityId]).get();
     return _.omit(result, 'userId');
   }
+
+
+
+
+//   @get('/users/me/test', {
+//     responses: {
+//       '200': {
+//         description: "Get user's permissions",
+//         content: {
+
+//         },
+//       },
+//     },
+//   })
+//   async test(@inject('services.Linkding') linkding : Linkding,
+//   @param.query.string('token') token: string,
+//   @param.query.number('limit') limit: number,
+//   @param.query.number('offset') offset: number,
+// ):Promise<Object> {
+//     const x = await linkding.getBookmarks(token, limit, offset )
+//     return x;
+//   }
 
 
 }

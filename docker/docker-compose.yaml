@@ -1,5 +1,5 @@
 name: Linkstash
-services:
+services:  
   linkstash_backend:
     image: paan1981/linkstash-server-nightly:daily-20240818-03
     environment:
@@ -8,7 +8,7 @@ services:
       DB_USER: ${DB_USER:-linkstash}
       DB_PASSWORD: ${DB_PASSWORD:-password}
       DB_NAME: ${DB_NAME:-linkstash_backend}
-      PORT: 3030    
+      PORT: 3030
     ports:
       - ${BACKEND_PORT:-3030}:3030 
     volumes:

@@ -16,6 +16,7 @@ import {ArchiveRepository, LinkstashUserRepository, UserCredentialsRepository, U
 import {ArchiveService, LinkStashUserService, PermissionsService} from '../services';
 import {ChangePasswordRequestBody, Credentials, CredentialsRequestBody, UserProfile} from '../types';
 
+
 @model()
 export class NewUserRequest extends LinkstashUser {
   @property({
