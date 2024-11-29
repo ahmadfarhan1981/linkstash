@@ -1,0 +1,11 @@
+name: Example Workflow
+
+on:
+  workflow_dispatch: # Allows manual triggering
+
+jobs:
+  example-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print Hello
+        run: echo "Hello, world!"

@@ -1,9 +1,5 @@
 "use client";
 
-import { ApiCallOptions } from "@/types";
-import { makeApiCall } from "@/scripts";
-import { useAuthentication } from "@/hooks";
-import { useState } from "react";
 import {
   Cell,
   Column,
@@ -12,6 +8,11 @@ import {
   TableBody,
   TableHeader,
 } from "react-aria-components";
+
+import { ApiCallOptions } from "@/types";
+import { makeApiCall } from "@/scripts";
+import { useAuthentication } from "@/hooks";
+import { useState } from "react";
 
 export default function FileUploadForm() {
   const { AuthenticationState } = useAuthentication();
