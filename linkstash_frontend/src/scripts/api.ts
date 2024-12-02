@@ -99,7 +99,7 @@ export function whereStringBuilder(filterBy:string, anyTagsList:ListData<TagList
    "where":{
       "and":[
          {
-            "or": [{"and":[${allTagsFilter}]}, {"or":[${anyTagsFilter}]}]
+            "and": [{"and":[${allTagsFilter}]}, {"or":[${anyTagsFilter}]}]
          },
          {
             "or":[
