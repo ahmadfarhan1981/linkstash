@@ -33,11 +33,12 @@ function generateRequestParams(options:fetchBookmarksOptions):Record<string, any
   const {sortBy, sortDirection, page, perPage, filter, anyTags, allTags} = options;
   const offset = ( page - 1 ) * perPage;  
   const filterStringFilter =`,${whereStringBuilder(filter, anyTags, allTags)}`
-
+  const orderTieBreaker =`'id ASC'`
+  
   const filterString = `{
     "skip" :${offset},
     "limit": ${perPage},
-    "order": "${sortBy} ${sortDirection}"
+    "order": "'${sortBy} ${sortDirection}', ${orderTieBreaker}"
     ${filterStringFilter}
   }`
   return {"filter":filterString}
