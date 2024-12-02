@@ -2,8 +2,6 @@
 
 There are a few ways to filter the main bookmark list.
 
-[[Pictures here]]
-
 ## Via tag cloud
 - Click show filter on the right
 - Start typing, 
