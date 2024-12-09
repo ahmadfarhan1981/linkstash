@@ -1,8 +1,8 @@
 import { ApiCallOptions, Bookmark, TagListItem } from "@/types";
 import { EMPTY_FUNCTION, makeApiCall, whereStringBuilder } from "@/scripts";
 import React, { useState } from "react";
-import {ListData} from 'react-stately'
 
+import {ListData} from 'react-stately'
 import { useAuthentication } from "@/hooks";
 
 export type useBookmarksReturnValue = {
@@ -33,12 +33,12 @@ function generateRequestParams(options:fetchBookmarksOptions):Record<string, any
   const {sortBy, sortDirection, page, perPage, filter, anyTags, allTags} = options;
   const offset = ( page - 1 ) * perPage;  
   const filterStringFilter =`,${whereStringBuilder(filter, anyTags, allTags)}`
-  const orderTieBreaker =`'id ASC'`
+  const orderTieBreaker =`id ASC`
   
   const filterString = `{
     "skip" :${offset},
     "limit": ${perPage},
-    "order": "'${sortBy} ${sortDirection}', ${orderTieBreaker}"
+    "order": "${sortBy} ${sortDirection}, ${orderTieBreaker},"
     ${filterStringFilter}
   }`
   return {"filter":filterString}

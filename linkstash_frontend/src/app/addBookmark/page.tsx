@@ -6,10 +6,10 @@ import {
   BookmarkFormData
 } from "@/components";
 import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { makeApiCall } from "@/scripts/index";
 import { useAuthentication } from "@/hooks/useAuthentication";
-import { useRouter } from "next/navigation";
 
 /**
  * TODO indicator when fetching url metadata
@@ -18,11 +18,12 @@ import { useRouter } from "next/navigation";
 
 export default function Home() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { AuthenticationState } = useAuthentication();
 
   const [allTags, setAllTags] = useState<TagListItem[]>([]);
   const [isTagFetched, setIsTagFetched] = useState(false);
-
+  
   useEffect(() => {
     if (!AuthenticationState.isLoggedIn || isTagFetched) return;
     const success = async (response: any) => {
@@ -45,7 +46,12 @@ export default function Home() {
 
   const addBookmark = async (data: BookmarkFormData): Promise<void> =>  {
     const success = async (_response: any) => {
-      router.push("/bookmarks");
+      if(url){//if called by bookmarklet
+        window.close();
+      }else{
+        router.push("/bookmarks");  
+      }
+      
     };
     const options: ApiCallOptions = {
       endpoint: "/bookmarks",
@@ -60,8 +66,8 @@ export default function Home() {
   }
 
 
-
-  const [formData, setFormData] = useState<BookmarkFormData>({});    
+  const url = searchParams.get("url");
+  const [formData, setFormData] = useState<BookmarkFormData>(url?{url:url}:{});    
   return (
     <>
       <BookmarkForm submitButtonText="Add bookmark" formData={formData} isLoading={!isTagFetched} handleSubmit={addBookmark} setFormData={setFormData} allTags={allTags}></BookmarkForm>      

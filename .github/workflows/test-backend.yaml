@@ -21,5 +21,3 @@ jobs:
           node-version-file : './linkstash_backend/.nvmrc'
       - run: npm ci
       - run: npm test
-
-      

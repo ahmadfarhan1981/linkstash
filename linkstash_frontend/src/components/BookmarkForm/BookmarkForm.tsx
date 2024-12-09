@@ -51,12 +51,19 @@ export function BookmarkForm({
     getKey: (item: TagListItem) => item.name,
   });
   const [lastUrlFetched, setLastUrlFetched] = useState("");
-
-  // TODO indicator when fetching url metadata
-  function handleURLChange(
+  
+  function handleURLChangeEvent(
     event: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>
   ) {
     const { value } = event.target;
+    handleURLChangeURL(value);
+  }
+  
+  // TODO indicator when fetching url metadata
+  function handleURLChangeURL(
+    url:string
+  ) {
+    const value = url;
 
     if (formData.title || formData.description) return;
     if (lastUrlFetched === value) return;
@@ -86,6 +93,13 @@ export function BookmarkForm({
     }    
   }, [formData.tagList]);
 
+  useEffect(() => {
+    console.log("use effect fetchurl")
+    if(formData.url){
+        handleURLChangeURL(formData.url)
+    }    
+  }, [formData.url] );
+  
   async function handleSubmitWrapper(form: FormData) {
     //TODO bookmarklet layout
     //TODO make the page more responsive when adding. (disable input while pending, splash screen before redirecting etc)
@@ -110,7 +124,7 @@ export function BookmarkForm({
     e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>
   ) => {
     handleFormChange(e, setFormData);
-    debounce(handleURLChange, 1000)(e);
+    debounce(handleURLChangeEvent, 1000)(e);
   };
   return (
     <>
