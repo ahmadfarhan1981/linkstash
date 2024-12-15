@@ -4,6 +4,7 @@ import {
   AuthenticatedSection,
   BookmarkCard,
   BookmarksToolbar,
+  Intro,
   Loader,
   Pager,
   TagCloud,
@@ -104,7 +105,7 @@ export default function Home() {
   }
 
   return (
-    <AuthenticatedSection>
+    <AuthenticatedSection prefix={<Intro />}>
       <Loader isLoading={isLoading} text="Loading bookmarks">
         <div className={styles["bookmarks-page"] }>
           <div className={styles["bookmark-list"]}>

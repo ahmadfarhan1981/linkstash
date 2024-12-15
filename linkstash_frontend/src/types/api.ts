@@ -5,6 +5,7 @@ export type ApiEndpoint =
   | "/bookmarks"
   | "/users/login/"
   | `/bookmarks/${number}/archive`
+  | `/bookmarks/${number}/archives`
   | `/bookmarks/${number}`
   | '/tags'
   | '/users'
