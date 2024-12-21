@@ -4,13 +4,13 @@
 			"path": "."
 		},
 		{
-			"path": "linkstash_backend"
+			"path": "linkstash-backend"
 		},
 		{
-			"path": "linkstash_frontend"
+			"path": "linkstash-frontend"
 		},
 		{
-			"path": "linkstash_website"
+			"path": "linkstash-website"
 		}
 	],
 	"settings": {
@@ -30,7 +30,7 @@
 				"username": "root"
 			}
 		],
-		"liveServer.settings.multiRootWorkspaceName": "linkstash_website"
+		"liveServer.settings.multiRootWorkspaceName": "linkstash-website"
 	},
 	"extensions": {
 		"recommendations": [
