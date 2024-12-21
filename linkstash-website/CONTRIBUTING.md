@@ -127,11 +127,11 @@ Style guide
 
 2. **Set Up Environment Configurations:**
    - `.env.local` can be created by copying the `.env.example` files in their respective folders.
-   - Backend: Inside the `linkstash_backend` folder:
+   - Backend: Inside the `linkstash-backend` folder:
      - Create `.env.local` and configure database connection settings.
      - Run migrations:
        ```bash
-       cd linkstash_backend
+       cd linkstash-backend
        nvm use
        npm run migrate
        ```
@@ -143,7 +143,7 @@ Style guide
         ```bash
         npm start
         ```
-   - Frontend: Inside the `linkstash_frontend` folder:
+   - Frontend: Inside the `linkstash-frontend` folder:
      - Create `.env.local` and configure the connection to the backend.
      - Start the frontend:
        ```bash

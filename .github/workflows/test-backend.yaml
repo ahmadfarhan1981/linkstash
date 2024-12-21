@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./linkstash_backend
+        working-directory: ./linkstash-backend
     # strategy:
     #   matrix:
     #     node-version: [18.x, 20.x, 22.x]
@@ -18,7 +18,7 @@ jobs:
         uses: actions/setup-node@v4
         with:          
           cache: 'npm'
-          node-version-file : './linkstash_backend/.nvmrc'
+          node-version-file : './linkstash-backend/.nvmrc'
       - run: npm ci
       - run: npm test
 

@@ -1,13 +1,13 @@
 name: Linkstash
 services:  
-  linkstash_backend:
-    image: paan1981/linkstash-server-nightly:daily-20240818-03
+  linkstash-backend:
+    image: paan1981/linkstash-backend-nightly:nightly-20240818-03
     environment:
-      DB_HOST: ${DB_HOST:-linkstash_db}
+      DB_HOST: ${DB_HOST:-linkstash-db}
       DB_PORT: ${DB_PORT:-3306}
       DB_USER: ${DB_USER:-linkstash}
       DB_PASSWORD: ${DB_PASSWORD:-password}
-      DB_NAME: ${DB_NAME:-linkstash_backend}
+      DB_NAME: ${DB_NAME:-linkstash-backend}
       PORT: 3030
     ports:
       - ${BACKEND_PORT:-3030}:3030 
@@ -15,26 +15,26 @@ services:
       - ./config:/home/node/app/config
       - ./archive:/home/node/app/public/archive
     depends_on:
-      linkstash_db:
+      linkstash-db:
         condition: service_healthy
-  linkstash_db:
+  linkstash-db:
     image: linuxserver/mariadb:10.11.8
     restart: unless-stopped
     environment:
       - PUID=1000
       - PGID=100 
       - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD:-password}
-      - MYSQL_DATABASE=${DB_NAME:-linkstash_backend}
+      - MYSQL_DATABASE=${DB_NAME:-linkstash-backend}
       - MYSQL_USER=${DB_USER:-linkstash}
       - MYSQL_PASSWORD=${DB_PASSWORD:-password}
     volumes:
-      - linkstash_data:/config
+      - linkstash-data:/config
     healthcheck:
       test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
       timeout: 5s
       retries: 30
-  linkstash_frontend:
-    image: paan1981/linkstash-frontend-nightly:daily-20240816-01
+  linkstash-frontend:
+    image: paan1981/linkstash-frontend-nightly:nightly-20240816-01
     restart: unless-stopped
     environment:
       TOKEN_COOKIE_NAME: ${TOKEN_COOKIE_NAME:-linkstash-token}
@@ -42,6 +42,6 @@ services:
     ports:
       - ${FRONTEND_PORT:-3000}:3000
     depends_on:
-      - linkstash_backend
+      - linkstash-backend
 volumes:
-  linkstash_data:
+  linkstash-data:

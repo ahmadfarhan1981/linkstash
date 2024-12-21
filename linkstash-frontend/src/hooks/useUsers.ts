@@ -1,8 +1,7 @@
 import { ApiCallOptions, User } from "@/types";
-import { makeApiCall } from "@/scripts";
 import React, { useState } from "react";
 
-
+import { makeApiCall } from "@/scripts";
 import { useAuthentication } from "@/hooks";
 
 export type useUsersReturnValue = {

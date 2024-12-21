@@ -46,7 +46,7 @@ password: password
 
 ## Persistent Data
 Persistent data created by LinkStash is located in two places:
-- MySQL data files are stored in the `linkstash_data` Docker volume.
+- MySQL data files are stored in the `linkstash-data` Docker volume.
 - The `./archive` folder contains downloaded assets for offline use.
 
 

@@ -9,8 +9,7 @@ export function Intro(){
             <div className="container mx-auto px-4">
               <h1 className="text-4xl font-bold">🔖 LinkStash</h1>
               <p className="mt-2 text-lg italic">
-                "Stash Your Links, Revisit Anytime - LinkStash Keeps It All
-                Together."
+                Stash Your Links, Revisit Anytime - LinkStash Keeps It All Together.
               </p>
             </div>
           </header>
@@ -19,8 +18,8 @@ export function Intro(){
             <section>
               <h2 className="text-2xl font-bold mb-4">Overview</h2>
               <p className="mb-6">
-                LinkStash is a self-hosted, backend-driven bookmarking and "read
-                it later" solution, empowering you to take full control of your
+                LinkStash is a self-hosted, backend-driven bookmarking and &quote;read
+                it later&quote; solution, empowering you to take full control of your
                 saved links and offline content.
               </p>
               {/* <img src="https://placeholder.com/your-demo-gif-link" alt="LinkStash Demo GIF" className="rounded-lg shadow-lg" /> */}

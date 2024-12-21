@@ -12,8 +12,8 @@ jobs:
     strategy:
       matrix:
         project:
-          - linkstash_backend
-          #- frontend # Add more subfolders as needed
+          - linkstash-backend
+          - linkstash-frontend
 
     steps:
     # Step 1: Checkout the repository
@@ -35,9 +35,9 @@ jobs:
     # Step 4: Build the Docker image
     - name: Build Docker image
       run: |
-        docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ matrix.project }}:nightly-$DATE ./${{ matrix.project }}
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ matrix.project }}-nightly:nightly-$DATE ./${{ matrix.project }}
 
     # Step 5: Push the Docker image
     - name: Push Docker image
       run: |
-        docker push ${{ secrets.DOCKER_USERNAME }}/${{ matrix.project }}:nightly-$DATE
+        docker push ${{ secrets.DOCKER_USERNAME }}/${{ matrix.project }}-nightly:nightly-$DATE
