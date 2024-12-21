@@ -128,7 +128,7 @@ export function BookmarkForm({
   };
   return (
     <>
-      <AuthenticatedSection prefix="Please login to continue">
+      <AuthenticatedSection prefix={<>Please login to continue</>}>
         <Loader isLoading={isLoading}>
           <h2>Adding a new bookmark</h2>
           <div className="bg-card-background shadow p-3 mt-3">

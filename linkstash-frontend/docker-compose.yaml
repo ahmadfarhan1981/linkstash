@@ -2,7 +2,7 @@ services:
   server:
     build:
       context: .
-    image: linkstash_frontend
+    image: linkstash-frontend
     environment:
       TOKEN_COOKIE_NAME: linkstash-token
       BACKEND_URL: http://localhost:3030

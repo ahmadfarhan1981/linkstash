@@ -1,5 +1,6 @@
 "use client";
 
+import { AuthenticatedSection, ConfirmActionButton, InputComponent, LinkStashDialog } from "@/components";
 import {
   Cell,
   Column,
@@ -8,14 +9,11 @@ import {
   TableBody,
   TableHeader,
 } from "react-aria-components";
-
-
-import { AuthenticatedSection, ConfirmActionButton, InputComponent, LinkStashDialog } from "@/components";
-import { useAuthentication, useUsers } from "@/hooks";
 import React, { useEffect, useState } from "react";
+import { useAuthentication, useUsers } from "@/hooks";
+
 import { User } from "@/types";
-import { EMPTY_FUNCTION, makeApiCall } from "@/scripts";
-import { confirmAlert } from "react-confirm-alert";
+import { makeApiCall } from "@/scripts";
 
 export default function Home() {
   const { users, fetchUsers } = useUsers();

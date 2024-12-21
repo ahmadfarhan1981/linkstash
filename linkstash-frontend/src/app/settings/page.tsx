@@ -25,7 +25,7 @@ export default function Home() {
 
   return (
     <>
-      <AuthenticatedSection prefix="Please login to continue">
+      <AuthenticatedSection prefix={<>Please login to continue</>}>
         <div className="flex flex-col items-start w-full md:px-20 px-2">
           <h2>Settings pages</h2>
         </div>
