@@ -49,7 +49,7 @@ jobs:
 
     # Step 4: Log in to DockerHub (only if the tag is valid)
     - name: Log in to DockerHub
-      if: ${{ env.VALID_TAG == 'false' || env.PROJECT_NAME != matrix.project }}
+      if: ${{ env.VALID_TAG == 'true' || env.PROJECT_NAME == matrix.project }}
       uses: docker/login-action@v2
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
@@ -57,12 +57,12 @@ jobs:
 
     # Step 5: Build the Docker image (only if the tag is valid)
     - name: Build Docker image
-      if: ${{ env.VALID_TAG == 'false' || env.PROJECT_NAME != matrix.project }}
+      if: ${{ env.VALID_TAG == 'true' || env.PROJECT_NAME == matrix.project }}
       run: |
         docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ matrix.project }}:${{ env.VERSION }} ./${{ matrix.project }}
 
     # Step 6: Push the Docker image (only if the tag is valid)
     - name: Push Docker image
-      if: ${{ env.VALID_TAG == 'false' || env.PROJECT_NAME != matrix.project }}
+      if: ${{ env.VALID_TAG == 'true' || env.PROJECT_NAME == matrix.project }}
       run: |
         docker push ${{ secrets.DOCKER_USERNAME }}/${{ matrix.project }}:${{ env.VERSION }}

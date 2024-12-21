@@ -94,8 +94,8 @@ export function BookmarksToolbar({
   };
 
   const onSelectionChange = (key: Key) => {
-    setSortBy(list.getItem(key).sortBy);
-    setSortDirection(list.getItem(key).sortDirection);
+    setSortBy(list.getItem(key)!.sortBy);
+    setSortDirection(list.getItem(key)!.sortDirection);
   };
 
   const handleFilterChange = (e:ChangeEvent<HTMLInputElement>)=>{setFilter(e.target.value)}
