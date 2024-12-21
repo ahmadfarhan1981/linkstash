@@ -11,6 +11,7 @@ export type useBookmarksReturnValue = {
   fetchBookmarks: (options:fetchBookmarksOptions) => void;
   deleteBookmark: (bookmarkId:number, onSuccess:()=>void)=>void
   archiveBookmark: (bookmarkId:number, onSuccess: ()=>void)=>void
+  deleteArchive: (bookmarkId:number, onSuccess:()=>void)=>void
   isLoading: boolean;
   numNonPagedResults: number;
 };
@@ -104,8 +105,23 @@ export function useBookmarks(): useBookmarksReturnValue {
     setIsLoading(true);
     makeApiCall(apiOptions, false);
     setIsLoading(false);
+  };
+
+  const deleteArchive = (bookmarkId:number, onSuccess?:()=>void) => {
+    if (!AuthenticationState.isLoggedIn) return;
     
-    
+    const apiOptions: ApiCallOptions = {
+      endpoint: `/bookmarks/${bookmarkId}/archives`,
+      method: "DELETE",
+      headers: {
+        Authorization: "Bearer ".concat(AuthenticationState.token),
+      },
+      successCallback: onSuccess?onSuccess:EMPTY_FUNCTION
+    };
+    // TODO loading states are not really reflected properly, makeApiCall is async so the loading status isn't reflected properly
+    setIsLoading(true);
+    makeApiCall(apiOptions, false);
+    setIsLoading(false);
   };
 
   return {
@@ -114,6 +130,7 @@ export function useBookmarks(): useBookmarksReturnValue {
     fetchBookmarks,
     deleteBookmark,
     archiveBookmark,
+    deleteArchive,
     isLoading,
     numNonPagedResults
   };

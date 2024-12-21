@@ -9,6 +9,8 @@
   margin: auto;
   width: 100%;
   max-width: fit-content;
+
+  @apply bg-card-background shadow p-3 mt-10
 }
 
 .submit-button{

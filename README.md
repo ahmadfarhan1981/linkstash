@@ -1,127 +1,106 @@
 # :bookmark: LinkStash
-Selfhosted, backend driven :bookmark:bookmarking and :book: read it later solution. 
 
-\>>>>>Pretty gif here<<<<<
+**"Stash Your Links, Revisit Anytime - LinkStash: Your Self-Hosted Bookmark Manager"**
 
-# Feature
-- :bookmark: Save and manage links
-- :book: Save an offline version for reading later
-- :file_cabinet: Selfhost friendly deployment via docker compose file
-- :wrench: backend driven, all functionality is exposed via REST endpoints.
+LinkStash is a self-hosted, backend-driven bookmarking and "read it later" solution, empowering you to take full control of your saved links and offline content.
 
-# Installation
-## docker compose
-A docker compose file with everything you need to run the service is available.
+![LinkStash Demo GIF](img/screenshot.png)
+
+## Features
+
+- **:file_folder: Privacy & Ownership**: Full control over your data, self-hosted for maximum privacy.
+- **:globe_with_meridians: Offline Access**: Save and read content offline, even without internet.
+- **:file_cabinet: Simple Deployment**: Get started quickly with Docker Compose.
+- **:wrench: REST API Integration**: Easily connect and automate with full REST API support.
+## Why LinkStash?
+
+LinkStash is designed to give you complete control over your bookmarking needs. Unlike cloud-based alternatives, LinkStash offers:
+- **Privacy & Ownership**: Self-hosted, so your data stays with you.
+- **Offline Reading**: Save articles for later, even when you're offline.
+- **REST API Access**: Full access to all features via REST endpoints, making it easy to integrate with other tools.
+- **Easy Deployment**: Get started quickly with Docker Compose, making setup painless.
+
+LinkStash is built for users who value control, privacy, and flexibility in organizing their web content.
+## Quickstart
+
+### Docker Compose
+
+To get up and running with default settings using Docker Compose:
 
 ```bash
 mkdir config
-
 mkdir archive
 
-wget docker-compose.yaml https://raw.githubusercontent.com/ahmadfarhan1981/linkstash/develop/docker/docker-compose.yaml
+wget https://raw.githubusercontent.com/ahmadfarhan1981/linkstash/develop/docker/docker-compose.yaml
 
 docker compose up -d
 ```
-Access linkstash at: http://localhost:3000
 
-The default credential is:
-```
+Access LinkStash at: [http://localhost:3000](http://localhost:3000)
+
+**Default credentials:**
+```plaintext
 username: admin
-password:password
+password: password
 ```
 
-## Customization
-
-You can customize stuff via the env file
-
-```bash
-wget .env.example https://raw.githubusercontent.com/ahmadfarhan1981/linkstash/develop/docker/.env.example
-cp .env.example .env
-```
+## Persistent Data
+Persistent data created by LinkStash is located in two places:
+- MySQL data files are stored in the `linkstash_data` Docker volume.
+- The `./archive` folder contains downloaded assets for offline use.
 
 
-## exposing to the internet
 
-reverse proxy
-please be advice to take reasonable precaution 
+## Community, Contribution & Development
 
-start with volumes
+Thanks for taking the time to contribute!
 
-```bash
-docker run --rm -v <volume>:/src -v $(pwd)/<dir>:/dest alpine sh -c 'cp -R /src/* /dest/'
-```
+All types of contributions are encouraged and valued. 🎉
 
-default user admin@linkstashapp:password
-data management
-grab data from volumes, 
-keep .migrated together, 
-when to remove .migrated.
+If you like the project, but just don't have time to contribute, that's fine. You can support the project by:
+- Star the project
+- Mention the project on social media
+- Participate in in [discussions](https://github.com/ahmadfarhan1981/linkstash/discussions).
+ 
+For detailed contribution guidelines, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Similar Projects / Services
 
-## For development
+- [Linkding](https://github.com/sissbruecker/linkding/)
+- [Pinboard](https://pinboard.in)
+- Delicious (now defunct): 
 
-run migrate for generated columns
+## Status
 
-Frontend
-create `.env.local`
+### MVP release
 
-Backend
-create `.env.local`
-
-init db
-start backend
-
-start frontend
-
-Docker stuff
-## Building locally
-Database
-- docker of mariadb example
-
-
-# Configuration
-ads
-
-# Similar projects / services
-- Linkding (https://github.com/sissbruecker/linkding/)
-- Pinboard (https://pinboard.in)
-- Delicious (now defunct) (https://del.icio.us/)
-- 
-  
-# Status
-## Moving towards MVP
-Feature set for MVP
+**MVP feature set:**
 - :white_check_mark: Bookmarking
-- :white_check_mark: Tagging 
+- :white_check_mark: Tagging / filtering
 - :white_check_mark: Archiving
 - :white_check_mark: Docker deployment
-- :construction: Import/export
+- :white_check_mark: Import
 
-Currently still working on MVP features. 
-After that, there is a round of bug squashing. Then onwards to V1.0 MVP
+The project is still in progress. 
 
-## For the future
-*These might change if there is feedback*
 
-After the MVP release. Focus topics (in no particular order) is going to be:
-- UI improvements
-  - responsive mobile layout
-  - general UX improvements
-- Integrations
-  - integration with other services
-    - paperless-ngx
-    - archivebox
-    - internet archive
-    - yt-dl
-- Arcihving improvements
-  - different formats
-    - default(non-reader view) format
-  - archive versioning
-- management feature
-  - group by domains
-  - link duplication check
-  - checking for changes / link rot
-  - backend scheduled tasks 
-- Code quality
-  - tests
-- extendable frontend styles
+### For the Future
+
+*These plans may evolve based on feedback.*
+
+Post-MVP, the focus areas will include:
+- **Management Features**
+  - Semantic search
+  - Grouping by domains
+  - Link duplication checks
+  - Change detection / link rot checking
+  - Statistics
+- **UI Improvements**
+  - Responsive mobile layout
+  - General UX enhancements
+- **Integrations**
+  - Integration with services like paperless-ngx, archivebox, and internet archive
+- **Archiving Improvements**
+  - Support for various formats
+  - Archive versioning
+

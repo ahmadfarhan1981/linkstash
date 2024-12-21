@@ -128,8 +128,10 @@ export function BookmarkForm({
   };
   return (
     <>
-      <AuthenticatedSection>
+      <AuthenticatedSection prefix="Please login to continue">
         <Loader isLoading={isLoading}>
+          <h2>Adding a new bookmark</h2>
+          <div className="bg-card-background shadow p-3 mt-3">
           <form action={handleSubmitWrapper}>
             <div>
               <InputComponent
@@ -189,6 +191,7 @@ export function BookmarkForm({
               >{submitButtonText}</button>
             </div>
           </form>
+          </div>
         </Loader>
       </AuthenticatedSection>
     </>
