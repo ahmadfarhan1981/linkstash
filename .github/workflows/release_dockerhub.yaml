@@ -37,6 +37,7 @@ jobs:
           echo "VALID_TAG=true" >> $GITHUB_ENV
         else
           echo "VALID_TAG=false" >> $GITHUB_ENV
+        fi
 
     # Step 3: Skip unrelated or invalid tags
     - name: Check tag validity and project match
