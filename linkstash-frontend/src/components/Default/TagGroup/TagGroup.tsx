@@ -16,6 +16,7 @@ import {
 import { delay, now } from "lodash";
 import { useRef, useState } from "react";
 
+import { SiPantheon } from "react-icons/si";
 import { useHover } from "react-aria";
 
 /**
@@ -95,9 +96,9 @@ export function MyTag({ children, ...props }: TagProps) {
   let textValue = typeof children === "string" ? children : undefined;
   return (
     <Tag textValue={textValue} {...props}>
-      {({ allowsRemoving }) => (
+      {( {allowsRemoving }) => (
         <>
-          {children}
+          children
           {allowsRemoving && (
             <Button slot="remove">
               <span className={"font-serif"}>
