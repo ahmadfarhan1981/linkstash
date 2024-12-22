@@ -1,7 +1,7 @@
 name: Linkstash
 services:  
   linkstash-backend:
-    image: paan1981/linkstash-backend-nightly:nightly-20240818-03
+    image: paan1981/linkstash-backend:0.012
     environment:
       DB_HOST: ${DB_HOST:-linkstash-db}
       DB_PORT: ${DB_PORT:-3306}
@@ -34,7 +34,7 @@ services:
       timeout: 5s
       retries: 30
   linkstash-frontend:
-    image: paan1981/linkstash-frontend-nightly:nightly-20240816-01
+    image: paan1981/linkstash-frontend:0.0123
     restart: unless-stopped
     environment:
       TOKEN_COOKIE_NAME: ${TOKEN_COOKIE_NAME:-linkstash-token}
