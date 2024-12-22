@@ -102,8 +102,8 @@ export function TagInput(props: TagInputProps  ) {
 
   return (
     <>
-      <div style={{width:Number.parseInt(maxWidthInPixel.toString())}} >      
-      <div id="tagListInputDiv">
+      <div style={{maxWidth:Number.parseInt(maxWidthInPixel.toString()), minWidth:'100px'}} >      
+      <div id="tagListInputDiv" className="w-full">
       <label className={styles["form-label"]} >
           <TextField            
             ref={tagInput}
@@ -155,8 +155,9 @@ export function TagInput(props: TagInputProps  ) {
             )}
           </GridList>
         </Popover>
-        <div id="selectedTagListDiv" className="overflow-x-auto">
+        <div id="selectedTagListDiv" className="overflow-x-auto w-full">
           <MyTagGroup
+          className="w-full"
             aria-label={selectedLabel}
             label={selectedLabel?selectedLabel:""}
             renderEmptyState={() => "**no tags specified**"}
