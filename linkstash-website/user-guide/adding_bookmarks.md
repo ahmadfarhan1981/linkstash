@@ -7,6 +7,7 @@
    - **URL**: Enter the URL of the link you want to save.  
    - **Title**: Provide a title for the link.  
    - **Description**: Add a longer description for the link (optional).
+   - TODO explain url metadata fetching
 
 3. **Add Tags**  
    - You can add tags to categorize the link:  
