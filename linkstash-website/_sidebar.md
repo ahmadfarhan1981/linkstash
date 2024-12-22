@@ -1,1 +1,5 @@
-* [Home](/)
+- [Linkstash](index.md)
+- [User guide](user-guide/README.md)
+  - [Adding a Bookmark](user-guide/adding_bookmarks.md)
+  - [Filtering Bookmarks](user-guide/filtering.md)
+  - [Settings page](user-guide/settings.md)
