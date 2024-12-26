@@ -7,7 +7,7 @@ on:
   workflow_dispatch: # Allows manual triggering of the workflow
 
 jobs:
-  build-and-push:
+  nightly-build-and-push:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -30,14 +30,52 @@ jobs:
     # Step 3: Get the current date
     - name: Get today's date
       id: date
-      run: echo "DATE=$(date +'%Y%m%d')" >> $GITHUB_ENV
+      run: |
+        echo "DATE=$(date +'%Y%m%d')" >> $GITHUB_ENV
+        echo "TIMESTAMP=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_ENV
+        echo "REVISION=$(git rev-parse HEAD)" >> $GITHUB_ENV
 
-    # Step 4: Build the Docker image
+    # Step 4: Pull latest Docker image and inspect labels
+    - name: Pull latest Docker image
+      id: check-latest-image
+      run: |
+        IMAGE=${{ secrets.DOCKER_USERNAME }}/${{ matrix.project }}-nightly:latest
+
+        if docker pull "$IMAGE" 2>/dev/null; then
+          LABEL_REVISION=$(docker inspect "$IMAGE" --format '{{ index .Config.Labels "org.opencontainers.image.revision" }}' || echo "")
+
+          if [ "$LABEL_REVISION" = "${{ env.REVISION }}" ]; then
+            echo "Matching revision found. Skipping build and push."
+            echo "SKIP_BUILD=true" >> $GITHUB_ENV
+          else
+            echo "Revision mismatch or label not found. Proceeding with build and push."
+            echo "SKIP_BUILD=false" >> $GITHUB_ENV
+          fi
+        else
+          echo "Image not found. Proceeding with build and push."
+          echo "SKIP_BUILD=false" >> $GITHUB_ENV
+        fi
+
+    # Step 5: Build the Docker image (conditionally)
     - name: Build Docker image
+      if: env.SKIP_BUILD != 'true'
       run: |
-        docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ matrix.project }}-nightly:nightly-$DATE ./${{ matrix.project }}
+        docker build \
+                ./${{ matrix.project }} \
+                -t ${{ secrets.DOCKER_USERNAME }}/${{ matrix.project }}-nightly:nightly-${{ env.DATE }} \
+                -t ${{ secrets.DOCKER_USERNAME }}/${{ matrix.project }}-nightly:latest \
+                --label "org.opencontainers.image.created=${{ env.TIMESTAMP }}" \
+                --label "org.opencontainers.image.version=nightly-${{ env.DATE }}" \
+                --label "org.opencontainers.image.revision=${{ env.REVISION }}"
 
-    # Step 5: Push the Docker image
+    # Step 6: Push the Docker image (conditionally)
     - name: Push Docker image
+      if: env.SKIP_BUILD != 'true'
       run: |
-        docker push ${{ secrets.DOCKER_USERNAME }}/${{ matrix.project }}-nightly:nightly-$DATE
+        docker push ${{ secrets.DOCKER_USERNAME }}/${{ matrix.project }}-nightly:nightly-${{ env.DATE }}
+        docker push ${{ secrets.DOCKER_USERNAME }}/${{ matrix.project }}-nightly:latest
+
+    # Step 7: Log skipping build and push (optional for debugging)
+    - name: Skipping build and push
+      if: env.SKIP_BUILD == 'true'
+      run: echo "Build and push skipped because the latest image revision matches the current git commit."

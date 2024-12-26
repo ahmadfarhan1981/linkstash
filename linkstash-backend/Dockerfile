@@ -26,3 +26,9 @@ ENV HOST=0.0.0.0 PORT=3030
 
 EXPOSE ${PORT}
 CMD [ "bash", "./docker-entrypoint.sh" ]
+
+LABEL org.opencontainers.image.authors="paan@linkstashapp.com" \
+      org.opencontainers.image.title="LinkStash Backend" \
+      org.opencontainers.image.description="Backend service for LinkStash: Your Self-Hosted Bookmark Manager." \
+      org.opencontainers.image.url="https://github.com/ahmadfarhan1981/linkstash"
+

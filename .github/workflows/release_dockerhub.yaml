@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       tag_name:
-        description: "Simulated tag name for testing"
+        description: "Tag name"
         required: false
 
 jobs:
@@ -38,15 +38,21 @@ jobs:
         else
           echo "VALID_TAG=false" >> $GITHUB_ENV
         fi
-    
-    # Step 3: Skip unrelated or invalid tags
+
+    # Step 3: Get revision and created timestamp
+    - name: Get revision and timestamp
+      run: |
+        echo "REVISION=$(git rev-parse HEAD)" >> $GITHUB_ENV
+        echo "CREATED_TIMESTAMP=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_ENV
+
+    # Step 4: Skip unrelated or invalid tags
     - name: Check tag validity and project match
       if: ${{ env.VALID_TAG == 'false' || env.PROJECT_NAME != matrix.project }}
       run: |
         echo "Skipping job. Either tag is invalid or does not match the project: ${{ matrix.project }}"
         exit 0
 
-    # Step 4: Log in to DockerHub (only if the tag is valid and matches project)
+    # Step 5: Log in to DockerHub (only if the tag is valid and matches project)
     - name: Log in to DockerHub
       if: ${{ env.VALID_TAG == 'true' && env.PROJECT_NAME == matrix.project }}
       uses: docker/login-action@v2
@@ -54,14 +60,21 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    # Step 5: Build the Docker image (only if the tag is valid and matches project)
+    # Step 6: Build the Docker image (only if the tag is valid and matches project)
     - name: Build Docker image
       if: ${{ env.VALID_TAG == 'true' && env.PROJECT_NAME == matrix.project }}
       run: |
-        docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ matrix.project }}:${{ env.VERSION }} ./${{ matrix.project }}
+        docker build \
+          -t ${{ secrets.DOCKER_USERNAME }}/${{ matrix.project }}:${{ env.VERSION }} \
+          -t ${{ secrets.DOCKER_USERNAME }}/${{ matrix.project }}:latest \
+          --label "org.opencontainers.image.created=${{ env.CREATED_TIMESTAMP }}" \
+          --label "org.opencontainers.image.version=${{ env.VERSION }}" \
+          --label "org.opencontainers.image.revision=${{ env.REVISION }}" \
+          ./${{ matrix.project }}
 
-    # Step 6: Push the Docker image (only if the tag is valid and matches project)
+    # Step 7: Push the Docker image (only if the tag is valid and matches project)
     - name: Push Docker image
       if: ${{ env.VALID_TAG == 'true' && env.PROJECT_NAME == matrix.project }}
       run: |
         docker push ${{ secrets.DOCKER_USERNAME }}/${{ matrix.project }}:${{ env.VERSION }}
+        docker push ${{ secrets.DOCKER_USERNAME }}/${{ matrix.project }}:latest
