@@ -36,8 +36,19 @@ export class BookmarkController {
     content: {
       'application/json': {
         schema: {
-          type: 'array',
-          items: getModelSchemaRef(Bookmark, {includeRelations: true}),
+          type: 'object',
+          properties: {
+            countAll: {
+              type: 'number',
+              description: 'Total count of all Bookmark instances',
+            },
+            data: {
+              type: 'array',
+              items: getModelSchemaRef(Bookmark, {includeRelations: false}),
+              description: 'Array of filtered Bookmark instances',
+            },
+          },
+          required: ['countAll', 'data'],
         },
       },
     },
@@ -99,28 +110,28 @@ export class BookmarkController {
 
   // @intercept('interceptors.AddCountToResultInterceptor')
   // TODO only admins should be able to do this
-  @get('/all_bookmarks')
-  @response(200, {
-    description: 'Array of Bookmark model instances',
-    content: {
-      'application/json': {
-        schema: {
-          type: 'array',
-          items: getModelSchemaRef(Bookmark, {includeRelations: true}),
-        },
-      },
-    },
-  })
-  async findAll(@inject(SecurityBindings.USER) currentUserProfile: UserProfile, @param.filter(Bookmark) filter?: Filter<Bookmark>): Promise<Object> {
-    const all = await this.bookmarkRepository.find(filter);
+  // @get('/all_bookmarks')
+  // @response(200, {
+  //   description: 'Array of Bookmark model instances',
+  //   content: {
+  //     'application/json': {
+  //       schema: {
+  //         type: 'array',
+  //         items: getModelSchemaRef(Bookmark, {includeRelations: true}),
+  //       },
+  //     },
+  //   },
+  // })
+  // async findAll(@inject(SecurityBindings.USER) currentUserProfile: UserProfile, @param.filter(Bookmark) filter?: Filter<Bookmark>): Promise<Object> {
+  //   const all = await this.bookmarkRepository.find(filter);
 
-    const returnValue = {
-      ...filter,
-      countAll: all.length,
-      data: all,
-    };
-    return returnValue;
-  }
+  //   const returnValue = {
+  //     ...filter,
+  //     countAll: all.length,
+  //     data: all,
+  //   };
+  //   return returnValue;
+  // }
 
   //write actions
   /**
@@ -156,6 +167,22 @@ export class BookmarkController {
   @patch('/bookmarks/{id}')
   @response(204, {
     description: 'Bookmark PATCH success',
+  })
+  @response(404, {
+    description: 'Bookmark not found',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'object',
+          properties: {
+            error: {
+              type: 'string',
+              description: 'Cannot find the bookmark specified',
+            },
+          },
+        },
+      },
+    },
   })
   async updateById(
     @param.path.number('id') id: number,

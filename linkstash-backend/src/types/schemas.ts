@@ -1,5 +1,7 @@
-import {getModelSchemaRef, SchemaObject} from '@loopback/rest';
+import {SchemaObject, getModelSchemaRef} from '@loopback/rest';
+
 import {Bookmark} from '../models';
+
 export const newTagSchema = {
   title: 'New tag option',
   description: 'Options for creating a new tag',
@@ -52,4 +54,4 @@ export const CredentialsRequestBody = {
   },
 };
 
-export const bookmarkPatchSchema = getModelSchemaRef(Bookmark, {title: 'Bookmark patch schema', partial: true, exclude: ['userId', 'id']});
+export const bookmarkPatchSchema = getModelSchemaRef(Bookmark, {title: 'Bookmark patch schema', partial: true, exclude: ['userId', 'id', 'archiveCount']});
