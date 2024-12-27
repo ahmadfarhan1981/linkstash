@@ -8,4 +8,5 @@ export type useAuthenticationReturnValue = {
     isLoggedIn: boolean;
     isPending: boolean;
     token: string;
+    userId: string;
   };

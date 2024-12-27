@@ -91,7 +91,7 @@ export default function FileUploadForm() {
           <details>
   <summary>Accepts Netscape bookmark file format</summary>
   <div className="p-6">
-    <p>Lorem impsum</p>
+    <p><b>Netscape bookmark file</b></p>
   <p>
       The Netscape bookmark file format is an HTML-based format used by many <br />
       browsers for exporting and importing bookmarks. It typically contains <br />

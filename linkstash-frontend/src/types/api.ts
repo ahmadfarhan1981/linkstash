@@ -10,6 +10,7 @@ export type ApiEndpoint =
   | '/tags'
   | '/users'
   | `/users/${string}`
+  | `/users/${string}/permissions`
   | '/change-password'
   | '/signup'
   | '/import'

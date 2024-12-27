@@ -29,7 +29,7 @@ export class ImportController {
   }
 
   @post('/import')
-  @response(200, {
+  @response(204, {
     description: 'Import a netscape format bookmark file',
     content: {
       'application/json': {

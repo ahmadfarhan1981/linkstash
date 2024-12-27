@@ -6,7 +6,7 @@
 import {authenticate, TokenService} from '@loopback/authentication';
 import {TokenServiceBindings, UserServiceBindings} from '@loopback/authentication-jwt';
 import {inject, service} from '@loopback/core';
-import {IsolationLevel, model, property, repository} from '@loopback/repository';
+import {Filter, IsolationLevel, model, property, repository} from '@loopback/repository';
 import {del, get, getModelSchemaRef, HttpErrors, param, post, requestBody, Response, response, RestBindings} from '@loopback/rest';
 import {SecurityBindings, securityId} from '@loopback/security';
 import {genSalt, hash} from 'bcryptjs';
@@ -62,6 +62,9 @@ export class UserController {
                 token: {
                   type: 'string',
                 },
+                userId:{
+                  type: 'string',
+                },
               },
             },
           },
@@ -69,7 +72,7 @@ export class UserController {
       },
     },
   })
-  async login(@requestBody(CredentialsRequestBody) credentials: Credentials): Promise<{token: string}> {
+  async login(@requestBody(CredentialsRequestBody) credentials: Credentials): Promise<{token: string, userId:string}> {
     // ensure the user exists, and the password is correct
     const user = await this.userService.verifyCredentials(credentials);
     // convert a User object into a UserProfile object (reduced set of properties)
@@ -77,7 +80,7 @@ export class UserController {
 
     // create a JSON Web Token based on the user profile
     const token = await this.jwtService.generateToken(userProfile);
-    return {token};
+    return {"token":token, "userId": userProfile[securityId]};
   }
 
   @authenticate('jwt')
@@ -145,18 +148,22 @@ export class UserController {
           'application/json': {
             schema: {
               type: 'array',
-              items: getModelSchemaRef(LinkstashUser, {includeRelations: false}),
+              items: getModelSchemaRef(LinkstashUser, {includeRelations: true}),
             },
           },
         },
       },
     },
   })
-  async getUsers(@inject(SecurityBindings.USER) currentUserProfile: UserProfile, @service(PermissionsService) permissionsService : PermissionsService): Promise<LinkstashUser[]> {
+  async getUsers(@inject(SecurityBindings.USER) currentUserProfile: UserProfile,
+                  @service(PermissionsService) permissionsService : PermissionsService,
+                  @param.filter(LinkstashUser) filter?: Filter<LinkstashUser> ): Promise<LinkstashUser[]> {
     const isUserAdmin = await permissionsService.isUserAdmin(currentUserProfile[securityId])
+
     if(isUserAdmin)
-      return this.userRepository.find();
-    return [await this.userRepository.findById(currentUserProfile[securityId])]
+      return this.userRepository.find( filter );
+
+    return [await this.userRepository.findById(currentUserProfile[securityId], filter)]
   }
 
   @authenticate('jwt')
@@ -221,7 +228,5 @@ export class UserController {
       res.status(404);
       throw new Error(`Entity not found: User with id ${id}`);
     }
-
-    //await this.bookmarkRepository.deleteById(id);
   }
 }
