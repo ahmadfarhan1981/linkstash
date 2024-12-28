@@ -15,6 +15,7 @@ import {LinkstashUser} from '../models';
 import {ArchiveRepository, LinkstashUserRepository, UserCredentialsRepository, UserPermissionsRepository} from '../repositories';
 import {ArchiveService, LinkStashUserService, PermissionsService} from '../services';
 import {ChangePasswordRequestBody, Credentials, CredentialsRequestBody, UserProfile} from '../types';
+import {ForbiddenResponse, NotFoundResponse, UnauthorizedResponse} from './responses';
 
 
 @model()
@@ -84,6 +85,7 @@ export class UserController {
   }
 
   @authenticate('jwt')
+  @response(401, UnauthorizedResponse)
   @get('/whoAmI', {
     responses: {
       '200': {
@@ -141,6 +143,7 @@ export class UserController {
   }
 
   @authenticate('jwt')
+  @response(401, UnauthorizedResponse)
   @get('/users', {
     responses: {
       '200': {
@@ -172,18 +175,16 @@ export class UserController {
       '204': {},
     },
   })
-  async changePassword(
+  @response(401, UnauthorizedResponse)
+  @response(403, ForbiddenResponse)
+  async changePassword(// TODO consider changing this to /users/{id}/change-password
     @requestBody(ChangePasswordRequestBody) changePasswordRequest: ChangePasswordRequest,
     @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
+    @service(PermissionsService) permissionsService : PermissionsService,
   ): Promise<undefined> {
-    const currentUserId = currentUserProfile[securityId];
-    const isUserAdmin = (await this.userRepository.userPermissions(currentUserId).get()).isUserAdmin;
+    await permissionsService.chcekIsAllowed(currentUserProfile[securityId], changePasswordRequest.userId )
     const newPassword = await hash(changePasswordRequest.newPassword, await genSalt());
-    if (changePasswordRequest.userId === currentUserProfile[securityId] || isUserAdmin) {
-      await this.userRepository.userCredentials(changePasswordRequest.userId).patch({password: newPassword});
-    } else {
-      throw new HttpErrors.Forbidden('Unauthorized');
-    }
+    await this.userRepository.userCredentials(changePasswordRequest.userId).patch({password: newPassword});
   }
 
   @authenticate('jwt')
@@ -191,17 +192,19 @@ export class UserController {
   @response(204, {
     description: 'User DELETE success',
   })
+  @response(401, UnauthorizedResponse)
+  @response(403, ForbiddenResponse)
+  @response(404, NotFoundResponse)
   async deleteById(
     @param.path.string('id') id: string,
     @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
-    @inject(RestBindings.Http.RESPONSE) res: Response,
     @repository(ArchiveRepository) archiveRepository: ArchiveRepository,
     @service(ArchiveService) archiveService: ArchiveService,
     @repository(UserCredentialsRepository) credentialsRepository: UserCredentialsRepository,
     @repository(UserPermissionsRepository) permissionsRepository: UserPermissionsRepository,
     @service(PermissionsService) permissionsService : PermissionsService,
   ): Promise<void> {
-    await permissionsService.chcekIsAllowed(currentUserProfile[securityId], "" )
+    await permissionsService.chcekIsAllowed(currentUserProfile[securityId], "" )//empty string, only useradmin allowed to delete
     const existing = await this.userRepository.findById(id);
     if (existing) {
       /**
@@ -225,8 +228,7 @@ export class UserController {
       await this.userRepository.deleteById(id, {transaction});
       await transaction.commit();
     } else {
-      res.status(404);
-      throw new Error(`Entity not found: User with id ${id}`);
+      throw new HttpErrors.NotFound(`Entity not found: User with id ${id}`);
     }
   }
 }

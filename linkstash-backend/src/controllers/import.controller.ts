@@ -1,16 +1,13 @@
-// Uncomment these imports to begin using these cool features!
-
+import {authenticate} from '@loopback/authentication';
 import {inject, service} from '@loopback/core';
 import {post, RequestBody, requestBody, RequestBodyParserOptions, response} from '@loopback/rest';
-import {LinkStashBookmarkService, NetscapeBookmark, NetscapeBookmarkConverterService} from '../services';
 import {SecurityBindings, securityId} from '@loopback/security';
-import {authenticate} from '@loopback/authentication';
+import {LinkStashBookmarkService, NetscapeBookmark, NetscapeBookmarkConverterService} from '../services';
 import {UserProfile} from '../types';
 
 @authenticate('jwt')
 export class ImportController {
-  constructor(@service(LinkStashBookmarkService) public bookmarkService: LinkStashBookmarkService) {
-  }
+  constructor(@service(LinkStashBookmarkService) public bookmarkService: LinkStashBookmarkService) {}
   async parseFileUpload(request: RequestBodyParserOptions): Promise<RequestBody> {
     const multer = require('multer');
     const storage = multer.memoryStorage();
@@ -34,14 +31,14 @@ export class ImportController {
     content: {
       'application/json': {
         schema: {
-          type:"array",
-          items:{
+          type: 'array',
+          items: {
             'x-ts-type': NetscapeBookmark,
-          }
+          },
         },
       },
-  }
-})
+    },
+  })
   async import(
     @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
     @requestBody.file({

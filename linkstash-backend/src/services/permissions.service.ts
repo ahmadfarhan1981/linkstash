@@ -32,7 +32,7 @@ export class PermissionsService {
     const notAllowed= "Not allowed"
     const isUserAdmin = await this.isUserAdmin(userId)
     if(!isUserAdmin && (!userId || !(userId === targetUserId)) ){
-      throw new HttpErrors.Unauthorized(notAllowed);
+      throw new HttpErrors.Forbidden(notAllowed);
     }
     return true;
   }
