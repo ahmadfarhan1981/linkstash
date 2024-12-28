@@ -15,13 +15,16 @@ export type Archive = {
   "DateRetrieved": Date;
   "LastChecked": Date,
   "Hash": string
-  "Filesize": 10393,
-  "CollisionId": 0,
+  "Filesize": number,
+  "CollisionId": number,
   "Content": string
   "bookmarkId": string
 }
 
 export type User = {
   "id":string;
-  "username": string;  
+  "username": string; 
+  "userPermissions": {
+    "isUserAdmin": boolean
+  }
 }

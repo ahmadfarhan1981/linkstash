@@ -8,6 +8,7 @@ services:
       DB_USER: ${DB_USER:-linkstash}
       DB_PASSWORD: ${DB_PASSWORD:-password}
       DB_NAME: ${DB_NAME:-linkstash-backend}
+      DB_COLLATION: ${DB_COLLATION:-utf8mb4_unicode_ci}
       PORT: 3030
     ports:
       - ${BACKEND_PORT:-3030}:3030 
@@ -38,7 +39,9 @@ services:
     restart: unless-stopped
     environment:
       TOKEN_COOKIE_NAME: ${TOKEN_COOKIE_NAME:-linkstash-token}
+      USERID_COOKIE_NAME: ${USERID_COOKIE_NAME:-linkstash-userid}
       BACKEND_URL: ${BACKEND_URL:-http://localhost}:${BACKEND_PORT:-3030}
+      IMPORT_TIMEOUT: ${IMPORT_TIMEOUT:-120000}
     ports:
       - ${FRONTEND_PORT:-3000}:3000
     depends_on:

@@ -1,0 +1,19 @@
+services:    
+  linkstash-db:
+    image: linuxserver/mariadb:10.11.8
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=100 
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD:-password}
+      - MYSQL_DATABASE=${DB_NAME:-linkstash-backend}
+      - MYSQL_USER=${DB_USER:-linkstash}
+      - MYSQL_PASSWORD=${DB_PASSWORD:-password}
+    volumes:
+      - linkstash-data:/config
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 5s
+      retries: 30  
+volumes:
+  linkstash-data:

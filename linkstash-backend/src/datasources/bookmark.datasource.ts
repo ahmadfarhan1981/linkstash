@@ -6,12 +6,12 @@ dotenv.config()
 const config = {
   name: 'bookmark',
   connector: 'mysql',
-  url: `mysql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`,
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
+  collation: process.env.DB_COLLATION, 
 };
 
 // Observe application's life cycle to disconnect the datasource when
@@ -24,8 +24,6 @@ export class BookmarkDataSource
   implements LifeCycleObserver
 {
   static dataSourceName = 'bookmark';
-  static readonly defaultConfig = config;
-
   constructor(
     @inject('datasources.config.bookmark', {optional: true})
     dsConfig: object = config,

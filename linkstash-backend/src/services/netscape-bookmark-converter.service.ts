@@ -1,6 +1,8 @@
-import {injectable, BindingScope} from '@loopback/core';
-import { JSDOM } from 'jsdom';
+import {BindingScope, injectable} from '@loopback/core';
+
 import {Bookmark} from '../models';
+import { JSDOM } from 'jsdom';
+
 export class NetscapeBookmark {
   title: string;
   url?: string;
@@ -22,7 +24,7 @@ export class NetscapeBookmarkConverterService {
     const result: NetscapeBookmark[] = [];
     function getBookmarkFromAnchor(a:Element):NetscapeBookmark{
       const addDate = a.getAttribute("ADD_DATE");
-        return {
+        const bookmark =  {
           title: a.textContent ?? "",
           url: a.getAttribute("HREF") ?? undefined,
           addDate: addDate ? new Date(parseInt(addDate) * 1000) : undefined,
@@ -30,6 +32,9 @@ export class NetscapeBookmarkConverterService {
           private: a.hasAttribute("PRIVATE") && (a.getAttribute("PRIVATE") === "true" || a.getAttribute("PRIVATE") === "1"),
           toRead: a.hasAttribute("TOREAD") && (a.getAttribute("TOREAD") === "true" || a.getAttribute("TOREAD") === "1"),
         };
+
+        bookmark.tags = bookmark.tags?.filter(tag => tag.trim() !== "");
+        return bookmark;
     }
 
     function processFolder(h3:Element):NetscapeBookmark{

@@ -6,7 +6,7 @@
 import {authenticate, TokenService} from '@loopback/authentication';
 import {TokenServiceBindings, UserServiceBindings} from '@loopback/authentication-jwt';
 import {inject, service} from '@loopback/core';
-import {IsolationLevel, model, property, repository} from '@loopback/repository';
+import {Filter, IsolationLevel, model, property, repository} from '@loopback/repository';
 import {del, get, getModelSchemaRef, HttpErrors, param, post, requestBody, Response, response, RestBindings} from '@loopback/rest';
 import {SecurityBindings, securityId} from '@loopback/security';
 import {genSalt, hash} from 'bcryptjs';
@@ -15,6 +15,7 @@ import {LinkstashUser} from '../models';
 import {ArchiveRepository, LinkstashUserRepository, UserCredentialsRepository, UserPermissionsRepository} from '../repositories';
 import {ArchiveService, LinkStashUserService, PermissionsService} from '../services';
 import {ChangePasswordRequestBody, Credentials, CredentialsRequestBody, UserProfile} from '../types';
+import {ForbiddenResponse, NotFoundResponse, UnauthorizedResponse} from './responses';
 
 
 @model()
@@ -62,6 +63,9 @@ export class UserController {
                 token: {
                   type: 'string',
                 },
+                userId:{
+                  type: 'string',
+                },
               },
             },
           },
@@ -69,7 +73,7 @@ export class UserController {
       },
     },
   })
-  async login(@requestBody(CredentialsRequestBody) credentials: Credentials): Promise<{token: string}> {
+  async login(@requestBody(CredentialsRequestBody) credentials: Credentials): Promise<{token: string, userId:string}> {
     // ensure the user exists, and the password is correct
     const user = await this.userService.verifyCredentials(credentials);
     // convert a User object into a UserProfile object (reduced set of properties)
@@ -77,10 +81,11 @@ export class UserController {
 
     // create a JSON Web Token based on the user profile
     const token = await this.jwtService.generateToken(userProfile);
-    return {token};
+    return {"token":token, "userId": userProfile[securityId]};
   }
 
   @authenticate('jwt')
+  @response(401, UnauthorizedResponse)
   @get('/whoAmI', {
     responses: {
       '200': {
@@ -138,6 +143,7 @@ export class UserController {
   }
 
   @authenticate('jwt')
+  @response(401, UnauthorizedResponse)
   @get('/users', {
     responses: {
       '200': {
@@ -145,18 +151,22 @@ export class UserController {
           'application/json': {
             schema: {
               type: 'array',
-              items: getModelSchemaRef(LinkstashUser, {includeRelations: false}),
+              items: getModelSchemaRef(LinkstashUser, {includeRelations: true}),
             },
           },
         },
       },
     },
   })
-  async getUsers(@inject(SecurityBindings.USER) currentUserProfile: UserProfile, @service(PermissionsService) permissionsService : PermissionsService): Promise<LinkstashUser[]> {
+  async getUsers(@inject(SecurityBindings.USER) currentUserProfile: UserProfile,
+                  @service(PermissionsService) permissionsService : PermissionsService,
+                  @param.filter(LinkstashUser) filter?: Filter<LinkstashUser> ): Promise<LinkstashUser[]> {
     const isUserAdmin = await permissionsService.isUserAdmin(currentUserProfile[securityId])
+
     if(isUserAdmin)
-      return this.userRepository.find();
-    return [await this.userRepository.findById(currentUserProfile[securityId])]
+      return this.userRepository.find( filter );
+
+    return [await this.userRepository.findById(currentUserProfile[securityId], filter)]
   }
 
   @authenticate('jwt')
@@ -165,18 +175,16 @@ export class UserController {
       '204': {},
     },
   })
-  async changePassword(
+  @response(401, UnauthorizedResponse)
+  @response(403, ForbiddenResponse)
+  async changePassword(// TODO consider changing this to /users/{id}/change-password
     @requestBody(ChangePasswordRequestBody) changePasswordRequest: ChangePasswordRequest,
     @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
+    @service(PermissionsService) permissionsService : PermissionsService,
   ): Promise<undefined> {
-    const currentUserId = currentUserProfile[securityId];
-    const isUserAdmin = (await this.userRepository.userPermissions(currentUserId).get()).isUserAdmin;
+    await permissionsService.chcekIsAllowed(currentUserProfile[securityId], changePasswordRequest.userId )
     const newPassword = await hash(changePasswordRequest.newPassword, await genSalt());
-    if (changePasswordRequest.userId === currentUserProfile[securityId] || isUserAdmin) {
-      await this.userRepository.userCredentials(changePasswordRequest.userId).patch({password: newPassword});
-    } else {
-      throw new HttpErrors.Forbidden('Unauthorized');
-    }
+    await this.userRepository.userCredentials(changePasswordRequest.userId).patch({password: newPassword});
   }
 
   @authenticate('jwt')
@@ -184,17 +192,19 @@ export class UserController {
   @response(204, {
     description: 'User DELETE success',
   })
+  @response(401, UnauthorizedResponse)
+  @response(403, ForbiddenResponse)
+  @response(404, NotFoundResponse)
   async deleteById(
     @param.path.string('id') id: string,
     @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
-    @inject(RestBindings.Http.RESPONSE) res: Response,
     @repository(ArchiveRepository) archiveRepository: ArchiveRepository,
     @service(ArchiveService) archiveService: ArchiveService,
     @repository(UserCredentialsRepository) credentialsRepository: UserCredentialsRepository,
     @repository(UserPermissionsRepository) permissionsRepository: UserPermissionsRepository,
     @service(PermissionsService) permissionsService : PermissionsService,
   ): Promise<void> {
-    await permissionsService.chcekIsAllowed(currentUserProfile[securityId], "" )
+    await permissionsService.chcekIsAllowed(currentUserProfile[securityId], "" )//empty string, only useradmin allowed to delete
     const existing = await this.userRepository.findById(id);
     if (existing) {
       /**
@@ -218,10 +228,7 @@ export class UserController {
       await this.userRepository.deleteById(id, {transaction});
       await transaction.commit();
     } else {
-      res.status(404);
-      throw new Error(`Entity not found: User with id ${id}`);
+      throw new HttpErrors.NotFound(`Entity not found: User with id ${id}`);
     }
-
-    //await this.bookmarkRepository.deleteById(id);
   }
 }

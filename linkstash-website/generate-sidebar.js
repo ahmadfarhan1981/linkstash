@@ -36,40 +36,49 @@ function generateSidebar(dir, depth = 0) {
     return file.endsWith('.md') && file !== '_sidebar.md' && file !== 'README.md'; // Include only valid .md files
   });
 
-  let sidebarContent = '';
-
-  items.forEach(item => {
+  // Map items to an array with titles for sorting
+  const entries = items.map(item => {
     const fullPath = path.join(dir, item);
-
     if (fs.lstatSync(fullPath).isDirectory()) {
       const folderLink = getFolderLink(fullPath);
       if (folderLink) {
-        if (folderLink.relativePath) {
-          // Link folder to its README.md file
-          sidebarContent += `${'  '.repeat(depth)}- [${folderLink.linkText}](${folderLink.relativePath})\n`;
-        } else {
-          // List folder name without link
-          sidebarContent += `${'  '.repeat(depth)}- ${folderLink.linkText}\n`;
-        }
-        sidebarContent += generateSidebar(fullPath, depth + 1); // Recurse into folder
+        return { type: 'folder', title: folderLink.linkText, path: fullPath, link: folderLink.relativePath };
       }
     } else {
       const header = getFirstHeader(fullPath);
-      const linkText = header || path.parse(item).name; // Use header or fallback to file name
+      const title = header || path.parse(item).name; // Use header or fallback to file name
       const relativePath = path.relative(process.cwd(), fullPath).replace(/\\/g, '/'); // Adjust for Windows paths
-      sidebarContent += `${'  '.repeat(depth)}- [${linkText}](${relativePath})\n`;
+      return { type: 'file', title, path: fullPath, link: relativePath };
+    }
+    return null;
+  }).filter(entry => entry !== null);
+
+  // Sort entries by title
+  entries.sort((a, b) => a.title.localeCompare(b.title, undefined, { sensitivity: 'base' }));
+
+  let sidebarContent = '';
+
+  // Build sidebar content
+  entries.forEach(entry => {
+    if (entry.type === 'folder') {
+      if (entry.link) {
+        // Link folder to its README.md file
+        sidebarContent += `${'  '.repeat(depth)}- [${entry.title}](${entry.link})\n`;
+      } else {
+        // List folder name without link
+        sidebarContent += `${'  '.repeat(depth)}- ${entry.title}\n`;
+      }
+      sidebarContent += generateSidebar(entry.path, depth + 1); // Recurse into folder
+    } else if (entry.type === 'file') {
+      sidebarContent += `${'  '.repeat(depth)}- [${entry.title}](${entry.link})\n`;
     }
   });
 
   return sidebarContent;
 }
 
-// Get the root path from the command-line arguments
-let rootDir = process.argv[2];
-
-if (!rootDir) {
-  rootDir =  './';
-}
+// Get the root path from the command-line arguments or use './' as default
+const rootDir = process.argv[2] || './';
 
 // Ensure the directory exists
 if (!fs.existsSync(rootDir)) {
@@ -78,8 +87,11 @@ if (!fs.existsSync(rootDir)) {
 }
 
 // Generate and write the sidebar
-const sidebar = generateSidebar(rootDir); // Use the provided directory
+let sidebar = generateSidebar(rootDir); // Use the provided directory
 const sidebarPath = path.join(rootDir, '_sidebar.md');
+
+const header = getFirstHeader(path.join(rootDir, 'README.md'));
+sidebar = `- [${header}](README.md)\n` + sidebar;//Add the top level README
 fs.writeFileSync(sidebarPath, sidebar);
 
 console.log(`Sidebar generated successfully at ${sidebarPath}`);

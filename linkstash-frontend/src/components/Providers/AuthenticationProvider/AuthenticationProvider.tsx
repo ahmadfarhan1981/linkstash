@@ -6,7 +6,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { getTokenCookieName, makeApiCall } from "@/scripts";
+import { getTokenCookieName, getUserIdCookieName, makeApiCall } from "@/scripts";
 
 import { Authentication } from "@/hooks";
 import Cookies from "universal-cookie";
@@ -19,19 +19,23 @@ export function AuthenticationProvider({
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isPending, setIsPending] = useState(true);
   const [token, setToken] = useState("");
+  const [userId, setUserId] = useState("");
   const AuthenticationState = {
     isLoggedIn,
     isPending,
     token,
+    userId,
   } as AuthenticationState;
 
   const login = async (username: string, password: string): Promise<void> => {
     const success = async (response: any) => {
-      const { token } = response.data;
+      const { token, userId } = response.data;
       setIsLoggedIn(true);
       setToken(token);
+      setUserId(userId);
       const cookies = new Cookies();
-      cookies.set(await getTokenCookieName(), token);
+      cookies.set(getTokenCookieName(), token);
+      cookies.set(getUserIdCookieName(), userId);
     };
     const failure = (error: any) => {
       // TODO handle error
@@ -61,14 +65,14 @@ export function AuthenticationProvider({
   const verifyLogin = async () => {
     const cookies = new Cookies();
     //TODO figure out server actions and setting via env var
-    const cookieTokenName = "linkstash-token";
     if (isLoggedIn) return;
-
+    const tokenCookieName = getTokenCookieName();
+    const userIdCookieName = getUserIdCookieName();
     setIsPending(true);
-    if (cookies.get(cookieTokenName)) {
+    if (cookies.get(tokenCookieName) && cookies.get(userIdCookieName) ) {
       
-      const cookieToken = cookies.get(cookieTokenName);
-
+      const cookieToken = cookies.get(getTokenCookieName());
+      const cookieUserId = cookies.get(getUserIdCookieName());
       makeApiCall({
         method: "GET",
         endpoint: "/whoAmI",
@@ -78,6 +82,7 @@ export function AuthenticationProvider({
         successCallback: () => {
           setIsLoggedIn(true);
           setToken(cookieToken);
+          setUserId(cookieUserId)
         },          
         finallyCallback: () => {
           setIsPending(false);
@@ -95,10 +100,16 @@ export function AuthenticationProvider({
   const logout = () => {
     setIsLoggedIn(false);
     setToken("");
+    setUserId("");
     const cookies = new Cookies();
-    const cookieTokenName = "linkstash-token";
-    if (cookies.get(cookieTokenName)) {
-      cookies.remove(cookieTokenName);
+    const tokenCookieName = getTokenCookieName();
+    const userIdCookieName = getUserIdCookieName();
+    
+    if (cookies.get(tokenCookieName)) {
+      cookies.remove(tokenCookieName);
+    }
+    if (cookies.get(userIdCookieName)) {
+      cookies.remove(userIdCookieName);
     }
   };
 

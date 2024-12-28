@@ -17,3 +17,5 @@ export const DEFAULT_HEADERS =  {
 
 export const DEFAULT_TIMEOUT_IN_MILISECONDS = 3000
 
+export const DEFAULT_TOKEN_COOKIE_NAME = "linkstash-token"
+export const DEFAULT_USERID_COOKIE_NAME = "linkstash-userid"

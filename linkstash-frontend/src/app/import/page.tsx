@@ -1,5 +1,6 @@
 "use client";
 
+import { AuthenticatedSection, LoadingSpinner } from "@/components";
 import {
   Cell,
   Column,
@@ -52,6 +53,7 @@ export default function FileUploadForm() {
         Authorization: "Bearer ".concat(AuthenticationState.token),
         "content-type": "multipart/form-data",
       },
+      timeout: process.env.IMPORT_TIMEOUT,
       successCallback: (_response: any) => {
         setUploadStatus({
           type: "success",
@@ -64,14 +66,15 @@ export default function FileUploadForm() {
           message: "Failed to upload file. Please try again." + err,
         });
       },
-    };
-    // setIsLoading(true);
-    makeApiCall(apiOptions, true);
-    setIsUploading(false);
-    // setIsLoading(false);
+      finallyCallback:()=>{
+        setIsUploading(false)
+      },
+    };    
+    makeApiCall(apiOptions, true);    
   };
 
   return (
+    <AuthenticatedSection>
     <Table
       aria-label="Import"
       className={"border-[1px] border-black border-solid w-full"}
@@ -91,7 +94,7 @@ export default function FileUploadForm() {
           <details>
   <summary>Accepts Netscape bookmark file format</summary>
   <div className="p-6">
-    <p>Lorem impsum</p>
+    <p><b>Netscape bookmark file</b></p>
   <p>
       The Netscape bookmark file format is an HTML-based format used by many <br />
       browsers for exporting and importing bookmarks. It typically contains <br />
@@ -171,7 +174,7 @@ export default function FileUploadForm() {
                   className="button submit-button disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                   // className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isUploading ? "Uploading..." : "Upload File"}
+                  {isUploading ? <><LoadingSpinner />Uploading...</> : "Upload File"}
                 </button>
               </form>
               {uploadStatus && (
@@ -187,5 +190,6 @@ export default function FileUploadForm() {
         </Row>
       </TableBody>
     </Table>
+    </AuthenticatedSection>
   );
 }

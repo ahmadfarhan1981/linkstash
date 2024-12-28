@@ -33,6 +33,12 @@ code {
     monospace;
 }
 
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* button:disabled:hover:after {
   position: absolute;
   top: 0;

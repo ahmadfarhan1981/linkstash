@@ -1,18 +1,16 @@
 "use client";
 
-import { AuthenticatedSection, ConfirmActionButton, InputComponent, LinkStashDialog } from "@/components";
+import { ApiCallOptions, User } from "@/types";
+import { AuthenticatedSection, ConfirmActionButton, InputComponent, LinkStashDialog, UserTableRow } from "@/components";
 import {
-  Cell,
   Column,
-  Row,
   Table,
   TableBody,
-  TableHeader,
+  TableHeader
 } from "react-aria-components";
 import React, { useEffect, useState } from "react";
 import { useAuthentication, useUsers } from "@/hooks";
 
-import { User } from "@/types";
 import { makeApiCall } from "@/scripts";
 
 export default function Home() {
@@ -24,6 +22,7 @@ export default function Home() {
 
   const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
   const [isDeleteUserdModalOpen, setIsDeleteUserdModalOpen] = useState(false);
+  const [isUserPermissionModalOpen, setIsUserPermissionModalOpen] = useState(false);
   const [isNewUserModalOpen, setIsNewUserModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
@@ -32,6 +31,15 @@ export default function Home() {
     setIsChangePasswordModalOpen(true);
   };
 
+  const showDeleteUserDialog = (user: User) => {
+    setSelectedUser(user);
+    setIsDeleteUserdModalOpen(true)
+  };
+
+  const showUserPermissionsDialog = (user: User) => {
+    setSelectedUser(user);
+    setIsUserPermissionModalOpen(true);
+  };
 
   const handleNewUserSubmit = (e: React.FormEvent)=>{
     e.preventDefault();
@@ -58,9 +66,6 @@ export default function Home() {
     )
 
   }
-
- 
-
   const handlePasswordSubmit = (e: React.FormEvent) => {
     e.preventDefault();        
     if (selectedUser) {      
@@ -70,7 +75,36 @@ export default function Home() {
     }
     setIsDeleteUserdModalOpen(false);
   };
+  const handleUpdatePermissionsSubmit = (e: React.FormEvent) => {
+    e.preventDefault();        
+    if (selectedUser) {      
+      const form = e.currentTarget as HTMLFormElement;
+      const isUserAdmin = form.isUserAdmin as HTMLInputElement;      
+      
+      const apiOptions:ApiCallOptions={
+        endpoint: `/users/${selectedUser.id}/permissions`,
+        body: {
+                "isUserAdmin": isUserAdmin.checked
+              },
+        method: "PATCH",
+        headers: {
+                 Authorization: "Bearer ".concat(AuthenticationState.token),
+               },
+        successCallback: ()=>{ 
+          setIsUserPermissionModalOpen(false);
+          fetchUsers(apiOptions);
+        }
+      }
+      makeApiCall(apiOptions)
 
+
+      
+    }
+    setIsDeleteUserdModalOpen(false);
+  };
+
+
+  //TODO extract the various dialogs into components
   const ChangePasswordDialog = () => (
     <LinkStashDialog isOpen={isChangePasswordModalOpen} onClose={() => setIsChangePasswordModalOpen(false)}>
       <LinkStashDialog.Title>Change Password</LinkStashDialog.Title>
@@ -108,7 +142,6 @@ export default function Home() {
   );
 
   const ConfirmDeleteDialog = ({ user }:{user:User|null}) => (
-
     <LinkStashDialog isOpen={isDeleteUserdModalOpen} onClose={() => setIsDeleteUserdModalOpen(false)}>
       <LinkStashDialog.Title>Change Password</LinkStashDialog.Title>
       <form action={(_data)=>{handleDeleteUser(user!.id)}}>
@@ -118,8 +151,7 @@ export default function Home() {
         
         </LinkStashDialog.Content>
         <LinkStashDialog.Actions>
-          <ConfirmActionButton type="submit" className="mr-4">Yes</ConfirmActionButton> 
-            
+          <ConfirmActionButton type="submit" className="mr-4">Yes</ConfirmActionButton>             
             <button
               type="button"
               className="px-4 py-2 mr-2 bg-gray-200 rounded"              
@@ -131,8 +163,6 @@ export default function Home() {
         </form>
     </LinkStashDialog>
   );
-
-
   const NewUserDialog = () => (
     <LinkStashDialog isOpen={isNewUserModalOpen} onClose={() => setIsNewUserModalOpen(false)}>
       <LinkStashDialog.Title>New user</LinkStashDialog.Title>
@@ -184,11 +214,38 @@ export default function Home() {
     </LinkStashDialog>
   )
 
+  const UserPermissionsDialog = () => (
+    <LinkStashDialog
+      isOpen={isUserPermissionModalOpen}
+      onClose={() => setIsUserPermissionModalOpen(false)}
+    >      
+      <LinkStashDialog.Title>Set User Permissiopns</LinkStashDialog.Title>
+      <LinkStashDialog.Content>        
+        <form onSubmit={handleUpdatePermissionsSubmit}>
+          <div className="mb-4">
+            <div className="">
+              <input type="checkbox" defaultChecked={selectedUser?.userPermissions?.isUserAdmin || false} className="w-4 h-4 rounded ring-accent focus:ring-1 focus:ring-accent-hover focus:checked:bg-accent-hover hover:checked:bg-accent-hover  checked:bg-accent " id="isUserAdmin" name="isUserAdmin" />
+              <label className="ms-2" htmlFor="isUserAdmin">User admin</label>              
+            </div>
+          </div>
+          <LinkStashDialog.Actions>
+            <button
+              type="button"
+              onClick={() => setIsUserPermissionModalOpen(false)}
+              className="button mr-4"
+            >
+              Cancel
+            </button>
+            <button type="submit" className="button accent-button">
+              OK
+            </button>
+          </LinkStashDialog.Actions>
+        </form>
+      </LinkStashDialog.Content>
+    </LinkStashDialog>
+  );
 
-
-
-  const handleDeleteUser =(userId:string)=>{
-    // alert(userId)
+  const handleDeleteUser =(userId:string)=>{    
     makeApiCall(
       { 
         endpoint: `/users/${userId}`,
@@ -201,9 +258,7 @@ export default function Home() {
           Authorization: "Bearer ".concat(AuthenticationState.token),
         },
       }
-    )
-    
-    
+    )        
   }
 
   const handlePasswordChange = (userId:string, newPassword:string) =>{
@@ -222,14 +277,14 @@ export default function Home() {
       }
     )
   }
-  //TODO: extract into user table component
+  
   return (
     <>    
       <AuthenticatedSection>
-        
         <ConfirmDeleteDialog user={selectedUser}/>
         <NewUserDialog />
-        <ChangePasswordDialog />         
+        <ChangePasswordDialog />
+        <UserPermissionsDialog />         
         <div>User list</div>          
         <div className="w-full grid py-2"><button className="button accent-button place-self-end " onClick={()=>setIsNewUserModalOpen(true)}>Add user</button></div>
        
@@ -245,46 +300,16 @@ export default function Home() {
               Username
             </Column>
             <Column>Actions</Column>
-          </TableHeader>
-  
+          </TableHeader>          
           <TableBody>
             {users.map((user: User) => (
-              <Row
-                key={user.id}
-                className={"even:bg-slate-200 odd:bg-white text-accent"}
-              >
-                <Cell className={""}>
-                  <abbr title="This is a username">{user.username}</abbr>
-                </Cell>
-                <Cell className={""}>
-                  <details>
-                    <summary>Actions</summary>
-                    <div className="*:m-1  *:rounded-lg ">
-                      <button                        
-                        className="button small-button"
-                        onClick={() => showPasswordChangeDialog(user)}
-                      >
-                        Change password
-                      </button>
-                      <button                        
-                        className="button small-button"
-                        onClick={() => alert("To be implemented")}
-                      >
-                        Permissions
-                      </button>
-                      <button onClick={
-                         (e)=>{
-                          e.preventDefault();                           
-                          setSelectedUser(user);
-                          setIsDeleteUserdModalOpen(true)
-                        }
-                        } className="small-button-original bg-red-600 drop-shadow hover:bg-red-600 text-[FFFFFF]  hover:scale-105 border-black border-[1px]">
-                        Delete user
-                      </button>
-                    </div>
-                  </details>                  
-                </Cell>
-              </Row>
+               <UserTableRow
+               key={user.id}
+               user={user}
+               showPasswordChangeDialog={showPasswordChangeDialog}
+               showUserPermissionsDialog={showUserPermissionsDialog}
+               showDeleteUserDialog={showDeleteUserDialog}
+             />
             ))}
           </TableBody>
         </Table>
