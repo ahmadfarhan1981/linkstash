@@ -87,8 +87,11 @@ if (!fs.existsSync(rootDir)) {
 }
 
 // Generate and write the sidebar
-const sidebar = generateSidebar(rootDir); // Use the provided directory
+let sidebar = generateSidebar(rootDir); // Use the provided directory
 const sidebarPath = path.join(rootDir, '_sidebar.md');
+
+const header = getFirstHeader(path.join(rootDir, 'README.md'));
+sidebar = `- [${header}](README.md)\n` + sidebar;//Add the top level README
 fs.writeFileSync(sidebarPath, sidebar);
 
 console.log(`Sidebar generated successfully at ${sidebarPath}`);

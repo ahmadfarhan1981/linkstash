@@ -8,7 +8,7 @@
    - **URL**: Enter the URL of the link you want to save.  
    - **Title**: Provide a title for the link.  
    - **Description**: Add a longer description for the link (optional).
-   > LinkStash will try to fetch the title and descriptionof the link entered if it can. You can press the refresh icon on the right of the URL input to force LinKStash to refetch the URL title and description.
+   > LinkStash will try to fetch the title and description of the link entered if it can. You can press the refresh icon on the right of the URL input to force LinkStash to refetch the URL title and description.
 
 3. **Add Tags**  
    - You can add tags to categorize the link:  

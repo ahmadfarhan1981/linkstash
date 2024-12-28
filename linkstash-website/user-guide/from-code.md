@@ -1,9 +1,6 @@
 # Running from code
 You can also run LinkStash from the code.
 
-
-
-
 ## Pre-requisites 
 - git 
 - nvm

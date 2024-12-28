@@ -1,4 +1,4 @@
-# LinkStash API Reference
+# 02 LinkStash API Reference
 
 This document serves as a reference for the LinkStash backend API.
 
