@@ -1,3 +1,8 @@
+Update version in package.json for frontend and backends
+Make sure package.json for the backend is updated correctly. This is important because that is used by the migration script of the docker package.
+
+
+
 to release tag commits.
 When tagged with linkstash-backend_vxxx or linkstash-frontend_vxxx , github actions will build the docker image and push to dockerhub to:
 
@@ -18,3 +23,5 @@ With numeric versions and suffixes:
 - `linkstash-backend_v1.0-alpha`
 - `linkstash-backend_v1.0.1-rc`
 - `linkstash-backend_v1.0.1.2-beta`
+
+
