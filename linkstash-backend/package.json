@@ -1,6 +1,6 @@
 {
-  "name": "linkstash",
-  "version": "0.0.1",
+  "name": "linkstash-backend",
+  "version": "1.0.0",
   "description": "Linkstash backend server",
   "homepage": "http://linkstashapp.com",
   "keywords": [

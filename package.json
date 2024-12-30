@@ -1,6 +1,6 @@
 {
   "name": "linkstash",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Linkstash",
   "main": "index.js",
   "scripts": {
