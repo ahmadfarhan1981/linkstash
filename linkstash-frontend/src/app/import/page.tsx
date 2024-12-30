@@ -45,6 +45,15 @@ export default function FileUploadForm() {
     const formData = new FormData();
     formData.append("file", file);
 
+    const defaultTimeout = "5000"; // Default value in milliseconds
+    const timeoutEnv = process.env.IMPORT_TIMEOUT?process.env.IMPORT_TIMEOUT:defaultTimeout;
+    let parsedTimeout:number = parseInt(timeoutEnv, 10);
+    if (isNaN(parsedTimeout)) {
+        parsedTimeout = parseInt(defaultTimeout)
+    }
+
+  
+    
     const apiOptions: ApiCallOptions = {
       endpoint: "/import",
       method: "POST",
@@ -53,7 +62,7 @@ export default function FileUploadForm() {
         Authorization: "Bearer ".concat(AuthenticationState.token),
         "content-type": "multipart/form-data",
       },
-      timeout: process.env.IMPORT_TIMEOUT,
+      timeout:  parsedTimeout,
       successCallback: (_response: any) => {
         setUploadStatus({
           type: "success",
