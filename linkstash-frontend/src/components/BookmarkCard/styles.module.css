@@ -24,3 +24,9 @@
 .commands{
     @apply font-extralight
 }
+
+
+  .checkbox {
+    @apply inline-block mr-2 w-4 h-4 rounded ring-accent focus:ring-1 focus:ring-accent-hover focus:checked:bg-accent-hover hover:checked:bg-accent-hover  checked:bg-accent 
+  }
+  

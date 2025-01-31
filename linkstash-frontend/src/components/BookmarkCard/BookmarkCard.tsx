@@ -1,112 +1,28 @@
-/* eslint-disable github/a11y-no-title-attribute */
 "use client";
 
-import { BiSolidArchiveIn, BiSolidEditAlt, BiSolidTrash } from "react-icons/bi";
-import { MyTag, MyTagGroup } from "@/components";
-import { formatDistanceToNow, formatRFC7231 } from "date-fns";
-
-import { AiFillRead } from "react-icons/ai";
-import { Bookmark } from "@/types";
-import Link from "next/link";
+import { BookmarkCardBottomBar } from "./subcomponents/BookmarkCardBottomBar";
+import BookmarkCardContext from "./BookmarkCardContext";
+import { BookmarkCardContextProps } from "@/types/props";
+import { BookmarkCardDescriptions } from "./subcomponents/BookmarkCardDescriptions";
+import { BookmarkCardTagGroup } from "./subcomponents/BookmarkCardTagGroup";
+import { BookmarkCardTitle } from "./subcomponents/BookmarkCardTitle";
+import { ReactNode } from "react";
 import styles from "./styles.module.css";
-import { uniq } from "lodash";
 
-//TODO compose the component 
-export function BookmarkCard({
-  bookmarkData,
-  handleDelete,
-  handleArchive,
-}: {
-  bookmarkData: Bookmark;
-  handleDelete: (_id: number) => void;
-  handleArchive: (_id: number) => void;
-}) {
-  const emptyTag = <div className={styles["no-tags"]}>No tags</div>;
+export function BookmarkCard( props: { contents : ReactNode , contextProps: BookmarkCardContextProps}) {
+  const {contextProps, contents} = props;
   return (
     <>
+    <BookmarkCardContext.Provider value={contextProps}>    
       <div className={styles["card"]}>
-        <div className={styles["title"]}>
-          <a href={bookmarkData.url} target="_blank" rel="noopener">
-            {bookmarkData.title ? bookmarkData.title : bookmarkData.url}
-          </a>
-          &nbsp;
-          {bookmarkData.archiveCount.count ? (
-            <Link href={`showArchive/${bookmarkData.id}`}>
-              <AiFillRead
-                className="react-icons"
-                aria-label="View archive"
-                title="View archive"
-              />
-            </Link>
-          ) : (
-            <Link
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                handleArchive(Number.parseInt(bookmarkData.id!));
-              }}
-            >
-              <BiSolidArchiveIn
-                className="react-icons"
-                aria-label="Create archive"
-                title="Create archive"
-              />
-            </Link>
-          )}
-        </div>
-
-        <div className={styles["description"]}>{bookmarkData.description}</div>
-
-        <div>
-          <MyTagGroup label="Tags:" id={`${bookmarkData.id!}-tagGroup`} renderEmptyState={() => emptyTag}>
-            {uniq(bookmarkData.tagList)?.map((tag) => (
-              <MyTag className={styles["tags"]} key={`${bookmarkData.id!}-${tag}`} id={`${bookmarkData.id!}-${tag}`}>
-                <Link onClick={(e)=>{e.preventDefault()}} href={`/tags/${tag}`}>{tag}</Link>
-              </MyTag>
-            ))}
-          </MyTagGroup>
-        </div>
-
-        <div className={styles["commands"]}>
-          <span
-            title={formatRFC7231(
-              bookmarkData.created
-                ? bookmarkData.created
-                : new Date(-8640000000000000)
-            )}
-          >
-            {formatDistanceToNow(
-              bookmarkData.created
-                ? bookmarkData.created
-                : new Date(-8640000000000000),
-              { addSuffix: true }
-            )}{" "}
-            ∞
-          </span>
-          <span className="separator">|</span>
-          <Link href={`/bookmarks/${bookmarkData.id}`}>
-            <BiSolidEditAlt
-              className="react-icons"
-              aria-label="Edit"
-              title="Edit"
-            />
-          </Link>{" "}
-          |
-          <Link
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              handleDelete(Number.parseInt(bookmarkData.id!));
-            }}
-          >
-            <BiSolidTrash
-              className="react-icons"
-              aria-label="Delete"
-              title="Delete"
-            />
-          </Link>
-        </div>
+       {contents}
       </div>
+      </BookmarkCardContext.Provider>
     </>
   );
 }
+    
+BookmarkCard.Title = BookmarkCardTitle
+BookmarkCard.Descriptions = BookmarkCardDescriptions
+BookmarkCard.TagGroup = BookmarkCardTagGroup
+BookmarkCard.BottomBar = BookmarkCardBottomBar
