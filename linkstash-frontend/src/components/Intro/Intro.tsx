@@ -1,8 +1,8 @@
 
 export function Intro(){
     return(
-        <>
-        <main className="pt-10">
+      
+        <div className="pt-10">
       
         <div className="bg-card-background shadow font-sans leading-relaxed tracking-wide">
           <header>
@@ -14,8 +14,8 @@ export function Intro(){
             </div>
           </header>
 
-          <main className="container mx-auto px-4 py-8">
-            <section>
+          <div className="container mx-auto px-4 py-8">
+            <div>
               <h2 className="text-2xl font-bold mb-4">Overview</h2>
               <p className="mb-6">
                 LinkStash is a self-hosted, backend-driven bookmarking and &quote;read
@@ -23,17 +23,15 @@ export function Intro(){
                 saved links and offline content.
               </p>
               {/* <img src="https://placeholder.com/your-demo-gif-link" alt="LinkStash Demo GIF" className="rounded-lg shadow-lg" /> */}
-            </section>
+            </div>
 
-            <section className="flex items-center justify-center h-full">
-              
-            </section>
-          </main>
+            
+          </div>
 
          
         </div>
    
-    </main>
-    </>
+    </div>
+    
     )
 }

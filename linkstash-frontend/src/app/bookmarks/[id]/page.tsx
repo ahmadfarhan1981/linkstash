@@ -14,7 +14,7 @@ import { useRouter } from "next/navigation";
 export default function Home({ params }: { params: { id: number } }) {
   const router = useRouter()
   const { AuthenticationState } = useAuthentication();
-
+  const {isLoggedIn, token} = AuthenticationState;
   const [allTags, setAllTags] = useState<TagListItem[]>([]);
   const [isTagFetched, setIsTagFetched] = useState(false);
   const [isBookmarkFetched, setIsBookmarkFetched] = useState(false);
@@ -22,7 +22,7 @@ export default function Home({ params }: { params: { id: number } }) {
 
   useEffect(() => {
     {
-      if (!AuthenticationState.isLoggedIn) return;
+      if (!isLoggedIn) return;
 
       const success = (response: any) => {
         setBookmark(response.data);
@@ -33,13 +33,13 @@ export default function Home({ params }: { params: { id: number } }) {
         endpoint: `/bookmarks/${params.id}`,
         method: "GET",
         headers: {
-          Authorization: "Bearer ".concat(AuthenticationState.token),
+          Authorization: "Bearer ".concat(token),
         },
         successCallback: success,
       };
       makeApiCall(option);
     }
-  }, [AuthenticationState.isLoggedIn, AuthenticationState.token, params.id]);
+  }, [isLoggedIn, token, params.id]);
 
   useEffect(() => {
     if (!isBookmarkFetched) return;
@@ -53,7 +53,7 @@ export default function Home({ params }: { params: { id: number } }) {
   }, [bookmark, isBookmarkFetched]);
 
   useEffect(() => {
-    if (!AuthenticationState.isLoggedIn || isTagFetched) return;
+    if (!isLoggedIn || isTagFetched) return;
     const success = async (response: any) => {
       const result = response.data.map((element: TagListItem) => {
         return { id: String(element.id), name: element.name } as TagListItem;
@@ -65,12 +65,12 @@ export default function Home({ params }: { params: { id: number } }) {
       endpoint: "/tags",
       method: "GET",
       headers: {
-        Authorization: "Bearer ".concat(AuthenticationState.token),
+        Authorization: "Bearer ".concat(token),
       },
       successCallback: success,
     };
     makeApiCall(options, false, true);
-  }, [AuthenticationState.isLoggedIn, AuthenticationState.token, isTagFetched]);
+  }, [isLoggedIn, token, isTagFetched]);
 
   async function editBookmark(form: BookmarkFormData) {
     const success = async (_response: any) => {
@@ -80,7 +80,7 @@ export default function Home({ params }: { params: { id: number } }) {
       endpoint: `/bookmarks/${params.id}`,
       method: "PATCH",
       headers: {
-        Authorization: "Bearer ".concat(AuthenticationState.token),
+        Authorization: "Bearer ".concat(token),
       },
       body: form,
       successCallback: success,

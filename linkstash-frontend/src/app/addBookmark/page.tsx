@@ -20,12 +20,13 @@ export default function Home() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { AuthenticationState } = useAuthentication();
+  const { isLoggedIn, token } = AuthenticationState;
 
   const [allTags, setAllTags] = useState<TagListItem[]>([]);
   const [isTagFetched, setIsTagFetched] = useState(false);
   
   useEffect(() => {
-    if (!AuthenticationState.isLoggedIn || isTagFetched) return;
+    if (!isLoggedIn || isTagFetched) return;
     const success = async (response: any) => {
       const result = response.data.map((element: TagListItem) => {
         return { id: String(element.id), name: element.name } as TagListItem;
@@ -37,12 +38,12 @@ export default function Home() {
       endpoint: "/tags",
       method: "GET",
       headers: {
-        Authorization: "Bearer ".concat(AuthenticationState.token),
+        Authorization: "Bearer ".concat(token),
       },
       successCallback: success,
     };
     makeApiCall(options, false, true);
-  }, [AuthenticationState.isLoggedIn, AuthenticationState.token, isTagFetched]);
+  }, [isLoggedIn, token, isTagFetched]);
 
   const addBookmark = async (data: BookmarkFormData): Promise<void> =>  {
     const success = async (_response: any) => {
@@ -57,7 +58,7 @@ export default function Home() {
       endpoint: "/bookmarks",
       method: "POST",
       headers: {
-        Authorization: "Bearer ".concat(AuthenticationState.token),
+        Authorization: "Bearer ".concat(token),
       },
       body: data,
       successCallback: success,

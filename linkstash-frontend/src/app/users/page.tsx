@@ -16,9 +16,10 @@ import { makeApiCall } from "@/scripts";
 export default function Home() {
   const { users, fetchUsers } = useUsers();
   const { AuthenticationState } = useAuthentication();
+  const {isLoggedIn, token} = AuthenticationState;
   useEffect(() => {
     fetchUsers({});
-  }, [AuthenticationState.token, AuthenticationState.isLoggedIn]);
+  }, [token, isLoggedIn]);
 
   const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
   const [isDeleteUserdModalOpen, setIsDeleteUserdModalOpen] = useState(false);
@@ -56,7 +57,7 @@ export default function Home() {
               },
         method: "POST",
         headers: {
-                 Authorization: "Bearer ".concat(AuthenticationState.token),
+                 Authorization: "Bearer ".concat(token),
                },
         successCallback: ()=>{ 
           setIsNewUserModalOpen(false);
@@ -88,7 +89,7 @@ export default function Home() {
               },
         method: "PATCH",
         headers: {
-                 Authorization: "Bearer ".concat(AuthenticationState.token),
+                 Authorization: "Bearer ".concat(token),
                },
         successCallback: ()=>{ 
           setIsUserPermissionModalOpen(false);
@@ -255,7 +256,7 @@ export default function Home() {
           fetchUsers({});          
         },
         headers: {
-          Authorization: "Bearer ".concat(AuthenticationState.token),
+          Authorization: "Bearer ".concat(token),
         },
       }
     )        
@@ -271,7 +272,7 @@ export default function Home() {
               },
         method: "POST",
         headers: {
-                 Authorization: "Bearer ".concat(AuthenticationState.token),
+                 Authorization: "Bearer ".concat(token),
                },
         successCallback: ()=>{ setIsChangePasswordModalOpen(false)}
       }
