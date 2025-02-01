@@ -35,13 +35,13 @@ export default function RootLayout({
             <Header />                        
             <UserNavigationBar />            
             <div className="left-spacer"></div>
-            <div className="content">
+            <div className="content border-2 w-full">
               {/* //TODO fix loader. suspense? */}
               <Suspense>{/** https://nextjs.org/docs/messages/missing-suspense-with-csr-bailout useSearchParams in /bookmarks */}
                 {children}
               </Suspense>
             </div>
-            <div className="right-spacer"></div>
+            <div className="right-spacer border-2"></div>
             
           </div>
         </body>

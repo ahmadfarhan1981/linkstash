@@ -13,31 +13,31 @@ import { useAuthentication } from "@/hooks";
 type TagCloudConfig = {
   anyFilterTags: ListData<TagListItem>;
   allFilterTags: ListData<TagListItem>;
+  tags: TagListItem[];
+  fetchTags: (_options:fetchTagsOptions) => void;
+  fetchTagsOption: fetchTagsOptions;
+  setFetchTagsOption: React.Dispatch<React.SetStateAction<fetchTagsOptions>>;
 };
 
-export function TagCloud({ anyFilterTags, allFilterTags }: TagCloudConfig) {
-  const { fetchTags, tags } = useTags();
-  const { AuthenticationState } = useAuthentication();
-  const {isLoggedIn, token} = AuthenticationState;
-  const [fetchTagsOption, setFetchTagsOption] = useState<fetchTagsOptions>({
-    sortBy: "numBookmarks",
-    sortDirection: "DESC",
-  });
-  useEffect(() => {
-    {
-      if (!isLoggedIn) return;
-      fetchTags({
-        sortBy: fetchTagsOption.sortBy,
-        sortDirection: fetchTagsOption.sortDirection,
-      });
-    }
-  }, [
-    isLoggedIn,
-    token,
-    fetchTagsOption.sortBy,
-    fetchTagsOption.sortDirection,
-    fetchTagsOption,
-  ]);
+export function TagCloud({ anyFilterTags, allFilterTags, tags, fetchTags, fetchTagsOption, setFetchTagsOption }: TagCloudConfig) {
+  // const { AuthenticationState } = useAuthentication();
+  // const {isLoggedIn, token} = AuthenticationState;
+  
+  // useEffect(() => {
+  //   {
+  //     if (!isLoggedIn) return;
+  //     fetchTags({
+  //       sortBy: fetchTagsOption.sortBy,
+  //       sortDirection: fetchTagsOption.sortDirection,
+  //     });
+  //   }
+  // }, [
+  //   isLoggedIn,
+  //   token,
+  //   fetchTagsOption.sortBy,
+  //   fetchTagsOption.sortDirection,
+  //   fetchTagsOption,
+  // ]);
 
   function FilterPane() {
     return (

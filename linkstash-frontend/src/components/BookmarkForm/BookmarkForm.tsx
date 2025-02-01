@@ -131,11 +131,11 @@ export function BookmarkForm({
     debounce(handleURLChangeEvent, 1000)(e);
   };
   return (
-    <>
+      <div className="w-[90%]">
       <AuthenticatedSection prefix={<>Please login to continue</>}>
         <Loader isLoading={isLoading}>
           <h2>Adding a new bookmark</h2>
-          <div className="bg-card-background shadow p-3 mt-3 w-[80%] min-w-[280px] ">
+          <div className="bg-card-background shadow p-3 mt-3 min-w-[280px] w-full">
             <form action={handleSubmitWrapper}>
               <div>
                 <InputComponent
@@ -186,6 +186,7 @@ export function BookmarkForm({
 
               <div>
                 <InputComponent
+                style={{ minWidth: "240px", maxWidth: "520px", width: "64%" }}
                   disabled={isURLFetching}
                   label="Description"
                   type="textarea"
@@ -224,6 +225,6 @@ export function BookmarkForm({
           </div>
         </Loader>
       </AuthenticatedSection>
-    </>
+      </div>
   );
 }
