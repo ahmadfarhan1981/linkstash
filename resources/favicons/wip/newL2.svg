@@ -1,0 +1,12 @@
+
+    <svg width="800" height="800"  
+    >
+    <g transform="scale(10)">
+    <path fill="none" stroke="#2ca9bc" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M15 7H9v8l3-2 3 2V7z" />
+    <path d="M19 7v13a1 1 0 01-1 1H7a2 2 0 01-2-2V5" fill="none" stroke="#000" stroke-linecap="round"
+        stroke-linejoin="round" stroke-width="2" />
+    <path data-name="primary" d="M7 3h12v4h0H7a2 2 0 01-2-2v0a2 2 0 012-2z" fill="none" stroke="#000"
+        stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+</g>
+</svg>

@@ -1,0 +1,30 @@
+<svg width="800" height="800">
+    <g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+        <path stroke="#2ca9bc" d="M150 60
+                                h-20
+                                v150
+                                l10-20 10 20
+                                V70
+                                z
+                                " />
+        <path d="M190 60
+                    v400
+                    a10 10 0 01-10 10
+                    H70
+                    a20 20 0 0 1 -20 -20 
+                    V45
+                    " stroke="#000" />
+        <path data-name="primary" 
+        d="M70 30 
+            h120 
+            a -100 -35 0 0 0 0 30 
+            H70 
+            a20 20 0 0 1 -20 -15  
+            a 20 20 0 0 1 20 -15
+            <!-- z -->
+            " 
+            
+            stroke="#000" 
+            " />
+    </g>
+</svg>
