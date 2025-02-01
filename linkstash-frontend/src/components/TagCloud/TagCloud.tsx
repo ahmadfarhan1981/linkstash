@@ -18,21 +18,22 @@ type TagCloudConfig = {
 export function TagCloud({ anyFilterTags, allFilterTags }: TagCloudConfig) {
   const { fetchTags, tags } = useTags();
   const { AuthenticationState } = useAuthentication();
+  const {isLoggedIn, token} = AuthenticationState;
   const [fetchTagsOption, setFetchTagsOption] = useState<fetchTagsOptions>({
     sortBy: "numBookmarks",
     sortDirection: "DESC",
   });
   useEffect(() => {
     {
-      if (!AuthenticationState.isLoggedIn) return;
+      if (!isLoggedIn) return;
       fetchTags({
         sortBy: fetchTagsOption.sortBy,
         sortDirection: fetchTagsOption.sortDirection,
       });
     }
   }, [
-    AuthenticationState.isLoggedIn,
-    AuthenticationState.token,
+    isLoggedIn,
+    token,
     fetchTagsOption.sortBy,
     fetchTagsOption.sortDirection,
     fetchTagsOption,

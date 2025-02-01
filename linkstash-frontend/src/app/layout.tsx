@@ -38,7 +38,7 @@ export default function RootLayout({
             <div className="content">
               {/* //TODO fix loader. suspense? */}
               <Suspense>{/** https://nextjs.org/docs/messages/missing-suspense-with-csr-bailout useSearchParams in /bookmarks */}
-              <Loader isLoading={false}>{children}</Loader>
+                {children}
               </Suspense>
             </div>
             <div className="right-spacer"></div>

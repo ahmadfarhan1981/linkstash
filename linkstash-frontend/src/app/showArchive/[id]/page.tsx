@@ -22,12 +22,13 @@ export default function Home({ params }: { params: { id: number } }) {
   const [isLoading, setIsLoading] = useState(true);
   const [archiveData, setArchiveData] = useState("");
   const { AuthenticationState } = useAuthentication();
+  const {isLoggedIn, token} = AuthenticationState;
 
   const [archive, setArchive] = useState<Archive | null>(null);
   const template = { __html: archiveData };
   const [bookmark, setBookmark] = useState<Bookmark>();
   useEffect(() => {
-    if (!AuthenticationState.isLoggedIn) return;
+    if (!isLoggedIn) return;
 
     const success = (response: any) => {
       setBookmark(response.data);
@@ -37,7 +38,7 @@ export default function Home({ params }: { params: { id: number } }) {
       endpoint: `/bookmarks/${params.id}`,
       method: "GET",
       headers: {
-        Authorization: "Bearer ".concat(AuthenticationState.token),
+        Authorization: "Bearer ".concat(token),
       },
       successCallback: success,
     };
@@ -53,7 +54,7 @@ export default function Home({ params }: { params: { id: number } }) {
       endpoint: `/bookmarks/${params.id}/archive`,
       method: "GET",
       headers: {
-        Authorization: "Bearer ".concat(AuthenticationState.token),
+        Authorization: "Bearer ".concat(token),
       },
       body: {},
       successCallback: getArchiveSuccess,
@@ -62,7 +63,7 @@ export default function Home({ params }: { params: { id: number } }) {
       },
     };
     makeApiCall(getArchiveOptions);
-  }, [AuthenticationState.isLoggedIn, AuthenticationState.token, params.id]);
+  }, [isLoggedIn, token, params.id]);
 
   const { deleteBookmark, deleteArchive } = useBookmarks();
   const router = useRouter();

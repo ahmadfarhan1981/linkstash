@@ -15,4 +15,6 @@ export * from  "./ConfirmActionButton/ConfirmActionButton"
 export * from "./Intro/Intro"
 export * from "./UserTableRow/UserTableRow"
 export * from "./LoadingSpinner/LoadingSpinner"
-
+export * from "./BulkToolbar/BulkToolbar"
+export * from "./BookmarksPage/subcomponents/BookmarksPageMultiSelectProvider/BookmarksPageMultiSelectProvider"
+export * from "./BookmarksPage/BookmarksPage";

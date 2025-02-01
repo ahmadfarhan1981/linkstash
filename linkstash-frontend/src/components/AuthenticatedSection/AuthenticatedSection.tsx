@@ -15,10 +15,11 @@ export function AuthenticatedSection({
   prefix,
 }: AuthenticatedSectionProps): JSX.Element {
   const { AuthenticationState } = useAuthentication();
+  const {isLoggedIn } = AuthenticationState;
   //TODO this really should be a composite component
   return (
-    <>
-    {!AuthenticationState.isLoggedIn ? (<><p>{prefix}</p><LoginForm /></>) : children}
-  </>
+    <div>
+    {!isLoggedIn ? (<div><div>{prefix}</div><LoginForm /></div>) : children}
+  </div>
   );
 }

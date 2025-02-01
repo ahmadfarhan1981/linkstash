@@ -13,6 +13,7 @@ import { useAuthentication } from "@/hooks";
 export function LoginForm() {
   const [isSubmited, setIsSubmited] = useState(false);
   const {login, AuthenticationState} = useAuthentication()
+  const {isLoggedIn, isPending} = AuthenticationState;
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -27,16 +28,16 @@ export function LoginForm() {
   };
   return (
     <>  
-      {/* <AlertBox isVisible={AuthenticationState.isPending}  message="Loging in..." /> */}
-      <AlertBox isVisible={ isSubmited && !AuthenticationState.isPending && !AuthenticationState.isLoggedIn} handleClose={()=>{setIsSubmited(false)}} message="Login failed." />
-      <Loader isLoading={AuthenticationState.isPending} text="Checking login">
+      {/* <AlertBox isVisible={isPending}  message="Loging in..." /> */}
+      <AlertBox isVisible={ isSubmited && !isPending && !isLoggedIn} handleClose={()=>{setIsSubmited(false)}} message="Login failed." />
+      <Loader isLoading={isPending} text="Checking login">
       <section className={styles['login-form']}>
         <div className="content-area-header">
           <h2>Login</h2>          
         </div>
         <form >
-          <InputComponent id="email" type="text" name="email" placeholder="Username" label="Username" autocomplete="username" disabled={AuthenticationState.isPending} handleChange={handleChange} />
-          <InputComponent id="password" type="password" name="password" placeholder="Password" label="Password" autocomplete="new-password" disabled={AuthenticationState.isPending} handleChange={handleChange} />         
+          <InputComponent id="email" type="text" name="email" placeholder="Username" label="Username" autocomplete="username" disabled={isPending} handleChange={handleChange} />
+          <InputComponent id="password" type="password" name="password" placeholder="Password" label="Password" autocomplete="new-password" disabled={isPending} handleChange={handleChange} />         
          
           <br />
           <div className="mt-2">
