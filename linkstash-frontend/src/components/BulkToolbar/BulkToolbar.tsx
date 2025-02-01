@@ -1,15 +1,20 @@
 "use client";
 
-import { Bookmark } from "@/types";
-import { useBookmarksPageMultiSelection } from "@/hooks";
+import { ApiCallOptions, Bookmark } from "@/types";
+import { useAuthentication, useBookmarksPageMultiSelection } from "@/hooks";
+
+import { makeApiCall } from "@/scripts";
 import { useMemo } from "react";
 
-export function BulkToolbar({ bookmarks }: { bookmarks: Bookmark[] }) {
+export function BulkToolbar({ bookmarks, refetchData }: { bookmarks: Bookmark[], refetchData: () => void }) {
   const {
     selectedBookmarks,
     isSelectionMode,
     toggleSelectionMode
   } = useBookmarksPageMultiSelection();
+
+  const {AuthenticationState} = useAuthentication();
+  const {token} = AuthenticationState;
 
   const { onScreenCount, totalSelected } = useMemo(() => {
     const onScreenCount = bookmarks.filter((b) =>
@@ -19,6 +24,23 @@ export function BulkToolbar({ bookmarks }: { bookmarks: Bookmark[] }) {
     return { onScreenCount, totalSelected };
   }, [bookmarks, selectedBookmarks]);
 
+  const onDeletionSuccess = () => {
+    refetchData();
+    toggleSelectionMode();
+  }
+
+  const handleDelete = () => {
+    const options: ApiCallOptions = {
+      endpoint: "/bookmarks/bulk",
+      method: "DELETE",
+      headers: {
+        Authorization: "Bearer ".concat(token),
+      },
+      body: { ids: selectedBookmarks.map(x=> x.toString()) },
+      successCallback: onDeletionSuccess,
+    };
+    makeApiCall(options);
+  };
 
   return (
     <div className="w-full mt-4 mb-6">
@@ -57,6 +79,7 @@ export function BulkToolbar({ bookmarks }: { bookmarks: Bookmark[] }) {
                 <button
                   // className="px-3 py-1 bg-red-600 text-white text-sm font-medium rounded-md hover:bg-red-700 transition-colors"
                   className="button small-button my-2 alert-button"
+                  onClick={handleDelete}
                 >
                   <svg
                     role="presentation"

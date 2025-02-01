@@ -9,6 +9,7 @@ import {
   TagCloud,
 } from "@/components";
 import { SortBy, SortDirection, useBookmarks } from "@/hooks/useBookmarks";
+import { fetchTagsOptions, useTags } from "@/hooks/useTags";
 import { useCallback, useEffect, useState } from "react";
 
 import { TagListItem } from "@/types";
@@ -108,6 +109,31 @@ export function BookmarksPage() {
     allFilterTags.items,
   ]);
 
+
+  const { fetchTags, tags } = useTags();
+
+  const [fetchTagsOption, setFetchTagsOption] = useState<fetchTagsOptions>({
+      sortBy: "numBookmarks",
+      sortDirection: "DESC",
+    });
+    
+    useEffect(() => {
+      {
+        if (!isLoggedIn) return;
+        fetchTags({
+          sortBy: fetchTagsOption.sortBy,
+          sortDirection: fetchTagsOption.sortDirection,
+        });
+      }
+    }, [
+      isLoggedIn,
+      token,
+      fetchTagsOption.sortBy,
+      fetchTagsOption.sortDirection,
+      fetchTagsOption,
+      bookmarks,
+    ]);
+  
   const stableSetUrlParam = useCallback(
     (key:any, value:any) => {
       setUrlParam(key, value, searchParams);
@@ -166,7 +192,7 @@ export function BookmarksPage() {
               />
             </div>
             <div>
-             <BulkToolbar bookmarks={bookmarks} />
+             <BulkToolbar bookmarks={bookmarks} refetchData={refetchData}/>
 
 
               <div>
@@ -203,6 +229,10 @@ export function BookmarksPage() {
               <TagCloud
                 allFilterTags={allFilterTags}
                 anyFilterTags={anyFilterTags}
+                tags={tags}
+                fetchTags={fetchTags}
+                fetchTagsOption={fetchTagsOption}
+                setFetchTagsOption={setFetchTagsOption}
               />
             </div>
           </div>

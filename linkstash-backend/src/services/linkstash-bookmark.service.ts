@@ -131,7 +131,7 @@ export class LinkStashBookmarkService {
 
     if (existingTag.length === 1) {
       const tagToUpdate = existingTag[0];
-      if (tagToUpdate.bookmarkIds.length === 0) {
+      if (tagToUpdate.bookmarkIds.length === 1) {
         await this.tagRepository.deleteById(tagToUpdate.id);
       } else {
         const bookmarkIds = uniq(existingTag[0].bookmarkIds.slice());
