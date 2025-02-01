@@ -30,7 +30,8 @@
 				"username": "root"
 			}
 		],
-		"liveServer.settings.multiRootWorkspaceName": "linkstash-website"
+		"liveServer.settings.multiRootWorkspaceName": "LinkStash",
+		"svg.preview.background": "transparent"
 	},
 	"extensions": {
 		"recommendations": [

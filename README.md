@@ -1,6 +1,23 @@
 # :bookmark: LinkStash
 
-**"Stash Your Links, Revisit Anytime - LinkStash: Your Self-Hosted Bookmark Manager"**
+<p align="center">
+  <img src="resources/favicons/logo-trans.svg" alt="LinkStash Logo" width="250">
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/github/v/release/ahmadfarhan1981/linkstash" alt="Latest Release">
+  <img src="https://img.shields.io/github/license/ahmadfarhan1981/linkstash" alt="License">
+  <img src="https://img.shields.io/github/stars/ahmadfarhan1981/linkstash?style=social" alt="Stars">
+  <img src="https://img.shields.io/docker/pulls/paan1981/linkstash-backend" alt="Docker Pulls">
+  <img src="https://img.shields.io/badge/Self--Hosted-✔-blue" alt="Self-Hosted">
+</p>
+
+
+<p align="center">
+  <strong>"Stash Your Links, Revisit Anytime - LinkStash: Your Self-Hosted Bookmark Manager"</strong>
+</p>
+
+
 
 LinkStash is a self-hosted, backend-driven bookmarking and "read it later" solution, empowering you to take full control of your saved links and offline content.
 

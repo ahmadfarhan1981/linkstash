@@ -1,0 +1,19 @@
+
+<svg width="100" height="100" viewBox="0 0 500 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="hsl(305, 100%, 48%)" />
+    <path d="M30 40H70M30 50H70M30 60H70" stroke="white" strokeWidth="8" strokeLinecap="round" />
+    <circle cx="35" cy="40" r="5" fill="white" />
+    <circle cx="65" cy="50" r="5" fill="white" />
+    <circle cx="50" cy="60" r="5" fill="white" />
+  
+    <g transform="translate(200, 0)">
+    <rect width="100" height="100" rx="20" fill="hsl(305, 100%, 48%)" />
+    <path d="M30 30V70H70V50L50 30H30Z" fill="white" />
+    <path d="M50 30V50H70" stroke="hsl(305, 100%, 48%)" strokeWidth="6" />
+  </g>
+   <g transform="translate(400, 0)">
+    <rect width="100" height="100" rx="20" fill="hsl(305, 100%, 48%)" />
+    <path d="M30 35C30 32.2386 32.2386 30 35 30H65C67.7614 30 70 32.2386 70 35V70L50 55L30 70V35Z" fill="white" />
+    <path d="M40 50H60M40 60H60" stroke="hsl(305, 100%, 48%)" strokeWidth="6" strokeLinecap="round" />
+    </g>
+  </svg>
