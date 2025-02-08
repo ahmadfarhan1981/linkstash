@@ -1,0 +1,101 @@
+name: Build Projects
+
+on:
+  pull_request:
+    branches:
+      - '**' # Runs on PRs to any branch
+  push:
+    branches:
+      - develop # Runs when changes are merged into develop
+  workflow_dispatch:
+    inputs:
+      base_branch:
+        description: 'Base branch to compare changes against'
+        required: false
+        default: 'develop'
+
+jobs:
+  check-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      backend_changed: ${{ steps.filter.outputs.backend }}
+      frontend_changed: ${{ steps.filter.outputs.frontend }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Determine Base for Comparison
+        id: determine_base
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "BASE_BRANCH=${{ github.event.inputs.base_branch }}" >> $GITHUB_ENV
+          else
+            echo "BASE_BRANCH=$GITHUB_SHA" >> $GITHUB_ENV
+          fi
+
+      - name: Detect Changes
+        id: filter
+        uses: dorny/paths-filter@v2
+        with:
+          base: ${{ env.BASE_BRANCH }}
+          filters: |
+            backend:
+              - 'linkstash-backend/**'
+            frontend:
+              - 'linkstash-frontend/**'
+
+  build-backend:
+    needs: check-changes
+    if: needs.check-changes.outputs.backend_changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Read Node.js Version from .nvmrc
+        id: node_version
+        run: echo "NODE_VERSION=$(cat linkstash-backend/.nvmrc)" >> $GITHUB_ENV
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install Dependencies
+        run: |
+          cd linkstash-backend
+          npm ci
+
+      - name: Build Backend
+        run: |
+          cd linkstash-backend
+          npm run build
+
+  build-frontend:
+    needs: check-changes
+    if: needs.check-changes.outputs.frontend_changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Read Node.js Version from .nvmrc
+        id: node_version
+        run: echo "NODE_VERSION=$(cat linkstash-frontend/.nvmrc)" >> $GITHUB_ENV
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install Dependencies
+        run: |
+          cd linkstash-frontend
+          npm ci
+
+      - name: Build Frontend
+        run: |
+          cd linkstash-frontend
+          npm run build
