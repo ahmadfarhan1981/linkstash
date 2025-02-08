@@ -3,14 +3,11 @@
 import {
   AuthenticatedSection,
   BookmarkCard,
-  BookmarksPageMultSelectProvider,
   BookmarksToolbar,
-  BulkToolbar,
   Intro,
   Loader,
   Pager,
   TagCloud,
-  TagInput,
 } from "@/components";
 import { SortBy, SortDirection, useBookmarks } from "@/hooks/useBookmarks";
 import { useEffect, useState } from "react";
@@ -18,7 +15,7 @@ import { useEffect, useState } from "react";
 import { TagListItem } from "@/types";
 import { setUrlParam } from "@/scripts";
 import styles from "./styles.module.css";
-import { useAuthentication, useBookmarksPageMultiSelection } from "@/hooks";
+import { useAuthentication } from "@/hooks";
 import { useListData } from "react-stately";
 import { useSearchParams } from "next/navigation";
 
