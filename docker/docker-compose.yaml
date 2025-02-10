@@ -3,6 +3,7 @@ services:
   linkstash-backend:
     image: paan1981/linkstash-backend:1.0.0
     environment:
+      DB_TYPE: ${DB_TYPE:-mysql}
       DB_HOST: ${DB_HOST:-linkstash-db}
       DB_PORT: ${DB_PORT:-3306}
       DB_USER: ${DB_USER:-linkstash}

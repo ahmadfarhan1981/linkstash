@@ -19,25 +19,77 @@ import {LinkStashUserService} from './services';
 export {ApplicationConfig};
 export class LinkstashApplication extends BootMixin(ServiceMixin(RepositoryMixin(RestApplication))) {
   private async customMigration(): Promise<void> {
-    // eslint-disable-next-line no-console
     console.log('Running additional migration tasks..');
+
     const tagRepo = await this.getRepository(TagRepository);
-    const sql: string = "ALTER TABLE Tag CHANGE `numBookmarks` `numBookmarks` INT GENERATED ALWAYS AS (LENGTH(bookmarkIds)-LENGTH(REPLACE(bookmarkIds, ',', ''))+1 ) STORED; ";
-    const result = await tagRepo.execute(sql);
+    const dbType  = process.env.DB_TYPE ?? "mysql"
+    if (dbType === 'mysql') {
+        // MySQL Query
+        const sql = `
+            ALTER TABLE Tag CHANGE numBookmarks numBookmarks
+            INT GENERATED ALWAYS AS
+            (LENGTH(bookmarkIds) - LENGTH(REPLACE(bookmarkIds, ',', '')) + 1 ) STORED;
+        `;
+        await tagRepo.execute(sql);
+    } else if (dbType === 'sqlite') {
+        // SQLite-compatible solution using a trigger
+        const sql1 = `ALTER TABLE Tag ADD COLUMN numBookmarks INT DEFAULT 0;`;
 
+        // Separate triggers for INSERT and UPDATE
+        const sql2 = `
+            CREATE TRIGGER IF NOT EXISTS tag_after_insert
+            AFTER INSERT ON Tag
+            FOR EACH ROW
+            BEGIN
+                UPDATE Tag
+                SET numBookmarks = (LENGTH(NEW.bookmarkIds) - LENGTH(REPLACE(NEW.bookmarkIds, ',', '')) + 1)
+                WHERE id = NEW.id;
+            END;
+        `;
+
+        const sql3 = `
+            CREATE TRIGGER IF NOT EXISTS tag_after_update
+            AFTER UPDATE OF bookmarkIds ON Tag
+            FOR EACH ROW
+            BEGIN
+                UPDATE Tag
+                SET numBookmarks = (LENGTH(NEW.bookmarkIds) - LENGTH(REPLACE(NEW.bookmarkIds, ',', '')) + 1)
+                WHERE id = NEW.id;
+            END;
+        `;
+
+        try {
+            await tagRepo.execute(sql1);
+        } catch (error) {
+            if (!error.message.includes("duplicate column name")) {
+                throw error;
+            }
+        }
+        await tagRepo.execute(sql2);
+        await tagRepo.execute(sql3);
+    }
     const userRepo = await this.getRepository(LinkstashUserRepository);
-
     const numUsers = (await userRepo.count()).count;
+
     if (numUsers === 0) {
       console.log('Empty users table. Creating default user...');
-      //await userRepo.create({email:"admin@linkstashapp.com", password:"password"})
       const password = await hash('password', await genSalt());
-      const savedUser = await userRepo.create({username: 'admin'});
-      await userRepo.userCredentials(savedUser.id).create({password});
-      await userRepo.userPermissions(savedUser.id).create({isUserAdmin: true});
-      console.log("User 'admin' created.");
-    }
+      const savedUser = await userRepo.create({ username: 'admin' });
+
+      // sqlite connector wont return id correctly into savedUser , so we have to retrieve
+      const latestUser = await userRepo.findOne({
+          where: { username: 'admin' },
+          order: ['id DESC'],
+      });
+      if (!latestUser) {
+          throw new Error("Failed to retrieve created user.");
+      }
+      await userRepo.userCredentials(latestUser.id).create({ password });
+      await userRepo.userPermissions(latestUser.id).create({ isUserAdmin: true });
+      console.log("User 'admin' created with ID:", latestUser.id);
   }
+}
+
 
   constructor(options: ApplicationConfig = {}) {
     super(options);

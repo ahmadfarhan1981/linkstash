@@ -71,4 +71,6 @@ typings/
 .migrated
 # generated archive assets
 public/archive/**
+#sqlite database
+database.sqlite
 
