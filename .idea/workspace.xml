@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="10fcfec8-d4b9-4fd5-94ec-86880b528627" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/linkstash-backend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/linkstash-backend/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/linkstash-backend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/linkstash-backend/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/linkstash-backend/src/datasources/bookmark.datasource.ts" beforeDir="false" afterPath="$PROJECT_DIR$/linkstash-backend/src/datasources/bookmark.datasource.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/linkstash-frontend/src/components/BookmarksPage/BookmarksPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/linkstash-frontend/src/components/BookmarksPage/BookmarksPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/linkstash-frontend/src/components/BulkToolbar/BulkToolbar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/linkstash-frontend/src/components/BulkToolbar/BulkToolbar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/linkstash-frontend/src/hooks/useTags.ts" beforeDir="false" afterPath="$PROJECT_DIR$/linkstash-frontend/src/hooks/useTags.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="TypeScript File" />
+        <option value="HTTP Private Environment File" />
+        <option value="HTTP Public Environment File" />
+        <option value="HTTP Request" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="develop" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;ahmadfarhan1981&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/ahmadfarhan1981/linkstash.git&quot;,
+    &quot;accountId&quot;: &quot;e521ae3c-0ea4-4459-b1dc-200bfab1cac1&quot;
+  },
+  &quot;recentNewPullRequestHead&quot;: {
+    &quot;server&quot;: {
+      &quot;useHttp&quot;: false,
+      &quot;host&quot;: &quot;github.com&quot;,
+      &quot;port&quot;: null,
+      &quot;suffix&quot;: null
+    },
+    &quot;owner&quot;: &quot;ahmadfarhan1981&quot;,
+    &quot;repository&quot;: &quot;linkstash&quot;
+  }
+}</component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/linkstash-frontend/src/components/BulkToolbar/BulkToolbar.tsx" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="HttpClientSelectedEnvironments">
+    <file url="jar://$APPLICATION_HOME_DIR$/plugins/restClient/lib/restClient.jar!/com/intellij/ws/rest/client/requests/collection/post-requests.http" environment="test" />
+    <file url="file://$USER_HOME$/AppData/Local/Temp/whats-new-dir/whats-new.http" environment="test" />
+    <file url="jar://$APPLICATION_HOME_DIR$/plugins/restClient/lib/restClient.jar!/com/intellij/ws/rest/client/requests/collection/requests-with-include.http" environment="test" />
+    <file url="jar://$APPLICATION_HOME_DIR$/plugins/restClient/lib/restClient.jar!/com/intellij/ws/rest/client/requests/collection/get-requests.http" environment="test" />
+    <file url="jar://$APPLICATION_HOME_DIR$/plugins/restClient/lib/restClient.jar!/com/intellij/ws/rest/client/requests/collection/requests-with-tests.http" environment="test" />
+    <file url="file://$PROJECT_DIR$/linkstash-backend/api/login.http" environment="dev" />
+    <file url="file://$PROJECT_DIR$/linkstash-backend/api/bulktag.http" environment="dev" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 4
+}</component>
+  <component name="ProjectId" id="2t7Y0pkr0nlN4YjDGUyO3NKnfAp" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "HTTP Request.All in login.executor": "Run",
+    "HTTP Request.bulktag | DELETE bulk bookmark remove.executor": "Run",
+    "HTTP Request.bulktag | GET all bookmarks.executor": "Run",
+    "HTTP Request.bulktag | POST bulk bookmark add.executor": "Run",
+    "HTTP Request.login | #1.executor": "Run",
+    "HTTP Request.login | #2.executor": "Run",
+    "HTTP Request.login | Get all bookmarks.executor": "Run",
+    "HTTP Request.login | Login.executor": "Run",
+    "HTTP Request.whoAmI.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "#35 on Rebasing farhan/bulk__taggin",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "C:/Users/paan/WebstormProjects/linkstash/linkstash-frontend/public/img",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "npm.backend.executor": "Run",
+    "npm.build frontend.executor": "Run",
+    "npm.build.executor": "Run",
+    "npm.frontend.executor": "Run",
+    "npm.start backend.executor": "Run",
+    "rest.client.default.execution.environment": "dev",
+    "run.code.analysis.last.selected.profile": "pProject Default",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "ts.external.directory.path": "C:\\Users\\paan\\WebstormProjects\\linkstash\\node_modules\\typescript\\lib",
+    "vue.rearranger.settings.migration": "true"
+  },
+  "keyToStringList": {
+    "GitStage.ChangesTree.GroupingKeys": [
+      "directory",
+      "module",
+      "repository"
+    ]
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\paan\WebstormProjects\linkstash\linkstash-frontend\public\img" />
+      <recent name="C:\Users\paan\WebstormProjects\linkstash\linkstash-frontend" />
+      <recent name="C:\Users\paan\WebstormProjects\linkstash\linkstash-backend" />
+    </key>
+    <key name="es6.move.members.recent.items">
+      <recent name="C:\Users\paan\WebstormProjects\linkstash\linkstash-backend\src\types\schemas\credentials.ts" />
+      <recent name="C:\Users\paan\WebstormProjects\linkstash\linkstash-backend\src\types\schemas\bulkTagAdd.ts" />
+      <recent name="C:\Users\paan\WebstormProjects\linkstash\linkstash-backend\src\types\schemas\bulkDelete.ts" />
+      <recent name="C:\Users\paan\WebstormProjects\linkstash\linkstash-backend\src\types\utils.ts" />
+    </key>
+  </component>
+  <component name="RunManager" selected="HTTP Request.bulktag | DELETE bulk bookmark remove">
+    <configuration name="bulktag | DELETE bulk bookmark remove" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/linkstash-backend/api/bulktag.http" executionIdentifier="DELETE bulk bookmark remove" index="3" runType="Run single request">
+      <method v="2" />
+    </configuration>
+    <configuration name="bulktag | GET all bookmarks" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/linkstash-backend/api/bulktag.http" executionIdentifier="GET all bookmarks" runType="Run single request">
+      <method v="2" />
+    </configuration>
+    <configuration name="bulktag | POST bulk bookmark add" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/linkstash-backend/api/bulktag.http" executionIdentifier="POST bulk bookmark add" index="2" runType="Run single request">
+      <method v="2" />
+    </configuration>
+    <configuration name="login | Login" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/linkstash-backend/api/login.http" executionIdentifier="Login" runType="Run single request">
+      <method v="2" />
+    </configuration>
+    <configuration name="build" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/linkstash-backend/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="build" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="HTTP Request.bulktag | DELETE bulk bookmark remove" />
+      <item itemvalue="HTTP Request.bulktag | GET all bookmarks" />
+      <item itemvalue="HTTP Request.bulktag | POST bulk bookmark add" />
+      <item itemvalue="HTTP Request.login | Login" />
+      <item itemvalue="npm.build" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="HTTP Request.bulktag | GET all bookmarks" />
+        <item itemvalue="HTTP Request.bulktag | POST bulk bookmark add" />
+        <item itemvalue="HTTP Request.bulktag | DELETE bulk bookmark remove" />
+        <item itemvalue="HTTP Request.login | Login" />
+        <item itemvalue="npm.build" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-76f8388c3a79-JavaScript-WS-243.24978.60" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="10fcfec8-d4b9-4fd5-94ec-86880b528627" name="Changes" comment="" />
+      <created>1739704360304</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1739704360304</updated>
+      <workItem from="1739704362711" duration="554000" />
+      <workItem from="1739709265180" duration="2046000" />
+      <workItem from="1739711350360" duration="7112000" />
+      <workItem from="1739752424311" duration="9981000" />
+      <workItem from="1739837600720" duration="5444000" />
+      <workItem from="1739924170048" duration="5970000" />
+      <workItem from="1740014408174" duration="2343000" />
+      <workItem from="1740059731874" duration="3738000" />
+      <workItem from="1740070144312" duration="3081000" />
+      <workItem from="1740105384933" duration="4621000" />
+      <workItem from="1740155239647" duration="107000" />
+      <workItem from="1740155684894" duration="727000" />
+    </task>
+    <task id="LOCAL-00001" summary="chore: wip bulk tagging">
+      <option name="closed" value="true" />
+      <created>1739761287591</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1739761287591</updated>
+    </task>
+    <task id="LOCAL-00002" summary="chore: wip bulk tagging">
+      <option name="closed" value="true" />
+      <created>1739840844833</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1739840844833</updated>
+    </task>
+    <task id="LOCAL-00003" summary="chore: wip bulk tagging">
+      <option name="closed" value="true" />
+      <created>1739840867328</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1739840867328</updated>
+    </task>
+    <task id="LOCAL-00004" summary="chore: wip bulk tagging">
+      <option name="closed" value="true" />
+      <created>1739840933900</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1739840933900</updated>
+    </task>
+    <task id="LOCAL-00005" summary="chore: wip bulk tagging">
+      <option name="closed" value="true" />
+      <created>1739843616946</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1739843616946</updated>
+    </task>
+    <task id="LOCAL-00006" summary="chore: wip bulk tagging">
+      <option name="closed" value="true" />
+      <created>1739843638248</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1739843638248</updated>
+    </task>
+    <task id="LOCAL-00007" summary="chore: wip bulk tagging">
+      <option name="closed" value="true" />
+      <created>1739931920372</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1739931920372</updated>
+    </task>
+    <task id="LOCAL-00008" summary="chore: wip bulk tagging">
+      <option name="closed" value="true" />
+      <created>1740016251641</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1740016251641</updated>
+    </task>
+    <task id="LOCAL-00009" summary="feat: bulk tagging&#10;&#10;WIP. basic bulk tag add">
+      <option name="closed" value="true" />
+      <created>1740016760339</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1740016760339</updated>
+    </task>
+    <task id="LOCAL-00010" summary="feat: bulk tagging&#10;&#10;WIP. basic bulk tag add">
+      <option name="closed" value="true" />
+      <created>1740062775344</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1740062775344</updated>
+    </task>
+    <task id="LOCAL-00011" summary="feat: bulk tagging&#10;&#10;WIP. basic bulk tag add">
+      <option name="closed" value="true" />
+      <created>1740072115618</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1740072115618</updated>
+    </task>
+    <task id="LOCAL-00012" summary="feat: bulk tagging&#10;&#10;WIP. basic bulk tag add">
+      <option name="closed" value="true" />
+      <created>1740072535937</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1740072535937</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="CUSTOM_BOOLEAN_PROPERTIES">
+                <map>
+                  <entry key="Show.Git.Branches" value="true" />
+                </map>
+              </option>
+              <option name="HIGHLIGHTERS">
+                <map>
+                  <entry key="CURRENT_BRANCH" value="true" />
+                  <entry key="MERGE_COMMITS" value="true" />
+                  <entry key="MY_COMMITS" value="true" />
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
+    <option name="CHECK_NEW_TODO" value="false" />
+    <MESSAGE value="wip bulk tagging" />
+    <MESSAGE value="chore: wip bulk tagging" />
+    <MESSAGE value="feat: bulk tagging&#10;&#10;WIP. basic bulk tag add" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: bulk tagging&#10;&#10;WIP. basic bulk tag add" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/linkstash-backend/src/types/schemas/bulkTagAdd.ts</url>
+          <line>23</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>

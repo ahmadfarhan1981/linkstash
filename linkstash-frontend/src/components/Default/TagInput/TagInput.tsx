@@ -102,6 +102,7 @@ export function TagInput(props: TagInputProps  ) {
 
   return (
     <>
+    {JSON.stringify(tagsToChooseFrom)}
       <div style={{maxWidth:Number.parseInt(maxWidthInPixel.toString()), minWidth:'100px'}} >      
       <div id="tagListInputDiv" className="w-full">
       <label className={styles["form-label"]} >

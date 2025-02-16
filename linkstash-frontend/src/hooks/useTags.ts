@@ -54,29 +54,11 @@ export function useTags(): useTagsReturnValue {
     makeApiCall(apiOptions, true);
     setIsLoading(false);
   };
-
-  // const deleteBookmark = (bookmarkId:number, onSuccess?:()=>void) => {
-  //   if (!AuthenticationState.isLoggedIn) return;
-    
-  //   const apiOptions: ApiCallOptions = {
-  //     endpoint: `/bookmarks/${bookmarkId}`,
-  //     method: "DELETE",
-  //     headers: {
-  //       Authorization: "Bearer ".concat(AuthenticationState.token),
-  //     },
-  //     successCallback: onSuccess?onSuccess:EMPTY_FUNCTION
-  //   };
-  //   // TODO loading states are not really reflected properly, makeApiCall is async so the loading status isn't reflected properly
-  //   setIsLoading(true);
-  //   makeApiCall(apiOptions, false);
-  //   setIsLoading(false);
-  // };
   
   return {
     tags,
     setTags,
     fetchTags,
-    // deleteBookmark,
     isLoading,    
   };
 }
