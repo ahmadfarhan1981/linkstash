@@ -43,7 +43,7 @@ export function BulkToolbar({ bookmarks, refetchData }: { bookmarks: Bookmark[],
   };
 
   return (
-    <div className="w-full ">
+    <div className="w-full mt-4 mb-6">
     <button
       className="button small-button m-2"
       onClick={toggleSelectionMode}

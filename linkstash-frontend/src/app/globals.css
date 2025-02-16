@@ -131,6 +131,8 @@ code {
 
   .button{
     @apply px-3 py-1 rounded text-primary-text border-[1px] border-black shadow hover:shadow-lg bg-primary-background hover:bg-primary-background-hover hover:scale-105 
+          disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400 disabled:border-slate-200 disabled:hover:scale-100 disabled:hover:bg-slate-200 disabled:hover:text-slate-400
+          disabled:hover:shadow-none disabled:hover:border-slate-200 disabled:shadow-none
   } 
 
   .small-button {
