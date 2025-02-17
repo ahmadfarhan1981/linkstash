@@ -1,0 +1,24 @@
+### GET all bookmarks
+GET {{hostURL}}/bookmarks
+Authorization: Bearer {{token}}
+
+### POST bulk bookmark add
+POST {{hostURL}}/bookmarks/tags/bulk
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "bookmarkIds": ["31222","32"],
+  "tagIds": ["new", "tag"]
+}
+
+### DELETE bulk bookmark remove
+DELETE {{hostURL}}/bookmarks/tags/bulk
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "bookmarkIds": ["31222","32"],
+  "tagIds": ["new", "tag"]
+}
+###

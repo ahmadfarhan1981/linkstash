@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext } from "react";
 
 
 type useBookmarksPageMultiSelectionReturnValue = {
@@ -14,9 +14,9 @@ export const BookmarksPageMultiSelection  = createContext<useBookmarksPageMultiS
 export function useBookmarksPageMultiSelection(): useBookmarksPageMultiSelectionReturnValue {
   const context = useContext(BookmarksPageMultiSelection);
   
-  // if (!context) {
-  //   throw new Error("useBookmarksPageMultiSelection must be used within a BookmarksPageMultiSelectProvider");
-  // }
+  if (!context) {
+    throw new Error("useBookmarksPageMultiSelection must be used within a BookmarksPageMultiSelectProvider");
+  }
 
   return context;
 

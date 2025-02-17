@@ -12,8 +12,8 @@ export type useTagsReturnValue = {
 };
 
 
-export type SortDirection = "ASC" | "DESC";
-export type SortBy = "numBookmarks" | "name" ;
+type SortDirection = "ASC" | "DESC";
+type SortBy = "numBookmarks" | "name" ;
 export type fetchTagsOptions = {
   sortBy : SortBy
   sortDirection : SortDirection ; 
@@ -46,13 +46,15 @@ export function useTags(): useTagsReturnValue {
         setTags((_oldState)=>{
           const newState = response.data
           return newState
-        });              
+        });
+        setIsLoading(false);
       },
-      requestParams:params
+      requestParams:params,
+      finallyCallback: () => { setIsLoading(false); },
     };
     setIsLoading(true);    
     makeApiCall(apiOptions, true);
-    setIsLoading(false);
+
   };
   
   return {

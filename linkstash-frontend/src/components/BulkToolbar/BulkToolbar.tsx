@@ -1,133 +1,238 @@
-"use client";
+'use client';
 
-import { ApiCallOptions, Bookmark } from "@/types";
-import { useAuthentication, useBookmarksPageMultiSelection } from "@/hooks";
+import {ApiCallOptions, Bookmark, TagListItem} from '@/types';
+import {useAuthentication, useBookmarksPageMultiSelection} from '@/hooks';
 
-import { makeApiCall } from "@/scripts";
-import { useMemo } from "react";
+import {TagInput} from '@/components';
+import {makeApiCall} from '@/scripts';
+import {useListData} from 'react-stately';
+import {useMemo} from 'react';
 
-export function BulkToolbar({ bookmarks, refetchData }: { bookmarks: Bookmark[], refetchData: () => void }) {
+export function BulkToolbar({bookmarks, refetchData, tags}: {bookmarks: Bookmark[], refetchData: () => void, tags: TagListItem[]}) {
   const {
     selectedBookmarks,
     isSelectionMode,
-    toggleSelectionMode
+    toggleSelectionMode,
   } = useBookmarksPageMultiSelection();
 
   const {AuthenticationState} = useAuthentication();
   const {token} = AuthenticationState;
-
-  const { onScreenCount, totalSelected } = useMemo(() => {
+  const selectedTags = useListData({
+    initialItems: [],
+    getKey: (item: TagListItem) => item.name,
+  });
+  const {onScreenCount, totalSelected} = useMemo(() => {
     const onScreenCount = bookmarks.filter((b) =>
-      selectedBookmarks.includes(Number.parseInt(b.id!))
+      selectedBookmarks.includes(Number.parseInt(b.id!)),
     ).length;
     const totalSelected = selectedBookmarks.length;
-    return { onScreenCount, totalSelected };
+    return {onScreenCount, totalSelected};
   }, [bookmarks, selectedBookmarks]);
 
-  const onDeletionSuccess = () => {
+  const refetchDataAndResetForm = () => {
     refetchData();
+    selectedTags.remove( ... selectedTags.items.map(i=>i.id) );
     toggleSelectionMode();
-  }
+  };
 
   const handleDelete = () => {
     const options: ApiCallOptions = {
-      endpoint: "/bookmarks/bulk",
-      method: "DELETE",
+      endpoint: '/bookmarks/bulk',
+      method: 'DELETE',
       headers: {
-        Authorization: "Bearer ".concat(token),
+        Authorization: 'Bearer '.concat(token),
       },
-      body: { ids: selectedBookmarks.map(x=> x.toString()) },
-      successCallback: onDeletionSuccess,
+      body: {ids: selectedBookmarks.map(x => x.toString())},
+      successCallback: refetchDataAndResetForm,
     };
-    makeApiCall(options);
+    makeApiCall(options, false);
   };
 
-  return (
-    <div className="w-full mt-4 mb-6">
-    <button
-      className="button small-button m-2"
-      onClick={toggleSelectionMode}
-    >
-      <svg
-        role="presentation"
-        xmlns="http://www.w3.org/2000/svg"
-        className="inline-block mr-2 h-4 w-4"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-        />
-      </svg>
-      {isSelectionMode ? "Exit Selection Mode" : "Select Multiple"}
-    </button>
+  const handleBulkAddTags = () =>{
 
-    {isSelectionMode && (
-      <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
-        <div className="p-4">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
-            <div className="space-y-1">
-              <p className="text-sm font-medium ">Selected: {totalSelected}</p>
-              <p className="text-sm text-gray-500">On screen: {onScreenCount}</p>
-            </div>
-            {totalSelected > 0 ? (
-              <div className="flex space-x-2">
-                <button
-                  // className="px-3 py-1 bg-red-600 text-white text-sm font-medium rounded-md hover:bg-red-700 transition-colors"
-                  className="button small-button my-2 alert-button"
-                  onClick={handleDelete}
-                >
-                  <svg
-                    role="presentation"
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="inline-block mr-1 h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                    />
-                  </svg>
-                  Delete
-                </button>
-                <button
-                  // className="px-3 py-1 bg-gray-200 text-gray-800 text-sm font-medium rounded-md hover:bg-gray-300 transition-colors"
-                  className="button small-button my-2"
-                  
-                >
-                  <svg
-                    role="presentation"
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="inline-block mr-1 h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
-                    />
-                  </svg>
-                  Archive
-                </button>
+    const options: ApiCallOptions = {
+    endpoint: '/bookmarks/tags/bulk',
+    method: 'POST',
+    headers: {
+      Authorization: 'Bearer '.concat(token),
+    },
+    body: {
+      bookmarkIds: selectedBookmarks.map(x => x.toString()),
+      tags: selectedTags.items.map(x => x.name)
+    },
+    successCallback: refetchDataAndResetForm,
+  };
+
+  makeApiCall(options, false);
+  }
+
+  const handleBulkRemoveTags = () =>{
+    const options: ApiCallOptions = {
+      endpoint: '/bookmarks/tags/bulk',
+      method: 'DELETE',
+      headers: {
+        Authorization: 'Bearer '.concat(token),
+      },
+      body: {
+        bookmarkIds: selectedBookmarks.map(x => x.toString()),
+        tags: selectedTags.items.map(x => x.name)
+      },
+      successCallback: refetchDataAndResetForm,
+    };
+
+    makeApiCall(options, false);
+  }
+
+  return (
+    <div className="w-full">
+      <button className="button small-button m-2" onClick={toggleSelectionMode}>
+        <svg
+          role="presentation"
+          xmlns="http://www.w3.org/2000/svg"
+          className="inline-block mr-2 h-4 w-4"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+          />
+        </svg>
+        {isSelectionMode ? 'Exit bulk selection mode' : 'Select Multiple'}
+      </button>
+      {isSelectionMode && (
+        <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
+          <div className="p-4 ">
+            <div
+              className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
+              <div className="space-y-1">
+                <p className="text-sm font-medium ">
+                  Selected: {totalSelected}
+                </p>
+                <p className="text-sm text-gray-500">
+                  On screen: {onScreenCount}
+                </p>
               </div>
-            ) : (
-              <p className="text-sm text-gray-500">Select items to perform actions</p>
+              {totalSelected > 0 ? (
+                <div>
+                  <div className="flex space-x-2">
+                    <button
+                      // className="px-3 py-1 bg-red-600 text-white text-sm font-medium rounded-md hover:bg-red-700 transition-colors"
+                      className="button small-button my-2 alert-button"
+                      onClick={handleDelete}
+                    >
+                      <svg
+                        role="presentation"
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="inline-block mr-1 h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                        />
+                      </svg>
+                      Delete
+                    </button>
+                    <button
+                      // className="px-3 py-1 bg-gray-200 text-gray-800 text-sm font-medium rounded-md hover:bg-gray-300 transition-colors"
+                      className="button small-button my-2"
+                    >
+                      <svg
+                        role="presentation"
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="inline-block mr-1 h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
+                        />
+                      </svg>
+                      Archive
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-sm text-gray-500">
+                  Select items to perform actions
+                </p>
+              )}
+            </div>
+            {isSelectionMode &&(
+              <div className="border-2">
+                <div className="">
+                  <TagInput
+                    inputLabel="Tags for operation"
+                    tagsToChooseFrom={tags}
+                    description="Run action on with selected tags"
+                    selectedTags={selectedTags}
+                  />
+                </div>
+                <div className="">
+                  <button
+                    disabled={selectedTags.items.length === 0}
+                    className="button small-button inline"
+                    onClick={handleBulkAddTags}
+                  >
+                    <svg
+                      className="inline"
+                      role="presentation"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M5 12h14" />
+                      <path d="M12 5v14" />
+                    </svg>
+                    <span className="inline">Add to all</span>
+                  </button>
+                  <button
+                    disabled={selectedTags.items.length === 0}
+                    className="button small-button alert-button inline mx-2"
+                    onClick={handleBulkRemoveTags}
+                  >
+                    <svg
+                      className="inline"
+                      role="presentation"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+
+                    >
+                      <path d="M5 12h14" />
+                    </svg>
+                    <span className="inline">Remove from all</span>
+                  </button>
+                </div>
+              </div>
             )}
           </div>
         </div>
-      </div>
-    )}
-  </div>
+      ) }
+    </div>
   );
 }

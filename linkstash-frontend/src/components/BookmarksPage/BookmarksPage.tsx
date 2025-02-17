@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   BookmarkCard,
@@ -7,27 +7,27 @@ import {
   Loader,
   Pager,
   TagCloud,
-} from "@/components";
-import { SortBy, SortDirection, useBookmarks } from "@/hooks/useBookmarks";
-import { fetchTagsOptions, useTags } from "@/hooks/useTags";
-import { useCallback, useEffect, useState } from "react";
+} from '@/components';
+import {SortBy, SortDirection, useBookmarks} from '@/hooks/useBookmarks';
+import {fetchTagsOptions, useTags} from '@/hooks/useTags';
+import {useCallback, useEffect, useState} from 'react';
 
-import { TagListItem } from "@/types";
-import { setUrlParam } from "@/scripts";
-import styles from "./styles.module.css";
-import { useAuthentication } from "@/hooks";
-import { useListData } from "react-stately";
-import { useSearchParams } from "next/navigation";
+import {TagListItem} from '@/types';
+import {setUrlParam} from '@/scripts';
+import styles from './styles.module.css';
+import {useAuthentication} from '@/hooks';
+import {useListData} from 'react-stately';
+import {useSearchParams} from 'next/navigation';
 
 export function BookmarksPage() {
   const searchParams = useSearchParams();
-  const page = searchParams.get("page");
-  const [sortBy, setSortBy] = useState<SortBy>("created");
-  const [sortDirection, setSortDirection] = useState<SortDirection>("DESC");
+  const page = searchParams.get('page');
+  const [sortBy, setSortBy] = useState<SortBy>('created');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('DESC');
   const [currentPage, setCurrentPage] = useState<number>(
-    page ? Number.parseInt(page) : 1
+    page ? Number.parseInt(page) : 1,
   );
-  const { AuthenticationState } = useAuthentication();
+  const {AuthenticationState} = useAuthentication();
   const {
     bookmarks,
     fetchBookmarks,
@@ -38,10 +38,8 @@ export function BookmarksPage() {
   } = useBookmarks();
   const [maxPage, setMaxPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
-  const [filter, setFilter] = useState<string>("");
-  const [isSelectionMode, setIsSelectionMode] = useState(false);
-  const [selectedBookmarks, setSelectedBookmarks] = useState<number[]>([]);
-  const { isLoggedIn, token } = AuthenticationState;
+  const [filter, setFilter] = useState<string>('');
+  const {isLoggedIn, token} = AuthenticationState;
   const allFilterTags = useListData({
     initialItems: [],
     getKey: (item: TagListItem) => item.name,
@@ -52,16 +50,16 @@ export function BookmarksPage() {
   });
 
   useEffect(() => {
-    const pageParam = searchParams.get("page");
+    const pageParam = searchParams.get('page');
     const currentPage = pageParam ? Number.parseInt(pageParam) : 1;
     setCurrentPage(currentPage);
-    setUrlParam("page", currentPage.toString(), searchParams);
-  }, [searchParams.get("page")]);
+    setUrlParam('page', currentPage.toString(), searchParams);
+  }, [searchParams.get('page')]);
 
   useEffect(() => {
-    const perPage = searchParams.get("perPage");
-    setPageSize(Number.parseInt(perPage ? perPage : "10"));
-  }, [searchParams.get("perPage")]);
+    const perPage = searchParams.get('perPage');
+    setPageSize(Number.parseInt(perPage ? perPage : '10'));
+  }, [searchParams.get('perPage')]);
 
   const refetchData = () => {
     fetchBookmarks({
@@ -75,24 +73,8 @@ export function BookmarksPage() {
     });
   };
 
-  const toggleSelectionMode = () => {
-    setIsSelectionMode((prev) => !prev);
-    console.log(JSON.stringify(selectedBookmarks));
-    if (isSelectionMode) {
-      setSelectedBookmarks([]); // Clear selection when exiting selection mode
-    } else {
-      console.log(JSON.stringify(selectedBookmarks));
-    }
-  };
-
-  const toggleSelection = (id: number) => {
-    setSelectedBookmarks((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-    );
-  };
 
   useEffect(() => {
-    console.log("useEffect isLoggedIn");
     {
       if (!isLoggedIn) return;
       refetchData();
@@ -110,35 +92,35 @@ export function BookmarksPage() {
   ]);
 
 
-  const { fetchTags, tags } = useTags();
+  const {fetchTags, tags} = useTags();
 
   const [fetchTagsOption, setFetchTagsOption] = useState<fetchTagsOptions>({
-      sortBy: "numBookmarks",
-      sortDirection: "DESC",
-    });
-    
-    useEffect(() => {
-      {
-        if (!isLoggedIn) return;
-        fetchTags({
-          sortBy: fetchTagsOption.sortBy,
-          sortDirection: fetchTagsOption.sortDirection,
-        });
-      }
-    }, [
-      isLoggedIn,
-      token,
-      fetchTagsOption.sortBy,
-      fetchTagsOption.sortDirection,
-      fetchTagsOption,
-      bookmarks,
-    ]);
-  
+    sortBy: 'numBookmarks',
+    sortDirection: 'DESC',
+  });
+
+  useEffect(() => {
+    {
+      if (!isLoggedIn) return;
+      fetchTags({
+        sortBy: fetchTagsOption.sortBy,
+        sortDirection: fetchTagsOption.sortDirection,
+      });
+    }
+  }, [
+    isLoggedIn,
+    token,
+    fetchTagsOption.sortBy,
+    fetchTagsOption.sortDirection,
+    fetchTagsOption,
+    bookmarks,
+  ]);
+
   const stableSetUrlParam = useCallback(
-    (key:any, value:any) => {
+    (key: any, value: any) => {
       setUrlParam(key, value, searchParams);
     },
-    [searchParams]
+    [searchParams],
   );
 
   useEffect(() => {
@@ -148,7 +130,7 @@ export function BookmarksPage() {
       setMaxPage(lastPage);
       if (currentPage > lastPage) {
         setCurrentPage(lastPage);
-        stableSetUrlParam("page", lastPage.toString());
+        stableSetUrlParam('page', lastPage.toString());
         // setUrlParam("page", lastPage.toString(), searchParams);
       }
     }
@@ -163,15 +145,13 @@ export function BookmarksPage() {
     deleteBookmark(id, refetchData);
   };
 
-  const handleOnClick = () => {
-    alert(JSON.stringify(selectedBookmarks));
-  };
+
   return (
     <>
-      
+
       <Loader isLoading={isLoading} text="Loading bookmarks">
-        <div className={styles["bookmarks-page"]}>
-          <div className={styles["bookmark-list"]}>
+        <div className={styles['bookmarks-page']}>
+          <div className={styles['bookmark-list']}>
             <div className="">
               <BookmarksToolbar
                 sortBy={sortBy}
@@ -184,7 +164,7 @@ export function BookmarksPage() {
                 setFilter={setFilter}
               />
             </div>
-            <BulkToolbar bookmarks={bookmarks} refetchData={refetchData}/>
+            <BulkToolbar bookmarks={bookmarks} refetchData={refetchData} tags={tags} />
             <div>
               <Pager
                 currentPage={currentPage}
@@ -193,9 +173,6 @@ export function BookmarksPage() {
               />
             </div>
             <div>
-
-
-
               <div>
                 {bookmarks?.map((bookmark) => (
                   <BookmarkCard
@@ -211,7 +188,7 @@ export function BookmarksPage() {
                     contextProps={{
                       bookmarkData: bookmark,
                       handleDelete: handleDelete,
-                      handleArchive: handleArchive                      
+                      handleArchive: handleArchive,
                     }}
                   />
                 ))}
@@ -226,7 +203,7 @@ export function BookmarksPage() {
             </div>
           </div>
           <div className="relative">
-            <div className={styles["tag-cloud"] + " sticky top-16"}>
+            <div className={styles['tag-cloud'] + ' sticky top-16'}>
               <TagCloud
                 allFilterTags={allFilterTags}
                 anyFilterTags={anyFilterTags}

@@ -1,6 +1,6 @@
 # SQLite Support (Experimental)
 
-Starting from **v1.1**, Linkstash includes **experimental** support for SQLite. This feature is still under development, and some functionality may be incomplete or unstable. Please report any issues you encounter.
+Starting from **v1.1**, the Linkstash backend includes **experimental** support for SQLite. This feature is still under development, and some functionality may be incomplete or unstable. Please report any issues you encounter.
 
 I am still debating whether to fully support SQLite. For now, I've done some basic work to make it functional but haven't extensively tested it. Issues related to SQLite will also be evaluated based on the effort required to maintain full compatibility with MySQL.
 
@@ -13,7 +13,17 @@ I am still debating whether to fully support SQLite. For now, I've done some bas
 - 
 ## Enabling SQLite Support
 
-To enable SQLite, set the following environment variable **before starting the backend**:
+### Pre-requisite
+Install the SQLite related pacakges:
+
+```bash
+npm install loopback-connector-sqlite3 sqlite3 --save
+
+```
+On windows, you would need to have `Visual Studio including the "Desktop development with C++" workload` installed to be able to install the loopback sqlite connector
+
+### Configuration and starting
+To start Linkstash with SQLite, set the following environment variable **before starting the backend**:
 
 You can do this by adding/editing this line in your `.env` file:
 
