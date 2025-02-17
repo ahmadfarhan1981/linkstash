@@ -13,8 +13,7 @@ export function Header() {
     if (!showHeaders) return (<></>)
 
     return (
-        <div
-            className="span-width
+        <div className="span-width
                         w-full
                         bg-white
                         border-accent
@@ -26,14 +25,16 @@ export function Header() {
             <header className="bg-[hsl(214,100%,97%)] shadow-md just">
                 <div className="container mx-auto flex justify-between items-center w-full">
                     <div className="w-12 h-12 flex space-x-3 ">
-                        <img src={"/img/icon.svg"} alt={"Logo"}/>
-                        <div className={"flex items-center font-bold "}>LinkStash</div>
+                        <Link className={"flex"} href={"/"} prefetch={false}>
+                            <img src={"/img/icon.svg"} alt={"Logo"}/>
+                            <div className={"flex items-center font-bold "}>LinkStash</div>
+                        </Link>
                     </div>
                     <nav className={""}>
                         <ul className="flex">
-                            <li>
-                                <span className={styles['items']}><Link href="/bookmarks" prefetch={false}>Links</Link></span>
-                            </li>
+                            {/*<li>*/}
+                            {/*    <span className={styles['items']}><Link href="/bookmarks" prefetch={false}>Links</Link></span>*/}
+                            {/*</li>*/}
                             <li>
 
                                 <span className={styles['items']}><Link href="/addBookmark">Add</Link></span>

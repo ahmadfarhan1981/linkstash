@@ -1,0 +1,20 @@
+### Login
+POST {{hostURL}}/users/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "password"
+}
+
+> {%
+  client.global.set("token", response.body.token);
+%}
+
+### Check login
+GET {{hostURL}}/whoAmI
+Authorization: Bearer {{token}}
+
+### Get all bookmarks
+GET http://{{hostURL}}/bookmarks
+Authorization: Bearer {{token}}

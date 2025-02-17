@@ -91,7 +91,7 @@
     "HTTP Request.whoAmI.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "#35 on Rebasing farhan/bulk__taggin",
+    "git-widget-placeholder": "#35 on farhan/bulk__taggin",
     "ignore.virus.scanning.warn.message": "true",
     "last_opened_file_path": "C:/Users/paan/WebstormProjects/linkstash/linkstash-frontend/public/img",
     "node.js.detected.package.eslint": "true",
@@ -129,7 +129,7 @@
       <recent name="C:\Users\paan\WebstormProjects\linkstash\linkstash-backend\src\types\utils.ts" />
     </key>
   </component>
-  <component name="RunManager" selected="HTTP Request.bulktag | DELETE bulk bookmark remove">
+  <component name="RunManager" selected="npm.backend">
     <configuration name="bulktag | DELETE bulk bookmark remove" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/linkstash-backend/api/bulktag.http" executionIdentifier="DELETE bulk bookmark remove" index="3" runType="Run single request">
       <method v="2" />
     </configuration>
@@ -157,6 +157,9 @@
       <item itemvalue="HTTP Request.bulktag | GET all bookmarks" />
       <item itemvalue="HTTP Request.bulktag | POST bulk bookmark add" />
       <item itemvalue="HTTP Request.login | Login" />
+      <item itemvalue="npm.backend" />
+      <item itemvalue="npm.build frontend" />
+      <item itemvalue="npm.frontend" />
       <item itemvalue="npm.build" />
     </list>
     <recent_temporary>
@@ -195,7 +198,7 @@
       <workItem from="1740070144312" duration="3081000" />
       <workItem from="1740105384933" duration="4621000" />
       <workItem from="1740155239647" duration="107000" />
-      <workItem from="1740155684894" duration="727000" />
+      <workItem from="1740155684894" duration="3586000" />
     </task>
     <task id="LOCAL-00001" summary="chore: wip bulk tagging">
       <option name="closed" value="true" />
