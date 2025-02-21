@@ -184,6 +184,7 @@ export function BookmarksPage() {
                 setFilter={setFilter}
               />
             </div>
+            <BulkToolbar bookmarks={bookmarks} refetchData={refetchData}/>
             <div>
               <Pager
                 currentPage={currentPage}
@@ -192,7 +193,7 @@ export function BookmarksPage() {
               />
             </div>
             <div>
-             <BulkToolbar bookmarks={bookmarks} refetchData={refetchData}/>
+
 
 
               <div>

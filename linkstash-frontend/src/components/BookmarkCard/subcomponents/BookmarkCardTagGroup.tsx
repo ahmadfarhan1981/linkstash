@@ -2,7 +2,7 @@ import { MyTag, MyTagGroup } from "@/components"
 
 import Link from "next/link";
 import styles from '../styles.module.css'
-import { uniq } from "lodash";
+import { uniq } from "lodash-es";
 import { useBookmarkCardContext } from "../BookmarkCardContext";
 
 export function BookmarkCardTagGroup(){

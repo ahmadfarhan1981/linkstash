@@ -14,7 +14,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { debounce, uniq } from "lodash";
+import { debounce, uniq } from "lodash-es";
 
 import { BiRefresh } from "react-icons/bi";
 import Link from "next/link";
@@ -132,7 +132,7 @@ export function BookmarkForm({
   };
   return (
       <div className="w-[90%]">
-      <AuthenticatedSection prefix={<>Please login to continue</>}>
+      <AuthenticatedSection loginPrefixComponent={<>Please login to continue</>}>
         <Loader isLoading={isLoading}>
           <h2>Adding a new bookmark</h2>
           <div className="bg-card-background shadow p-3 mt-3 min-w-[280px] w-full">

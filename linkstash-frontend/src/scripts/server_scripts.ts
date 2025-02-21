@@ -1,10 +1,10 @@
 'use server'
 
 
-
+import {trimEnd} from 'lodash-es';
 export async function  getBackendURL():Promise<string>{
-    const _ = require('lodash')
-    return  _.trimEnd(process.env.BACKEND_URL?.trimEnd(), '/')
+
+    return  trimEnd(process.env.BACKEND_URL?.trimEnd(), '/')
 }
 
 

@@ -1,4 +1,4 @@
-import {injectable, /* inject, */ BindingScope, service} from '@loopback/core';
+import {BindingScope, injectable, service} from '@loopback/core';
 import {Count, FilterBuilder, IsolationLevel, repository, Transaction, WhereBuilder} from '@loopback/repository';
 import {Archive, Bookmark, Tag} from '../models';
 import {ArchiveRepository, BookmarkRepository, LinkstashUserRepository, TagRepository} from '../repositories';
@@ -27,12 +27,19 @@ export class LinkStashBookmarkService {
 
   async createBookmark(userId: string, bookmark: Partial<Bookmark>): Promise<Bookmark> {
     bookmark.userId = userId;
-    const transaction = await this.bookmarkRepository.beginTransaction(IsolationLevel.READ_COMMITTED);
+    const transaction = await this.getTransaction(this.bookmarkRepository);
     const result = await this.bookmarkRepository.create(bookmark, transaction);
     await this.linkAllTags(result, userId, transaction, true);
-    await transaction.commit();
+    if(transaction) await transaction.commit();
     return result;
   }
+
+  private async getTransaction( repo:BookmarkRepository): Promise<Transaction | undefined> {
+    const isSqlite = repo.dataSource.connector?.name === 'sqlite3'
+
+    return isSqlite?undefined:repo.beginTransaction(IsolationLevel.READ_COMMITTED);
+  }
+
   async updateBookmark(existing: Partial<Bookmark>, updated: Partial<Bookmark>): Promise<Count> {
     if (!existing) return {count: 0};
     const {userId, id} = existing;
@@ -64,25 +71,25 @@ export class LinkStashBookmarkService {
     const id = existing.id!;
     const userId = existing.userId!;
     await this.archiveService.removeLocalAssetByBookmark(id);
-    const transaction = await this.bookmarkRepository.beginTransaction(IsolationLevel.READ_COMMITTED);
+    const transaction = await this.getTransaction(this.bookmarkRepository);
     await this.unlinkAllTags(existing, userId, transaction);
     await this.archiveRepository.deleteAll({bookmarkId: id}, transaction);
     await this.bookmarkRepository.deleteById(id, transaction);
-    await transaction.commit();
+    if(transaction) await transaction.commit();
   }
   // helper functions
-  async linkAllTags(bookmark: Bookmark, userID: string, transaction: Transaction, createNonExisting: boolean = false) {
+  async linkAllTags(bookmark: Bookmark, userID: string, transaction: Transaction | undefined, createNonExisting: boolean = false) {
     if (!bookmark.tagList) return
     await this.linkTagsToBookmark(userID, bookmark.tagList!, bookmark.id!, transaction, createNonExisting);
   }
-  async linkTagsToBookmark(userId: string, tags: string[], bookmarkId: number, transaction: Transaction, createNonExisting: boolean = false) {
+  async linkTagsToBookmark(userId: string, tags: string[], bookmarkId: number, transaction: Transaction | undefined, createNonExisting: boolean = false) {
     if (!tags) return
     for (const tag of tags) {
       await this.linkTagToBookmark(userId, tag, bookmarkId, transaction, createNonExisting);
     }
   }
 
-  async linkTagToBookmark(userId: string, tag: string, bookmarkId: number, transaction: Transaction, createNonExisting: boolean = false) {
+  async linkTagToBookmark(userId: string, tag: string, bookmarkId: number, transaction: Transaction |undefined, createNonExisting: boolean = false) {
     const filter = new FilterBuilder<Tag>().impose({name: tag}).build();
     const existingTag: Tag[] = await this.userRepository.tags(userId).find(filter, transaction);
     if (existingTag.length === 0) {
@@ -113,19 +120,19 @@ export class LinkStashBookmarkService {
     }
   }
 
-  async unlinkAllTags(bookmark: Bookmark, userID: string, transaction: Transaction) {
+  async unlinkAllTags(bookmark: Bookmark, userID: string, transaction: Transaction | undefined) {
     if (!bookmark.tagList) return;
     await this.unlinkTagsFromBookmark(userID, bookmark.tagList!, bookmark.id!, transaction);
   }
 
-  async unlinkTagsFromBookmark(userId: string, tags: string[], bookmarkId: number, transaction: Transaction) {
+  async unlinkTagsFromBookmark(userId: string, tags: string[], bookmarkId: number, transaction: Transaction | undefined) {
     if (!tags) return
     for (const tag of tags) {
       await this.unlinkTagFromBookmark(userId, tag, bookmarkId, transaction);
     }
   }
 
-  async unlinkTagFromBookmark(userId: string, tag: string, bookmarkId: number, transaction: Transaction) {
+  async unlinkTagFromBookmark(userId: string, tag: string, bookmarkId: number, transaction: Transaction | undefined) {
     const filter = new FilterBuilder<Tag>().impose({name: tag}).build();
     const existingTag: Tag[] = await this.userRepository.tags(userId).find(filter, transaction);
 

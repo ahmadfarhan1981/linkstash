@@ -14,9 +14,8 @@ import {
   Text,
 } from "react-aria-components";
 import { ReactNode, useRef, useState } from "react";
-import { delay, now } from "lodash";
+import { delay, now } from "lodash-es";
 
-import { SiPantheon } from "react-icons/si";
 import { useHover } from "react-aria";
 
 /**

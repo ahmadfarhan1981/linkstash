@@ -12,7 +12,6 @@ export * from "./Providers/Providers";
 export * from "./TagCloud/TagCloud";
 export * from "./UserNavigationBar/UserNavigationBar";
 export * from  "./ConfirmActionButton/ConfirmActionButton"
-export * from "./Intro/Intro"
 export * from "./UserTableRow/UserTableRow"
 export * from "./LoadingSpinner/LoadingSpinner"
 export * from "./BulkToolbar/BulkToolbar"
