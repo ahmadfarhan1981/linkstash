@@ -4,6 +4,13 @@ Starting from **v1.1**, Linkstash includes **experimental** support for SQLite. 
 
 I am still debating whether to fully support SQLite. For now, I've done some basic work to make it functional but haven't extensively tested it. Issues related to SQLite will also be evaluated based on the effort required to maintain full compatibility with MySQL.
 
+## Known issues
+
+- tag filtering doesn't work
+  - root cause: using `regexp` in request related to tag filtering.
+  - effort: medium. need to take the tag filter and parse it instead of just using the loopback where clause. might be able to work around it using `LIkE` instead of `regexp`
+  - impact: medium to big. its annoying, more so if you have large collection
+- 
 ## Enabling SQLite Support
 
 To enable SQLite, set the following environment variable **before starting the backend**:
@@ -31,5 +38,6 @@ DB_FILE=database.sqlite
 ## Notes
 - This feature is in **early-stage testing** and may have **performance or stability issues**.
 - Some advanced database features may not work as expected.
+
 
 > I decided to add SQLite support because MySQL can be a heavy requirement in some cases. However, I do not want to fully commit to supporting SQLite long-term, as I may introduce future features requiring more advanced database functionality that SQLite may not fully support. As of now, I don't foresee any immediate issues, but this may change depending on project needs.

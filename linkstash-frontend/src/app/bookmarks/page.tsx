@@ -1,12 +1,12 @@
 "use client";
 
-import { AuthenticatedSection, BookmarksPage, BookmarksPageMultSelectProvider, Intro } from "@/components";
+import {AuthenticatedSection, BookmarksPage, BookmarksPageMultSelectProvider} from "@/components";
 
 
 export default function Home() {
     
   return (
-    <AuthenticatedSection prefix={<Intro />}>
+    <AuthenticatedSection >
       <BookmarksPageMultSelectProvider>
         <BookmarksPage />
       </BookmarksPageMultSelectProvider>

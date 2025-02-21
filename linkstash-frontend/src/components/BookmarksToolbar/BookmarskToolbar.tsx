@@ -10,12 +10,12 @@ import {
   Select,
   SelectValue,
 } from "react-aria-components";
-import React, { CSSProperties, ChangeEvent, ReactNode } from "react";
+import React, { ChangeEvent, ReactNode } from "react";
 import { SortBy, SortDirection } from "@/hooks";
 
 import { InputComponent } from "../Default";
 import { Key } from "@react-types/shared"
-import { debounce } from "lodash";
+import { debounce } from "lodash-es";
 import { setUrlParam } from "@/scripts";
 import { useListData } from "react-stately";
 import { useSearchParams } from "next/navigation";
