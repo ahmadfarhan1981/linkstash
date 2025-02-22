@@ -25,12 +25,17 @@ export function BookmarksPageMultSelectProvider({
       return [...prev, bookmarkId];
     });
   };
+
+  const clearSelection = () => {
+    setSelectedBookmarks([]);
+  }
   
   const value =  {
     selectedBookmarks,
     isSelectionMode,
     toggleSelectionMode,
-    selectBookmark
+    selectBookmark,
+    clearSelection
   };
     return (
         <BookmarksPageMultiSelection.Provider value={value}>

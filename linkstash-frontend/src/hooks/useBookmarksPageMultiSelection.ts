@@ -6,6 +6,7 @@ type useBookmarksPageMultiSelectionReturnValue = {
     isSelectionMode: boolean;
     toggleSelectionMode: () => void;
     selectBookmark: (bookmarkId: number) => void;
+    clearSelection: () => void;
 };
 
 export const BookmarksPageMultiSelection  = createContext<useBookmarksPageMultiSelectionReturnValue>({} as useBookmarksPageMultiSelectionReturnValue);

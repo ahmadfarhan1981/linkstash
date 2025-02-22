@@ -11,6 +11,7 @@ import React, {ReactNode, Suspense} from "react";
 import type { Metadata } from "next";
 
 import { Open_Sans } from "next/font/google";
+import {ToastProvider} from '@/components/Providers/ToastProvider';
 
 const openSans = Open_Sans({
     weight: "variable",
@@ -39,10 +40,12 @@ export default function RootLayout({
             <UserNavigationBar />            
             <div className="left-spacer"></div>
             <div className="content w-full">
+              <ToastProvider>
               {/* //TODO fix loader. suspense? */}
               <Suspense>{/** https://nextjs.org/docs/messages/missing-suspense-with-csr-bailout useSearchParams in /bookmarks */}
                 {children}
               </Suspense>
+              </ToastProvider>
             </div>
             <div className="right-spacer"></div>
             

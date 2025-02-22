@@ -1,6 +1,4 @@
-.login-form * {
-  display: block;
-}
+
 
 .login-form{
   align-items: center;
@@ -10,7 +8,7 @@
   width: 100%;
   max-width: fit-content;
 
-  @apply bg-card-background shadow p-3 mt-10 rounded-t-sm rounded-b-2xl  shadow-2xl
+  @apply bg-card-background p-3 mt-10 rounded-t-sm rounded-b-2xl shadow-2xl ;
 }
 
 .submit-button{

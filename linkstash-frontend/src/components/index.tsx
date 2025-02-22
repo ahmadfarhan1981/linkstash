@@ -1,4 +1,3 @@
-export * from "./AlertBox/AlertBox";
 export * from "./AuthenticatedSection/AuthenticatedSection";
 export * from "./BookmarkCard/BookmarkCard";
 export * from "./BookmarkForm/BookmarkForm";
