@@ -1,0 +1,55 @@
+/* ToastNotification.module.css */
+
+.toast {
+    @apply bg-white p-2 rounded-md bg-card-background border-[1px] relative
+            w-24 sm:w-40 lg:w-72 /** width **/
+            /*before:content-["xs"] sm:before:content-["sm"] md:before:content-["md"]  lg:before:content-["lg"] xl:before:content-["xl"] 2xl:before:content-["2xl"]*/
+    ;
+}
+
+.summary {
+    @apply text-xs lg:text-sm xl:text-base
+    font-bold text-gray-800;
+}
+
+.detailsContainer {
+    @apply overflow-hidden transition-all duration-300 ease-out;
+}
+
+.details {
+    @apply text-xs lg:text-sm text-gray-600;
+}
+
+.closeBtn {
+    @apply text-gray-500 hover:text-gray-800 font-bold text-xl leading-none;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.expandBtn {
+    @apply mt-2 text-blue-500 hover:text-blue-700 text-xs lg:text-sm;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+/* Progress Bar styles */
+.progressBar {
+    @apply bg-accent;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    width: 100%;
+    animation-name: countdown;
+    animation-timing-function: ease-out;
+    animation-fill-mode: forwards;
+    border-bottom-left-radius: inherit;
+    border-bottom-right-radius: inherit;
+}
+
+@keyframes countdown {
+    from { width: 100%; }
+    to { width: 0%; }
+}

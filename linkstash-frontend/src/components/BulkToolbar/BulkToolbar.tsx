@@ -1,18 +1,25 @@
 'use client';
 
-import {ApiCallOptions, Bookmark, TagListItem} from '@/types';
+import {ApiCallOptions, Bookmark, BulkTagResult, TagListItem} from '@/types';
+import {Toast, useToast} from '@/components/Providers/ToastProvider';
 import {useAuthentication, useBookmarksPageMultiSelection} from '@/hooks';
 
+import {AxiosResponse} from 'axios';
 import {TagInput} from '@/components';
+
 import {makeApiCall} from '@/scripts';
 import {useListData} from 'react-stately';
 import {useMemo} from 'react';
+
+
 
 export function BulkToolbar({bookmarks, refetchData, tags}: {bookmarks: Bookmark[], refetchData: () => void, tags: TagListItem[]}) {
   const {
     selectedBookmarks,
     isSelectionMode,
     toggleSelectionMode,
+    selectBookmark,
+    clearSelection
   } = useBookmarksPageMultiSelection();
 
   const {AuthenticationState} = useAuthentication();
@@ -29,7 +36,27 @@ export function BulkToolbar({bookmarks, refetchData, tags}: {bookmarks: Bookmark
     return {onScreenCount, totalSelected};
   }, [bookmarks, selectedBookmarks]);
 
-  const refetchDataAndResetForm = () => {
+  const {addToast} = useToast();
+
+
+
+  function generateToastFromResult(response:AxiosResponse):Toast{
+    const bulkTagResult:BulkTagResult = response.data;
+    const successCount:number = bulkTagResult.success.length;
+    const failureCount:number = bulkTagResult.failure.length;
+    const result:Toast = {} as Toast;
+    if(failureCount === 0){
+      result.summary = (<span>Bulk actions successful</span>)
+      result.details = (<span>✔ All {successCount} actions completed successfully</span>)
+    }else{
+      result.summary = (<span>⚠ {failureCount} item failed during bulk action</span>)
+      result.details = (<div>{bulkTagResult.failure.map(failure => <div key={failure.bookmarkId + failure.tag}>⚠ BookmarkId : {failure.bookmarkId}. Tag: {failure.tag}. Message: {failure.message}</div>)}</div>)
+    }
+    result.timeout = 7000;
+    return result;
+  }
+  const refetchDataAndResetForm = (response:AxiosResponse) => {
+    addToast(generateToastFromResult(response));
     refetchData();
     selectedTags.remove( ... selectedTags.items.map(i=>i.id) );
     toggleSelectionMode();
@@ -83,6 +110,14 @@ export function BulkToolbar({bookmarks, refetchData, tags}: {bookmarks: Bookmark
     makeApiCall(options, false);
   }
 
+  function selectAllBookmarks():void {
+    bookmarks.forEach(value => {
+      if (!selectedBookmarks.includes(Number.parseInt(value.id!)) ) selectBookmark(Number.parseInt(value.id!))
+      }
+    )
+  }
+
+
   return (
     <div className="w-full">
       <button className="button small-button m-2" onClick={toggleSelectionMode}>
@@ -114,6 +149,11 @@ export function BulkToolbar({bookmarks, refetchData, tags}: {bookmarks: Bookmark
                 </p>
                 <p className="text-sm text-gray-500">
                   On screen: {onScreenCount}
+                </p>
+                <p>
+                  <button className={"underline hover:cursor-pointer"} onClick={selectAllBookmarks} > Select all on screen</button>
+                <br />
+                  <button className={"underline hover:cursor-pointer"} onClick={clearSelection} > Clear selection</button>
                 </p>
               </div>
               {totalSelected > 0 ? (
@@ -171,7 +211,10 @@ export function BulkToolbar({bookmarks, refetchData, tags}: {bookmarks: Bookmark
               )}
             </div>
             {isSelectionMode &&(
-              <div className="border-2">
+
+              <div className="border-0">
+                <hr  className={"mt-3 mb-2"}/>
+                <div><h3>Bulk tag operations</h3></div>
                 <div className="">
                   <TagInput
                     inputLabel="Tags for operation"

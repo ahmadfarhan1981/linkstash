@@ -3,9 +3,9 @@
 import { ApiCallOptions, AuthenticationState } from "@/types";
 import {
   ReactNode,
-  useEffect,
+  useEffect, useRef,
   useState,
-} from "react";
+} from 'react';
 import { getTokenCookieName, getUserIdCookieName, makeApiCall } from "@/scripts";
 
 import { Authentication } from "@/hooks";
@@ -27,6 +27,23 @@ export function AuthenticationProvider({
     userId,
   } as AuthenticationState;
 
+  // Store the post-login callback
+  const postLoginSuccessCallbackRef = useRef<(() => void) | null>(null);
+
+  // Method to set post-login callback
+  const setPostLoginSuccessCallback = (callback: () => void) => {
+    postLoginSuccessCallbackRef.current = callback;
+  };
+
+  // Store the post-login callback
+  const postLoginFailureCallbackRef = useRef<(() => void) | null>(null);
+
+  // Method to set post-login callback
+  const setPostLoginFailureCallback = (callback: () => void) => {
+    postLoginFailureCallbackRef.current = callback;
+  };
+
+
   const login = async (username: string, password: string): Promise<void> => {
     const success = async (response: any) => {
       const { token, userId } = response.data;
@@ -36,11 +53,16 @@ export function AuthenticationProvider({
       const cookies = new Cookies();
       cookies.set(getTokenCookieName(), token);
       cookies.set(getUserIdCookieName(), userId);
+      if(postLoginSuccessCallbackRef.current){
+        postLoginSuccessCallbackRef.current();
+      }
     };
     const failure = (error: any) => {
       // TODO handle error
       setIsLoggedIn(false);
-      console.error(error);
+      if(postLoginFailureCallbackRef.current){
+        postLoginFailureCallbackRef.current();
+      }
     };
     const finallyFunction = () => {
       // always executed
@@ -115,6 +137,6 @@ export function AuthenticationProvider({
 
   return (
 
-    <Authentication.Provider value={{AuthenticationState, login, logout}}>{children}</Authentication.Provider>
+    <Authentication.Provider value={{AuthenticationState, login, logout, setPostLoginSuccessCallback, setPostLoginFailureCallback}}>{children}</Authentication.Provider>
   );
 }

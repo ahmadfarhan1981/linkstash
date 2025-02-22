@@ -1,4 +1,4 @@
-import { RawAxiosRequestHeaders } from "axios";
+import {Axios, AxiosResponse, RawAxiosRequestHeaders} from 'axios';
 
 export type ApiEndpoint =
   | "/whoAmI"
@@ -24,7 +24,12 @@ export type ApiCallOptions = {
   body?: any;
   timeout?: number;
   requestParams?: Record<string, any>;
-  successCallback: Function;
+  successCallback: (response: AxiosResponse)=>void;
   failureCallback?: (err: any) => void;
   finallyCallback?: () => void;
+};
+
+export type BulkTagResult = {
+  success: {bookmarkId: string, tag: string, message?: string}[],
+  failure: {bookmarkId: string, tag: string, message: string}[],
 };
