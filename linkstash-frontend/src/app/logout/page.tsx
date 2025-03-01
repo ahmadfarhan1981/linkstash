@@ -1,8 +1,9 @@
 "use client";
 
-import { useAuthentication } from "@/hooks";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+
+import { useAuthentication } from "@/hooks";
 
 export default function Home() {
   const { logout } = useAuthentication();

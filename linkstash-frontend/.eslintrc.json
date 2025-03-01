@@ -8,8 +8,16 @@
   "rules": {
     "no-console": "warn",
     "no-duplicate-imports": ["error", { "includeExports": true }],
-    "sort-imports": "error",
-    "no-unused-vars": ["warn", {"argsIgnorePattern": "^_"} ]
+    "sort-imports": "off",
+    "no-unused-vars": ["warn", {"argsIgnorePattern": "^_"} ],
+    "compat/compat": ["warn"],
+    "import/order": [
+      "error",
+      {
+        "groups": ["builtin", "external", "internal", "parent", "sibling", "index"],
+        "newlines-between": "always"
+      }
+    ]
   },
   "env": {
     "browser": true

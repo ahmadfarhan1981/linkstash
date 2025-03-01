@@ -1,7 +1,5 @@
 "use client";
 
-import { ApiCallOptions, User } from "@/types";
-import { AuthenticatedSection, ConfirmActionButton, InputComponent, LinkStashDialog, UserTableRow } from "@/components";
 import {
   Column,
   Table,
@@ -9,8 +7,10 @@ import {
   TableHeader
 } from "react-aria-components";
 import React, { useEffect, useState } from "react";
-import { useAuthentication, useUsers } from "@/hooks";
 
+import { ApiCallOptions, User } from "@/types";
+import { AuthenticatedSection, ConfirmActionButton, InputComponent, LinkStashDialog, UserTableRow } from "@/components";
+import { useAuthentication, useUsers } from "@/hooks";
 import { makeApiCall } from "@/scripts";
 
 export default function Home() {

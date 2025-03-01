@@ -1,6 +1,6 @@
-import { ApiCallOptions, User } from "@/types";
 import React, { useState } from "react";
 
+import { ApiCallOptions, User } from "@/types";
 import { makeApiCall } from "@/scripts";
 import { useAuthentication } from "@/hooks";
 

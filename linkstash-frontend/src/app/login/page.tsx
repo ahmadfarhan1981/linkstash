@@ -1,7 +1,8 @@
 'use client'
 
-import {AuthenticatedSection} from '@/components'
 import Link from 'next/link'
+
+import {AuthenticatedSection} from '@/components'
 
 export default function Home() {
     return (        

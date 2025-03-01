@@ -4,8 +4,8 @@ import {
   Cell,
   Row,
 } from "react-aria-components";
-
 import { FaUserGear } from "react-icons/fa6";
+
 import { User } from "@/types";
 
 interface UserTableRowProps {

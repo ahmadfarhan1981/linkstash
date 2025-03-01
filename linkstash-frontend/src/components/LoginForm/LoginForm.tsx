@@ -4,14 +4,16 @@ import {
   ChangeEvent,
   useState,
 } from "react";
-import { InputComponent, Loader } from "@/components";
 import {ShieldAlert, ShieldCheck} from 'lucide-react';
-import {Toast, useToast} from '@/components/Providers/ToastProvider';
-
 import { FaGithub, } from "react-icons/fa";
+
+import { InputComponent, Loader } from "@/components";
+import {Toast, useToast} from '@/components/Providers/ToastProvider';
 import { generateClassNames } from "@/scripts";
-import styles from "./LoginForm.module.css";
 import { useAuthentication } from "@/hooks";
+
+import styles from "./LoginForm.module.css";
+
 
 
 
@@ -36,6 +38,8 @@ export function LoginForm() {
   const failureToast:Toast = {summary:( <div><ShieldAlert className={"text-red-600 inline"}  />Login failed</div>), details:(<>Login failed</>)}
   setPostLoginSuccessCallback(()=>{addToast(successToast)})
   setPostLoginFailureCallback(()=>{addToast(failureToast)})
+
+
   return (
     <div className={"flex  justify-center"}>
       <Loader isLoading={isPending} text="Checking login">

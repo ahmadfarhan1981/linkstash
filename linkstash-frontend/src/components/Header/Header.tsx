@@ -1,10 +1,14 @@
 'use client'
 
-import {Application} from '@/app/context/application';
 import Link from 'next/link'
-import styles from './Header.module.css'
-import {useAuthentication} from '@/hooks';
 import {useContext} from 'react'
+
+import {Application} from '@/app/context/application';
+import {useAuthentication} from '@/hooks';
+
+import styles from './Header.module.css'
+
+
 
 export function Header() {
     const ApplicationContext = useContext(Application);
@@ -25,7 +29,7 @@ export function Header() {
             <header className="bg-[hsl(214,100%,97%)] shadow-md just">
                 <div className="container mx-auto flex justify-between items-center w-full">
                     <div className="w-12 h-12 flex space-x-3 ">
-                        <Link className={"flex"} href={"/"} prefetch={false}>
+                        <Link className={"flex"} href={"/"} prefetch={false} >
                             <img src={"/img/icon.svg"} alt={"Logo"}/>
                             <div className={"flex items-center font-bold "}>LinkStash</div>
                         </Link>
