@@ -1,9 +1,10 @@
 "use client"
+import { ReactNode } from "react";
+
 import {
   Application,
   useApplication
 } from "@/app/context/application";
-import { ReactNode } from "react";
 export function ApplicationProvider({
   children,
 }: {

@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-
 import { AiFillRead } from "react-icons/ai";
 import { BiSolidArchiveIn } from "react-icons/bi";
 import Link from "next/link";
+
+import { useBookmarksPageMultiSelection } from "@/hooks";
+
 import styles from "../styles.module.css";
 import { useBookmarkCardContext } from "../BookmarkCardContext";
-import { useBookmarksPageMultiSelection } from "@/hooks";
 
 export function BookmarkCardTitle() {
   const multiSelectionContext= useBookmarksPageMultiSelection();

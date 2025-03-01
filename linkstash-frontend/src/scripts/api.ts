@@ -1,4 +1,7 @@
-import { ApiCallOptions, TagListItem } from "@/types";
+import axios, { AxiosRequestConfig } from "axios";
+
+import { ApiCallOptions } from "@/types";
+
 import {
   DEFAULT_FAILURE_CALLBACK,
   DEFAULT_FINALLY_CALLBACK,
@@ -8,8 +11,6 @@ import {
   EMPTY_PARAM,
   getBackendURL,
 } from ".";
-import axios, { AxiosRequestConfig } from "axios";
-import {ListData} from 'react-stately'
 
 
 // TODO refactor. this is a mess, move everything that can be done client side together, then only send everything to the server side, 
@@ -73,11 +74,11 @@ function getFinallyCallback(options: ApiCallOptions) {
 }
 
 
-export function whereStringBuilder(filterBy:string, anyTagsList:ListData<TagListItem>, allTagsList:ListData<TagListItem>):string{
-  const generateFilterList = (currentValue:TagListItem):string => {return `{"tagList": {"regexp":"\\"${currentValue.name }\\""}}`}
+export function whereStringBuilder(filterBy:string, anyTagsList:string[], allTagsList:string[]):string{
+  const generateFilterList = (currentValue:string):string => {return `{"tagList": {"regexp":"\\"${currentValue }\\""}}`}
 
-  const allTagsFilter = allTagsList.items.map(generateFilterList).join(",")
-  const anyTagsFilter = anyTagsList.items.map(generateFilterList).join(",")
+  const allTagsFilter = allTagsList.map(generateFilterList).join(",")
+  const anyTagsFilter = anyTagsList.map(generateFilterList).join(",")
   const filterByFilter=filterBy ?`
                 {
                     "title": {

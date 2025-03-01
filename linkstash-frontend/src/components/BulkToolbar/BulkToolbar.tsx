@@ -1,19 +1,17 @@
 'use client';
 
+import React, {useMemo, useState} from 'react';
+import {AxiosResponse} from 'axios';
+
+
 import {ApiCallOptions, Bookmark, BulkTagResult, TagListItem} from '@/types';
 import {Toast, useToast} from '@/components/Providers/ToastProvider';
 import {useAuthentication, useBookmarksPageMultiSelection} from '@/hooks';
-
-import {AxiosResponse} from 'axios';
 import {TagInput} from '@/components';
-
 import {makeApiCall} from '@/scripts';
-import {useListData} from 'react-stately';
-import {useMemo} from 'react';
 
 
-
-export function BulkToolbar({bookmarks, refetchData, tags}: {bookmarks: Bookmark[], refetchData: () => void, tags: TagListItem[]}) {
+export function BulkToolbar({bookmarks, refetchData, tags2 }: {bookmarks: Bookmark[], refetchData: () => void, tags: TagListItem[], tags2: string[] }) {
   const {
     selectedBookmarks,
     isSelectionMode,
@@ -24,10 +22,6 @@ export function BulkToolbar({bookmarks, refetchData, tags}: {bookmarks: Bookmark
 
   const {AuthenticationState} = useAuthentication();
   const {token} = AuthenticationState;
-  const selectedTags = useListData({
-    initialItems: [],
-    getKey: (item: TagListItem) => item.name,
-  });
   const {onScreenCount, totalSelected} = useMemo(() => {
     const onScreenCount = bookmarks.filter((b) =>
       selectedBookmarks.includes(Number.parseInt(b.id!)),
@@ -58,7 +52,7 @@ export function BulkToolbar({bookmarks, refetchData, tags}: {bookmarks: Bookmark
   const refetchDataAndResetForm = (response:AxiosResponse) => {
     addToast(generateToastFromResult(response));
     refetchData();
-    selectedTags.remove( ... selectedTags.items.map(i=>i.id) );
+    setSelectedTags2([]);
     toggleSelectionMode();
   };
 
@@ -85,7 +79,7 @@ export function BulkToolbar({bookmarks, refetchData, tags}: {bookmarks: Bookmark
     },
     body: {
       bookmarkIds: selectedBookmarks.map(x => x.toString()),
-      tags: selectedTags.items.map(x => x.name)
+      tags: selectedTags2
     },
     successCallback: refetchDataAndResetForm,
   };
@@ -102,7 +96,7 @@ export function BulkToolbar({bookmarks, refetchData, tags}: {bookmarks: Bookmark
       },
       body: {
         bookmarkIds: selectedBookmarks.map(x => x.toString()),
-        tags: selectedTags.items.map(x => x.name)
+        tags: selectedTags2
       },
       successCallback: refetchDataAndResetForm,
     };
@@ -117,7 +111,7 @@ export function BulkToolbar({bookmarks, refetchData, tags}: {bookmarks: Bookmark
     )
   }
 
-
+const [selectedTags2, setSelectedTags2] = useState<string[]>([]);
   return (
     <div className="w-full">
       <button className="button small-button m-2" onClick={toggleSelectionMode}>
@@ -216,16 +210,11 @@ export function BulkToolbar({bookmarks, refetchData, tags}: {bookmarks: Bookmark
                 <hr  className={"mt-3 mb-2"}/>
                 <div><h3>Bulk tag operations</h3></div>
                 <div className="">
-                  <TagInput
-                    inputLabel="Tags for operation"
-                    tagsToChooseFrom={tags}
-                    description="Run action on with selected tags"
-                    selectedTags={selectedTags}
-                  />
+                  <TagInput label={"Tags for operation"} tagsToChooseFrom={tags2} selectedTags={selectedTags2} onSelectedTagsChange={t=> setSelectedTags2([...t])} />
                 </div>
                 <div className="">
                   <button
-                    disabled={selectedTags.items.length === 0}
+                    disabled={ selectedTags2.length === 0 }
                     className="button small-button inline"
                     onClick={handleBulkAddTags}
                   >
@@ -248,7 +237,7 @@ export function BulkToolbar({bookmarks, refetchData, tags}: {bookmarks: Bookmark
                     <span className="inline">Add to all</span>
                   </button>
                   <button
-                    disabled={selectedTags.items.length === 0}
+                    disabled={selectedTags2.length === 0}
                     className="button small-button alert-button inline mx-2"
                     onClick={handleBulkRemoveTags}
                   >

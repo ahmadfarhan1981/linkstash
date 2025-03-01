@@ -1,28 +1,40 @@
 "use client";
 
+import {ReactNode} from 'react';
+
+import { BookmarkCardContextProps } from "@/types/props";
+
 import { BookmarkCardBottomBar } from "./subcomponents/BookmarkCardBottomBar";
 import BookmarkCardContext from "./BookmarkCardContext";
-import { BookmarkCardContextProps } from "@/types/props";
 import { BookmarkCardDescriptions } from "./subcomponents/BookmarkCardDescriptions";
 import { BookmarkCardTagGroup } from "./subcomponents/BookmarkCardTagGroup";
 import { BookmarkCardTitle } from "./subcomponents/BookmarkCardTitle";
-import { ReactNode } from "react";
 import styles from "./styles.module.css";
 
-export function BookmarkCard( props: { contents : ReactNode , contextProps: BookmarkCardContextProps}) {
-  const {contextProps, contents} = props;
-  return (
-    <>
-    <BookmarkCardContext.Provider value={contextProps}>    
-      <div className={styles["card"]}>
-       {contents}
-      </div>
-      </BookmarkCardContext.Provider>
-    </>
-  );
+interface BookmarkCardProps extends BookmarkCardContextProps {
+  children?: ReactNode; // Add `children` support
 }
-    
-BookmarkCard.Title = BookmarkCardTitle
-BookmarkCard.Descriptions = BookmarkCardDescriptions
-BookmarkCard.TagGroup = BookmarkCardTagGroup
-BookmarkCard.BottomBar = BookmarkCardBottomBar
+
+export const BookmarkCard = ( { children, ...contextProps }: BookmarkCardProps ) => {
+  return (
+    <BookmarkCardContext.Provider value={contextProps}>
+      <div className={styles["card"]}>
+        {children || defaultCard}
+      </div>
+    </BookmarkCardContext.Provider>
+  );
+};
+
+BookmarkCard.Title = BookmarkCardTitle;
+BookmarkCard.Descriptions = BookmarkCardDescriptions;
+BookmarkCard.TagGroup = BookmarkCardTagGroup;
+BookmarkCard.BottomBar = BookmarkCardBottomBar;
+
+const defaultCard = (
+  <>
+    <BookmarkCard.Title />
+    <BookmarkCard.Descriptions />
+    <BookmarkCard.TagGroup />
+    <BookmarkCard.BottomBar />
+  </>
+)

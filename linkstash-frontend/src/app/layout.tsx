@@ -1,16 +1,16 @@
 import "./globals.css";
 import "../global_styles/react-aria_combobox.css"
 
+import React, {ReactNode, Suspense} from "react";
+import type { Metadata } from "next";
+import { Open_Sans } from "next/font/google";
 
 import {
     Header,
     Providers,
     UserNavigationBar,
 } from "@/components";
-import React, {ReactNode, Suspense} from "react";
-import type { Metadata } from "next";
-
-import { Open_Sans } from "next/font/google";
+import {QueryProvider} from '@/components/Providers/QueryStateProvider/QueryStateProvider';
 import {ToastProvider} from '@/components/Providers/ToastProvider';
 
 const openSans = Open_Sans({
@@ -40,12 +40,14 @@ export default function RootLayout({
             <UserNavigationBar />            
             <div className="left-spacer"></div>
             <div className="content w-full">
+              <QueryProvider >
               <ToastProvider>
               {/* //TODO fix loader. suspense? */}
               <Suspense>{/** https://nextjs.org/docs/messages/missing-suspense-with-csr-bailout useSearchParams in /bookmarks */}
                 {children}
               </Suspense>
               </ToastProvider>
+              </QueryProvider>
             </div>
             <div className="right-spacer"></div>
             

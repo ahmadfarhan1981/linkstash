@@ -1,8 +1,8 @@
 import { BiSolidEditAlt, BiSolidTrash } from 'react-icons/bi';
 import { formatDistanceToNow, formatRFC7231 } from 'date-fns';
-
 /* eslint-disable github/a11y-no-title-attribute */
 import Link from 'next/link';
+
 import styles from '../styles.module.css'
 import { useBookmarkCardContext } from '../BookmarkCardContext';
 

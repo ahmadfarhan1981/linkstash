@@ -1,71 +1,52 @@
 /* eslint-disable github/a11y-no-title-attribute */
 "use client";
+import React, {useState} from 'react';
 
-import { fetchTagsOptions, useTags } from "@/hooks/useTags";
-import { useEffect, useState } from "react";
-
-import { ListData } from "react-stately";
-import { TagInput } from "@/components/Default";
-import { TagListItem } from "@/types";
-import { useAuthentication } from "@/hooks";
-
+import {FetchTagsOptions, TagListItem} from '@/types';
+import {useQuerySelector, useUpdateQuery} from '@/components/Providers/QueryStateProvider/QueryStateProvider';
+import {TagInput} from '@/components';
 
 type TagCloudConfig = {
-  anyFilterTags: ListData<TagListItem>;
-  allFilterTags: ListData<TagListItem>;
   tags: TagListItem[];
-  fetchTags: (_options:fetchTagsOptions) => void;
-  fetchTagsOption: fetchTagsOptions;
-  setFetchTagsOption: React.Dispatch<React.SetStateAction<fetchTagsOptions>>;
+  setFetchTagsOption: React.Dispatch<React.SetStateAction<FetchTagsOptions>>;
+  simpleTags : string[];
 };
 
-export function TagCloud({ anyFilterTags, allFilterTags, tags, fetchTags, fetchTagsOption, setFetchTagsOption }: TagCloudConfig) {
-  // const { AuthenticationState } = useAuthentication();
-  // const {isLoggedIn, token} = AuthenticationState;
-  
-  // useEffect(() => {
-  //   {
-  //     if (!isLoggedIn) return;
-  //     fetchTags({
-  //       sortBy: fetchTagsOption.sortBy,
-  //       sortDirection: fetchTagsOption.sortDirection,
-  //     });
-  //   }
-  // }, [
-  //   isLoggedIn,
-  //   token,
-  //   fetchTagsOption.sortBy,
-  //   fetchTagsOption.sortDirection,
-  //   fetchTagsOption,
-  // ]);
+export function TagCloud({  tags, setFetchTagsOption, simpleTags }: TagCloudConfig) {
 
+  const anyTags =useQuerySelector('anyTags');
+  const allTags = useQuerySelector('allTags');
+
+
+  const updateQuery = useUpdateQuery();
   function FilterPane() {
     return (
+
       <div id="filterpane">
         {tags && tags.length > 0 && (
           <TagInput
-            selectedTags={allFilterTags}
-            tagsToChooseFrom={tags}
-            // maxWidthInPixel={20}
-            inputLabel={"Include all tags:"}
-            selectedLabel={"All:"}
-            description="Filter must incliude all:"
+            tagsToChooseFrom={simpleTags}
+            selectedTags={allTags}
+            onSelectedTagsChange={t=>updateQuery('allTags', t )}
+            label={"Include all tags:"}
+            selectedTagsLabel={"All"}
           />
         )}
+        <hr />
         {tags && tags.length > 0 && (
           <TagInput
-            selectedTags={anyFilterTags}
-            tagsToChooseFrom={tags}
-            // maxWidthInPixel={20}
-            inputLabel={"Include any tags"}
-            selectedLabel={"Any:"}
-            description="Filter must include at least one:"
+            tagsToChooseFrom={simpleTags}
+            selectedTags={anyTags}
+            onSelectedTagsChange={t=>updateQuery('anyTags', t )}
+            label={"Include any tags:"}
+            selectedTagsLabel={"Any:"}
           />
         )}
+
       </div>
     );
   }
-  const [showFilterPane, setShowFilterPane] = useState(false);
+  const [showFilterPane, setShowFilterPane] = useState(anyTags.length > 0 || allTags.length > 0);
   return (
     <div className="tag-cloud">
       <div id="tag_cloud_header">
@@ -120,6 +101,7 @@ export function TagCloud({ anyFilterTags, allFilterTags, tags, fetchTags, fetchT
       >
         {showFilterPane ? "Hide" : "Show"} filter pane
       </button>
+      <div className={"mb-3"} ></div>
       {showFilterPane ? <FilterPane></FilterPane> : null}
 
       <div className="text-gray-600">
@@ -133,7 +115,7 @@ export function TagCloud({ anyFilterTags, allFilterTags, tags, fetchTags, fetchT
                   onClick={(e) => {
                     e.preventDefault();
                     setShowFilterPane(true);
-                    allFilterTags.append(tag);
+                    updateQuery("allTags", [...allTags, tag.name]);
                   }}
                   className=""
                 >

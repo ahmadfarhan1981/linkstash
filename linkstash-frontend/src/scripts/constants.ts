@@ -1,3 +1,5 @@
+import { FetchTagsOptions } from "@/types";
+
 export const DEV_MOCK_RESPONSE = false
 export const EMPTY_FUNCTION = () => {};
 export const EMPTY_BODY = JSON.stringify({});
@@ -12,10 +14,15 @@ export const DEFAULT_FINALLY_CALLBACK = EMPTY_FUNCTION;
 
 export const DEFAULT_HEADERS =  {
   "Content-Type": "application/json",
-  "User-Agent": "Linkstash react frontend",
+  "User-Agent": "LinkStash react frontend",
 }
 
 export const DEFAULT_TIMEOUT_IN_MILISECONDS = 3000
 
 export const DEFAULT_TOKEN_COOKIE_NAME = "linkstash-token"
 export const DEFAULT_USERID_COOKIE_NAME = "linkstash-userid"
+
+export const DEFAULT_FETCH_TAGS_OPTIONS: FetchTagsOptions  = {
+  sortBy : "name",
+  sortDirection: "ASC"
+}
