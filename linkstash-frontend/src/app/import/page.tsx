@@ -1,6 +1,5 @@
 "use client";
 
-import { AuthenticatedSection, LoadingSpinner } from "@/components";
 import {
   Cell,
   Column,
@@ -9,11 +8,13 @@ import {
   TableBody,
   TableHeader,
 } from "react-aria-components";
+import { useState } from "react";
 
+import { AuthenticatedSection, LoadingSpinner } from "@/components";
 import { ApiCallOptions } from "@/types";
 import { makeApiCall } from "@/scripts";
 import { useAuthentication } from "@/hooks";
-import { useState } from "react";
+
 
 export default function FileUploadForm() {
   const { AuthenticationState } = useAuthentication();

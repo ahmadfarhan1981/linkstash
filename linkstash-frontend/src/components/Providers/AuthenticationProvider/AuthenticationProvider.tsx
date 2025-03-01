@@ -1,15 +1,16 @@
 "use client";
 
-import { ApiCallOptions, AuthenticationState } from "@/types";
 import {
   ReactNode,
   useEffect, useRef,
   useState,
 } from 'react';
-import { getTokenCookieName, getUserIdCookieName, makeApiCall } from "@/scripts";
-
-import { Authentication } from "@/hooks";
 import Cookies from "universal-cookie";
+
+import { ApiCallOptions, AuthenticationState } from "@/types";
+import { getTokenCookieName, getUserIdCookieName, makeApiCall } from "@/scripts";
+import { Authentication } from "@/hooks";
+
 
 export function AuthenticationProvider({
   children,

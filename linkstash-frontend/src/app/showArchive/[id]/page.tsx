@@ -1,17 +1,17 @@
 "use client";
 
-import { ApiCallOptions, Archive, Bookmark } from "@/types";
-import { AuthenticatedSection, BookmarkCard, Loader } from "@/components";
-import { useAuthentication, useBookmarks } from "@/hooks";
 import { useEffect, useState } from "react";
-
 import { BiSolidTrashAlt } from "react-icons/bi";
 import Link from "next/link";
 import { Roboto } from "next/font/google";
 import { TfiNewWindow } from "react-icons/tfi";
 import { formatRFC7231 } from "date-fns";
-import { makeApiCall } from "@/scripts";
 import { useRouter } from "next/navigation";
+
+import { makeApiCall } from "@/scripts";
+import { useAuthentication, useBookmarks } from "@/hooks";
+import { AuthenticatedSection, BookmarkCard, Loader } from "@/components";
+import { ApiCallOptions, Archive, Bookmark } from "@/types";
 
 const roboto = Roboto({
   weight: "400",
