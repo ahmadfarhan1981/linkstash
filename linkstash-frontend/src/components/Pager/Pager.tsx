@@ -3,20 +3,19 @@
 
 import React, { ReactNode } from "react";
 import Link from "next/link";
-import { setUrlParam } from "@/scripts";
-import { useSearchParams } from "next/navigation";
+
+import {useQuerySelector, useUpdateQuery} from '@/components/Providers/QueryStateProvider/QueryStateProvider';
+
 
 //TODO refactor the css classes in this component
 export function Pager({
-                          currentPage,
-                          setCurrentPage,
                           maxPages,
                       }: {
-    currentPage: number;
-    setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
+
     maxPages: number;
 }): ReactNode {
-    const searchParams = useSearchParams();
+  const currentPage = useQuerySelector('page');
+  const updateQuery = useUpdateQuery();
 
     const pages = [];
     for (let i = 1; i <= maxPages; i++) {
@@ -29,8 +28,7 @@ export function Pager({
                 }}
                 onClick={(e) => {
                     e.preventDefault();
-                    setCurrentPage(i);
-                    setUrlParam("page", i.toString(), searchParams);
+                    updateQuery("page", i);
                 }}
                 id={`page_${i}`}
                 className={`px-2 py-0.5 mx-1 rounded transition-colors duration-200 text-xs
@@ -47,21 +45,17 @@ export function Pager({
 
     const moveNext = () => {
         const nextPage = currentPage === maxPages ? currentPage : currentPage + 1;
-        setCurrentPage(nextPage);
-        setUrlParam("page", nextPage.toString(), searchParams);
+        updateQuery("page", nextPage);
     };
     const movePrev = () => {
         const prevPage = currentPage === 1 ? currentPage : currentPage - 1;
-        setCurrentPage(prevPage);
-        setUrlParam("page", prevPage.toString(), searchParams);
+        updateQuery("page", prevPage);
     };
     const moveFirst = () => {
-        setCurrentPage(1);
-        setUrlParam("page", "1", searchParams);
+        updateQuery("page", 1);
     };
     const moveLast = () => {
-        setCurrentPage(maxPages);
-        setUrlParam("page", maxPages.toString(), searchParams);
+        updateQuery("page", maxPages);
     };
 
     return (

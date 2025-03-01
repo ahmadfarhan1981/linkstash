@@ -2,12 +2,6 @@
 "use client";
 
 import {
-  AuthenticatedSection,
-  InputComponent,
-  Loader,
-  TagInput,
-} from "@/components";
-import {
   ChangeEvent,
   Dispatch,
   SetStateAction,
@@ -15,14 +9,18 @@ import {
   useState,
 } from "react";
 import { debounce, uniq } from "lodash-es";
-
 import { BiRefresh } from "react-icons/bi";
 import Link from "next/link";
-import { TagListItem } from "@/types";
 import axios from "axios";
-import { handleFormChange } from "@/scripts";
-import styles from "./styles.module.css";
 import { useListData } from "react-stately";
+
+import { TagListItem } from "@/types";
+import { DEFAULT_FETCH_TAGS_OPTIONS, handleFormChange } from "@/scripts";
+import { AuthenticatedSection, InputComponent, Loader } from "@/components";
+import { useTags } from "@/hooks";
+import { TagInput } from "@/components/Default/TagInput/TagInput";
+
+import styles from "./styles.module.css";
 
 export type BookmarkFormConfig = {
   allTags: TagListItem[];
@@ -42,8 +40,6 @@ export type BookmarkFormData = {
 
 export function BookmarkForm({
   handleSubmit,
-  isLoading,
-  allTags,
   formData,
   setFormData,
   submitButtonText,
@@ -56,7 +52,7 @@ export function BookmarkForm({
   const [isURLFetching, setIsURLFetching] = useState(false);
 
   function handleURLChangeEvent(
-    event: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>
+    event: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>,
   ) {
     const { value } = event.target;
     handleURLChangeURL(value);
@@ -99,11 +95,17 @@ export function BookmarkForm({
     }
   }, [formData.tagList]);
 
-  useEffect(() => {    
+  useEffect(() => {
     if (formData.url) {
       handleURLChangeURL(formData.url);
     }
   }, [formData.url]);
+
+  const { simpleTags, isLoading, fetchTags } = useTags();
+
+  useEffect(() => {
+    fetchTags(DEFAULT_FETCH_TAGS_OPTIONS);
+  }, []);
 
   async function handleSubmitWrapper(form: FormData) {
     //TODO bookmarklet layout
@@ -120,19 +122,23 @@ export function BookmarkForm({
     await handleSubmit(postData);
   }
   const handleControlledInput = (
-    e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>
+    e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>,
   ) => {
     handleFormChange(e, setFormData);
   };
   const handleControlledURLInput = (
-    e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>
+    e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>,
   ) => {
     handleFormChange(e, setFormData);
     debounce(handleURLChangeEvent, 1000)(e);
   };
+
+  const [tags, setTags] = useState<string[]>([]);
   return (
-      <div className="w-[90%]">
-      <AuthenticatedSection loginPrefixComponent={<>Please login to continue</>}>
+    <div className="w-[90%]">
+      <AuthenticatedSection
+        loginPrefixComponent={<>Please login to continue</>}
+      >
         <Loader isLoading={isLoading}>
           <h2>Adding a new bookmark</h2>
           <div className="bg-card-background shadow p-3 mt-3 min-w-[280px] w-full">
@@ -186,7 +192,7 @@ export function BookmarkForm({
 
               <div>
                 <InputComponent
-                style={{ minWidth: "240px", maxWidth: "520px", width: "64%" }}
+                  style={{ minWidth: "240px", maxWidth: "520px", width: "64%" }}
                   disabled={isURLFetching}
                   label="Description"
                   type="textarea"
@@ -203,15 +209,15 @@ export function BookmarkForm({
                   </span>
                 )}
               </div>
+
               <div>
                 {!isLoading && (
                   <TagInput
-                    selectedTags={tagList}
-                    tagsToChooseFrom={allTags}
-                    maxWidthInPixel={700}
-                    inputLabel={"Tags:"}
-                    selectedLabel={"Tags:"}
-                    description="List of selected tags."
+                    selectedTags={tags}
+                    tagsToChooseFrom={simpleTags}
+                    label={"Tags:"}
+                    selectedTagsLabel={"Tags:"}
+                    onSelectedTagsChange={(t) => setTags([...t])}
                   />
                 )}
               </div>
@@ -225,6 +231,6 @@ export function BookmarkForm({
           </div>
         </Loader>
       </AuthenticatedSection>
-      </div>
+    </div>
   );
 }

@@ -1,8 +1,7 @@
-import { ApiCallOptions, Bookmark, TagListItem } from "@/types";
-import { EMPTY_FUNCTION, makeApiCall, whereStringBuilder } from "@/scripts";
 import React, { useState } from "react";
 
-import {ListData} from 'react-stately'
+import { ApiCallOptions, Bookmark } from "@/types";
+import { EMPTY_FUNCTION, makeApiCall, whereStringBuilder } from "@/scripts";
 import { useAuthentication } from "@/hooks";
 
 export type useBookmarksReturnValue = {
@@ -25,8 +24,8 @@ export type fetchBookmarksOptions = {
   page: number;
   perPage: number;
   filter: string;
-  allTags: ListData<TagListItem>
-  anyTags: ListData<TagListItem>
+  allTags: string[]
+  anyTags: string[]
 }
 
 

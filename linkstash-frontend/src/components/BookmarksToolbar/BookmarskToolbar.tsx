@@ -11,14 +11,17 @@ import {
   SelectValue,
 } from "react-aria-components";
 import React, { ChangeEvent, ReactNode } from "react";
+import { Key } from "@react-types/shared";
+import { debounce } from "lodash-es";
+import { useListData } from "react-stately";
+
 import { SortBy, SortDirection } from "@/hooks";
+import {
+  useQuerySelector,
+  useUpdateQuery,
+} from "@/components/Providers/QueryStateProvider/QueryStateProvider";
 
 import { InputComponent } from "../Default";
-import { Key } from "@react-types/shared"
-import { debounce } from "lodash-es";
-import { setUrlParam } from "@/scripts";
-import { useListData } from "react-stately";
-import { useSearchParams } from "next/navigation";
 
 export type SortListItem = {
   id: string;
@@ -28,26 +31,13 @@ export type SortListItem = {
   sortDirection: SortDirection;
 };
 
-export function BookmarksToolbar({
-  sortBy,
-  sortDirection,
-  pageSize,
-  filter,
-  setSortBy,
-  setSortDirection,
-  setPageSize,
-  setFilter,
-}: {
-  sortBy:SortBy;
-  sortDirection: SortDirection;
-  pageSize: number;
-  filter: string;
-  setSortBy: React.Dispatch<React.SetStateAction<SortBy>>;
-  setSortDirection: React.Dispatch<React.SetStateAction<SortDirection>>;
-  setPageSize: React.Dispatch<React.SetStateAction<number>>;
-  setFilter: React.Dispatch<React.SetStateAction<string>>;
-}) {
-  const searchParams = useSearchParams();
+export function BookmarksToolbar() {
+  const sortBy = useQuerySelector("sortBy");
+  const sortDirection = useQuerySelector("sortDirection");
+  const pageSize = useQuerySelector("perPage");
+  const filter = useQuerySelector("filter");
+  const updateQuery = useUpdateQuery();
+
   let list = useListData<SortListItem>({
     initialItems: [
       {
@@ -60,14 +50,14 @@ export function BookmarksToolbar({
       {
         id: "created ASC",
         name: "Date added",
-        icon: <BiSortUp className="inline text-accent"/>,
+        icon: <BiSortUp className="inline text-accent" />,
         sortBy: "created",
         sortDirection: "ASC",
       },
       {
         id: "title ASC",
         name: "Title",
-        icon: <BiSortUp className="inline text-accent"/>,
+        icon: <BiSortUp className="inline text-accent" />,
         sortBy: "title",
         sortDirection: "ASC",
       },
@@ -88,17 +78,17 @@ export function BookmarksToolbar({
   });
 
   const onPageSizeSelectionChange = (key: Key) => {
-    
-    setPageSize(Number.parseInt(key.toString()));
-    setUrlParam("perPage", key.toString(), searchParams )
+    updateQuery("perPage", Number.parseInt(key.toString()));
   };
 
   const onSelectionChange = (key: Key) => {
-    setSortBy(list.getItem(key)!.sortBy);
-    setSortDirection(list.getItem(key)!.sortDirection);
+    updateQuery("sortBy", list.getItem(key)!.sortBy);
+    updateQuery("sortDirection", list.getItem(key)!.sortDirection);
   };
 
-  const handleFilterChange = (e:ChangeEvent<HTMLInputElement>)=>{setFilter(e.target.value)}
+  const handleFilterChange = (e: ChangeEvent<HTMLInputElement>) => {
+    updateQuery("filter", e.target.value);
+  };
   return (
     <>
       <div className={"flex w-full "}>
@@ -114,7 +104,10 @@ export function BookmarksToolbar({
           ></InputComponent>
         </div>
         <div className={"inline-block flex-none content-center"}>
-          <Select onSelectionChange={onSelectionChange} selectedKey={`${sortBy} ${sortDirection}`}>
+          <Select
+            onSelectionChange={onSelectionChange}
+            selectedKey={`${sortBy} ${sortDirection}`}
+          >
             <Label>Sort: </Label>
             <Button className={"min-w-32 max-w-96  border-2"}>
               <SelectValue />
@@ -132,7 +125,10 @@ export function BookmarksToolbar({
           </Select>
         </div>
         <div className={"inline-block flex-none content-center"}>
-          <Select onSelectionChange={onPageSizeSelectionChange} selectedKey={pageSize.toString()}>
+          <Select
+            onSelectionChange={onPageSizeSelectionChange}
+            selectedKey={pageSize.toString()}
+          >
             <Label>Items: </Label>
             <Button className={"min-w-16 max-w-32  border-2"}>
               <SelectValue />

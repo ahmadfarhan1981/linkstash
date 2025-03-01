@@ -1,4 +1,4 @@
-import {Axios, AxiosResponse, RawAxiosRequestHeaders} from 'axios';
+import {AxiosResponse, RawAxiosRequestHeaders} from 'axios';
 
 export type ApiEndpoint =
   | "/whoAmI"
@@ -33,3 +33,10 @@ export type BulkTagResult = {
   success: {bookmarkId: string, tag: string, message?: string}[],
   failure: {bookmarkId: string, tag: string, message: string}[],
 };
+
+type FetchTagsSortDirection = 'ASC' | 'DESC';
+type FetchTagsSortBy = 'numBookmarks' | 'name';
+export type FetchTagsOptions = {
+  sortBy: FetchTagsSortBy
+  sortDirection: FetchTagsSortDirection;
+}
