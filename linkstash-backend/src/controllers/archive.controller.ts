@@ -30,7 +30,7 @@ export class ArchiveController {
     const bookmark = await this.bookmarkRepository.findById(id);
     if (bookmark) {
       const result = await archiveService.archive(bookmark);
-      return result;
+      return result.archive;
     }
   }
 

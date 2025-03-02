@@ -1,4 +1,4 @@
-import {/* inject, */ BindingScope, injectable} from '@loopback/core';
+import {BindingScope, injectable} from '@loopback/core';
 
 import {repository} from '@loopback/repository/dist/decorators';
 import {Readability} from '@mozilla/readability';
@@ -10,6 +10,10 @@ import {Archive, Bookmark} from '../models';
 import {ArchiveRepository, BookmarkRepository} from '../repositories';
 import {rimrafSync} from 'rimraf';
 import {DataObject} from '@loopback/repository';
+import {ArchiveResult} from '../types/schemas/archive';
+import {Result, Status} from '../types';
+import {SUCCESS_RESULT} from '../constants';
+
 async function downloadResource(url: string, downloadLocation: string): Promise<{success: boolean; error: string}> {
   try {
     const response = await axios.get(url, {responseType: 'arraybuffer'});
@@ -85,7 +89,7 @@ export class ArchiveService {
    * Add service methods here
    */
 
-  async archive(bookmark: Bookmark): Promise<Archive | undefined> {
+  async archive(bookmark: Bookmark): Promise<ArchiveResult> {
     try {
       const url = bookmark.url;
       const response = await axios.get(url);
@@ -109,7 +113,11 @@ export class ArchiveService {
       const isHashChanged = !latestExisting || size !== latestExisting.Filesize || hash !== latestExisting.Hash;
       const isContentChanged = !latestExisting || isHashChanged || Buffer.compare(Buffer.from(contentBeforePost), Buffer.from(latestExisting.Content)) !== 0;
 
-      if (latestExisting && !isHashChanged && !isContentChanged) return latestExisting;
+      if (latestExisting && !isHashChanged && !isContentChanged){
+        const res:ArchiveResult ={ archive: latestExisting, result: {... SUCCESS_RESULT, status: Status.SKIPPED}, };
+        console.log('Archive result:', res);
+        return  res
+      }
       const collisionId = latestExisting && isHashChanged && isContentChanged ? latestExisting.CollisionId + 1 : 0;
       const version = latestExisting ? latestExisting.Version + 1 : 0;
 
@@ -139,7 +147,7 @@ export class ArchiveService {
       });
 
       const contentToWrite = parsedDoc.serialize();
-      const archive:DataObject<Archive> = {
+      const archiveToCreate:DataObject<Archive> = {
         ArchiveId: `${bookmark.id}-${version}`,
         UserId: bookmark.userId,
         Content: contentToWrite,
@@ -153,11 +161,20 @@ export class ArchiveService {
         bookmarkId: bookmark.id as number,
       };
 
-      return await this.bookmarkRepository.archives(bookmark.id).create(archive);
+      const archive=  await this.bookmarkRepository.archives(bookmark.id).create(archiveToCreate);
+      const result: Result = {success:true, status: Status.SUCCESS };
+      return {
+        archive,
+        result,
+      }
     } catch (error) {
       // TODO Logging
       // eslint-disable-next-line no-console
       console.log(error);
+      const result:Result = {success: false, status: Status.ERROR, message: error.message };
+
+      return {result:result};
+
     }
   }
   removeLocalAssets(bookmarkId:number, version:number){

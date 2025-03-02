@@ -52,11 +52,11 @@ export function BulkToolbar({bookmarks, refetchData, tags2 }: {bookmarks: Bookma
   const refetchDataAndResetForm = (response:AxiosResponse) => {
     addToast(generateToastFromResult(response));
     refetchData();
-    setSelectedTags2([]);
+    setSelectedTags([]);
     toggleSelectionMode();
   };
 
-  const handleDelete = () => {
+  const handleBulkDelete = () => {
     const options: ApiCallOptions = {
       endpoint: '/bookmarks/bulk',
       method: 'DELETE',
@@ -69,17 +69,30 @@ export function BulkToolbar({bookmarks, refetchData, tags2 }: {bookmarks: Bookma
     makeApiCall(options, false);
   };
 
+  const handleBulkArchive = () => {
+    const options: ApiCallOptions = {
+      endpoint: '/bookmarks/bulk/archive',
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer '.concat(token),
+      },
+      body: {bookmarkIds: selectedBookmarks.map(x => x.toString())},
+      successCallback: refetchDataAndResetForm,
+    };
+    makeApiCall(options, false);
+  };
+
   const handleBulkAddTags = () =>{
 
     const options: ApiCallOptions = {
-    endpoint: '/bookmarks/tags/bulk',
+    endpoint: '/bookmarks/bulk/tags',
     method: 'POST',
     headers: {
       Authorization: 'Bearer '.concat(token),
     },
     body: {
       bookmarkIds: selectedBookmarks.map(x => x.toString()),
-      tags: selectedTags2
+      tags: selectedTags
     },
     successCallback: refetchDataAndResetForm,
   };
@@ -89,14 +102,14 @@ export function BulkToolbar({bookmarks, refetchData, tags2 }: {bookmarks: Bookma
 
   const handleBulkRemoveTags = () =>{
     const options: ApiCallOptions = {
-      endpoint: '/bookmarks/tags/bulk',
+      endpoint: '/bookmarks/bulk/tags',
       method: 'DELETE',
       headers: {
         Authorization: 'Bearer '.concat(token),
       },
       body: {
         bookmarkIds: selectedBookmarks.map(x => x.toString()),
-        tags: selectedTags2
+        tags: selectedTags
       },
       successCallback: refetchDataAndResetForm,
     };
@@ -111,7 +124,7 @@ export function BulkToolbar({bookmarks, refetchData, tags2 }: {bookmarks: Bookma
     )
   }
 
-const [selectedTags2, setSelectedTags2] = useState<string[]>([]);
+const [selectedTags, setSelectedTags] = useState<string[]>([]);
   return (
     <div className="w-full">
       <button className="button small-button m-2" onClick={toggleSelectionMode}>
@@ -156,7 +169,7 @@ const [selectedTags2, setSelectedTags2] = useState<string[]>([]);
                     <button
                       // className="px-3 py-1 bg-red-600 text-white text-sm font-medium rounded-md hover:bg-red-700 transition-colors"
                       className="button small-button my-2 alert-button"
-                      onClick={handleDelete}
+                      onClick={handleBulkDelete}
                     >
                       <svg
                         role="presentation"
@@ -178,6 +191,7 @@ const [selectedTags2, setSelectedTags2] = useState<string[]>([]);
                     <button
                       // className="px-3 py-1 bg-gray-200 text-gray-800 text-sm font-medium rounded-md hover:bg-gray-300 transition-colors"
                       className="button small-button my-2"
+                      onClick={handleBulkArchive}
                     >
                       <svg
                         role="presentation"
@@ -210,11 +224,11 @@ const [selectedTags2, setSelectedTags2] = useState<string[]>([]);
                 <hr  className={"mt-3 mb-2"}/>
                 <div><h3>Bulk tag operations</h3></div>
                 <div className="">
-                  <TagInput label={"Tags for operation"} tagsToChooseFrom={tags2} selectedTags={selectedTags2} onSelectedTagsChange={t=> setSelectedTags2([...t])} />
+                  <TagInput label={"Tags for operation"} tagsToChooseFrom={tags2} selectedTags={selectedTags} onSelectedTagsChange={t=> setSelectedTags([...t])} />
                 </div>
                 <div className="">
                   <button
-                    disabled={ selectedTags2.length === 0 }
+                    disabled={ selectedTags.length === 0 }
                     className="button small-button inline"
                     onClick={handleBulkAddTags}
                   >
@@ -237,7 +251,7 @@ const [selectedTags2, setSelectedTags2] = useState<string[]>([]);
                     <span className="inline">Add to all</span>
                   </button>
                   <button
-                    disabled={selectedTags2.length === 0}
+                    disabled={selectedTags.length === 0}
                     className="button small-button alert-button inline mx-2"
                     onClick={handleBulkRemoveTags}
                   >
