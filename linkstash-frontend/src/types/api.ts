@@ -8,7 +8,8 @@ export type ApiEndpoint =
   | `/bookmarks/${number}/archives`
   | `/bookmarks/${number}`
   | '/bookmarks/bulk'
-  | '/bookmarks/tags/bulk'
+  | '/bookmarks/bulk/tags'
+  | '/bookmarks/bulk/archive'
   | '/tags'
   | '/users'
   | `/users/${string}`

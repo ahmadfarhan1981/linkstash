@@ -1,0 +1,12 @@
+
+
+### POST bulk bookmark archive
+POST {{hostURL}}/bookmarks/bulk/archive
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "bookmarkIds": ["999999999999999","45"]
+}
+
+###
