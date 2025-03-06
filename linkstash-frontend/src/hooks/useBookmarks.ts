@@ -12,7 +12,7 @@ export type useBookmarksReturnValue = {
   archiveBookmark: (bookmarkId:number, onSuccess: ()=>void)=>void
   deleteArchive: (bookmarkId:number, onSuccess:()=>void)=>void
   isLoading: boolean;
-  numNonPagedResults: number;
+  numNonPagedResults?: number;
 };
 
 
@@ -48,7 +48,7 @@ export function useBookmarks(): useBookmarksReturnValue {
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
   const { AuthenticationState } = useAuthentication();
   const [isLoading, setIsLoading] = useState(false);
-  const [numNonPagedResults, setNumNonPagedResult] = useState(0)
+  const [numNonPagedResults, setNumNonPagedResult] = useState<number|undefined>(undefined)
 
   const fetchBookmarks = (fetchOptions:fetchBookmarksOptions) => {
     if (!AuthenticationState.isLoggedIn) return;    

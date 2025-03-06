@@ -79,7 +79,8 @@ export function BookmarksPage() {
 
   useEffect(() => {
     {
-      if (!isLoggedIn) return;
+      if (!isLoggedIn ) return;
+      if( numNonPagedResults === undefined ) return;
       const lastPage = Math.max(
         Math.ceil(numNonPagedResults / queryState.perPage),
         1,
