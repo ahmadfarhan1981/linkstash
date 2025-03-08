@@ -1,0 +1,48 @@
+{
+  "name": "@linkstash/client-sdk",
+  "version": "1.0.0",
+  "description": "The client SDK for Linkstash",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "pnpm run build",
+    "test": "vitest",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix",
+    "format": "prettier --write ./src",
+    "test:watch": "vitest --watch"
+  },
+  "keywords": [],
+  "author": "Ahmad Farhan",
+  "license": "MIT",
+  "packageManager": "pnpm@10.6.1",
+  "devDependencies": {
+    "@eslint/js": "^9.22.0",
+    "@types/node": "^22.13.9",
+    "@typescript-eslint/eslint-plugin": "^8.26.0",
+    "@typescript-eslint/parser": "^8.26.0",
+    "eslint": "^9.22.0",
+    "globals": "^16.0.0",
+    "nodemon": "^3.1.9",
+    "prettier": "3.5.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2",
+    "typescript-eslint": "^8.26.0",
+    "vitest": "^3.0.8"
+  },
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    "import": "./dist/index.mjs",
+    "require": "./dist/index.cjs"
+  },
+  "files": [
+    "dist"
+  ],
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  }
+}
