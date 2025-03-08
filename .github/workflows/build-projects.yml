@@ -54,24 +54,25 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Read Node.js Version from .nvmrc
-        id: node_version
-        run: echo "NODE_VERSION=$(cat apps/linkstash-backend/.nvmrc)" >> $GITHUB_ENV
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: 10.6.1
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: 20.1.0
 
       - name: Install Dependencies
         run: |
           cd apps/linkstash-backend
-          npm ci
+          pnpm install
 
       - name: Build Backend
         run: |
           cd apps/linkstash-backend
-          npm run build
+          pnpm run build
 
   build-frontend:
     needs: check-changes
@@ -81,21 +82,22 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Read Node.js Version from .nvmrc
-        id: node_version
-        run: echo "NODE_VERSION=$(cat apps/linkstash-frontend/.nvmrc)" >> $GITHUB_ENV
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: 10.6.1
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: 21.1.0
 
       - name: Install Dependencies
         run: |
           cd apps/linkstash-frontend
-          npm ci
+          pnpm install
 
       - name: Build Frontend
         run: |
           cd apps/linkstash-frontend
-          npm run build
+          pnpm run build

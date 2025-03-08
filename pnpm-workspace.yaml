@@ -1,0 +1,5 @@
+packages:
+  - 'apps/linkstash-backend'
+  - 'apps/linkstash-frontend'
+  - 'apps/linkstash-website'
+  - 'packages/linkstash-client-sdk'
