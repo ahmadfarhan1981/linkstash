@@ -70,7 +70,7 @@ jobs:
           --label "org.opencontainers.image.created=${{ env.CREATED_TIMESTAMP }}" \
           --label "org.opencontainers.image.version=${{ env.VERSION }}" \
           --label "org.opencontainers.image.revision=${{ env.REVISION }}" \
-          ./${{ matrix.project }}
+          .apps/${{ matrix.project }}
 
     # Step 7: Push the Docker image (only if the tag is valid and matches project)
     - name: Push Docker image
