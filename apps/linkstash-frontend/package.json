@@ -44,5 +44,8 @@
   },
   "browserslist": [
     "defaults"
-  ]
+  ],
+  "engines": {
+    "node": "21.1.0"
+  }
 }

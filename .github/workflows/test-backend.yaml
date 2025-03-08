@@ -18,7 +18,7 @@ jobs:
         uses: actions/setup-node@v4
         with:          
           cache: 'npm'
-          node-version-file : './linkstash-backend/.nvmrc'
+          node-version-file : '.apps/linkstash-backend/.nvmrc'
       - run: npm ci
       - run: npm test
 

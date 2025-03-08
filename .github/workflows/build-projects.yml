@@ -42,9 +42,9 @@ jobs:
           base: ${{ env.BASE_BRANCH }}
           filters: |
             backend:
-              - 'linkstash-backend/**'
+              - 'apps/linkstash-backend/**'
             frontend:
-              - 'linkstash-frontend/**'
+              - 'apps/linkstash-frontend/**'
 
   build-backend:
     needs: check-changes
@@ -56,7 +56,7 @@ jobs:
 
       - name: Read Node.js Version from .nvmrc
         id: node_version
-        run: echo "NODE_VERSION=$(cat linkstash-backend/.nvmrc)" >> $GITHUB_ENV
+        run: echo "NODE_VERSION=$(cat apps/linkstash-backend/.nvmrc)" >> $GITHUB_ENV
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -65,12 +65,12 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          cd linkstash-backend
+          cd apps/linkstash-backend
           npm ci
 
       - name: Build Backend
         run: |
-          cd linkstash-backend
+          cd apps/linkstash-backend
           npm run build
 
   build-frontend:
@@ -83,7 +83,7 @@ jobs:
 
       - name: Read Node.js Version from .nvmrc
         id: node_version
-        run: echo "NODE_VERSION=$(cat linkstash-frontend/.nvmrc)" >> $GITHUB_ENV
+        run: echo "NODE_VERSION=$(cat apps/linkstash-frontend/.nvmrc)" >> $GITHUB_ENV
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -92,10 +92,10 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          cd linkstash-frontend
+          cd apps/linkstash-frontend
           npm ci
 
       - name: Build Frontend
         run: |
-          cd linkstash-frontend
+          cd apps/linkstash-frontend
           npm run build
