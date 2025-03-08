@@ -11,6 +11,7 @@
   "engines": {
     "node": "~20.11.0"
   },
+  "packageManager": "pnpm@10.6.1",
   "scripts": {
     "build": "lb-tsc",
     "build:watch": "lb-tsc --watch",
@@ -36,7 +37,8 @@
     "predev": "npm run rebuild",
     "dev": "node --inspect -r source-map-support/register .",
     "clean": "lb-clean dist *.tsbuildinfo .eslintcache",
-    "rebuild": "npm run clean && npm run build"
+    "rebuild": "npm run clean && npm run build",
+    "clean-node-modules": "rm -rf node_modules"
   },
   "repository": {
     "type": "git",
@@ -48,6 +50,7 @@
     "README.md",
     "dist",
     "src",
+    "docker-entrypoint.sh",
     "!*/__tests__"
   ],
   "dependencies": {

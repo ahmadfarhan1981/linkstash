@@ -61,9 +61,10 @@ jobs:
       if: env.SKIP_BUILD != 'true'
       run: |
         docker build \
-                .apps/${{ matrix.project }} \
+                . \
                 -t ${{ secrets.DOCKER_USERNAME }}/${{ matrix.project }}-nightly:nightly-${{ env.DATE }} \
                 -t ${{ secrets.DOCKER_USERNAME }}/${{ matrix.project }}-nightly:latest \
+                -- target ${{ matrix.project }}
                 --label "org.opencontainers.image.created=${{ env.TIMESTAMP }}" \
                 --label "org.opencontainers.image.version=nightly-${{ env.DATE }}" \
                 --label "org.opencontainers.image.revision=${{ env.REVISION }}"

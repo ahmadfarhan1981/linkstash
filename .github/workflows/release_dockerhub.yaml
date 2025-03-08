@@ -67,10 +67,11 @@ jobs:
         docker build \
           -t ${{ secrets.DOCKER_USERNAME }}/${{ matrix.project }}:${{ env.VERSION }} \
           -t ${{ secrets.DOCKER_USERNAME }}/${{ matrix.project }}:latest \
+          -- target ${{ matrix.project }}
           --label "org.opencontainers.image.created=${{ env.CREATED_TIMESTAMP }}" \
           --label "org.opencontainers.image.version=${{ env.VERSION }}" \
           --label "org.opencontainers.image.revision=${{ env.REVISION }}" \
-          .apps/${{ matrix.project }}
+          .
 
     # Step 7: Push the Docker image (only if the tag is valid and matches project)
     - name: Push Docker image
