@@ -6,7 +6,7 @@
     "build": "tsc",
     "clean": "rm -rf dist",
     "prepublishOnly": "pnpm run build",
-    "test": "vitest",
+    "test": "vitest run",
     "lint": "eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix",
     "format": "prettier --write ./src",
@@ -44,5 +44,8 @@
     "onlyBuiltDependencies": [
       "esbuild"
     ]
+  },
+  "directories": {
+    "test": "test"
   }
 }

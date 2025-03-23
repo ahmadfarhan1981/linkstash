@@ -47,5 +47,17 @@
   ],
   "engines": {
     "node": "21.1.0"
-  }
+  },
+  "description": "Frontend application  for LinkStash. Built with nextjs.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ahmadfarhan1981/linkstash.git",
+    "directory": "apps/linkstash-frontend"
+  },
+  "author": "Ahmad Farhan",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ahmadfarhan1981/linkstash/issues"
+  },
+  "homepage": "https://github.com/ahmadfarhan1981/linkstash#readme"
 }

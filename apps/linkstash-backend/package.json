@@ -40,7 +40,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ahmadfarhan1981/linkstash.git"
+    "url": "git+https://github.com/ahmadfarhan1981/linkstash.git",
+    "directory": "apps/linkstash-backend"
   },
   "author": "paan <paan@linkstashapp.com>",
   "license": "MIT",
@@ -82,5 +83,8 @@
     "eslint": "^8.57.0",
     "source-map-support": "^0.5.21",
     "typescript": "~5.2.2"
+  },
+  "bugs": {
+    "url": "https://github.com/ahmadfarhan1981/linkstash/issues"
   }
 }

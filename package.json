@@ -17,11 +17,17 @@
     "url": "https://github.com/ahmadfarhan1981/linkstash/issues"
   },
   "homepage": "https://github.com/ahmadfarhan1981/linkstash#readme",
-  "dependencies": {
-  },
   "devDependencies": {
     "@commitlint/cli": "^18.4.3",
     "@commitlint/config-conventional": "^18.4.3",
-    "husky": "^8.0.3"
-  }
+    "husky": "^8.0.3",
+    "turbo": "^2.4.4"
+  },
+  "workspaces": [
+    "apps/linkstash-backend",
+    "apps/linkstash-frontend",
+    "apps/linkstash-website",
+    "packages/linkstash-client-sdk"
+  ],
+  "packageManager": "npm@10.2.0"
 }
