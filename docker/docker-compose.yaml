@@ -1,7 +1,7 @@
 name: Linkstash
 services:  
   linkstash-backend:
-    image: paan1981/linkstash-backend:1.0.0
+    image: paan1981/linkstash-backend:latest
     environment:
       DB_TYPE: ${DB_TYPE:-mysql}
       DB_HOST: ${DB_HOST:-linkstash-db}
@@ -36,7 +36,7 @@ services:
       timeout: 5s
       retries: 30
   linkstash-frontend:
-    image: paan1981/linkstash-frontend:1.0.0
+    image: paan1981/linkstash-frontend:latest
     restart: unless-stopped
     environment:
       TOKEN_COOKIE_NAME: ${TOKEN_COOKIE_NAME:-linkstash-token}

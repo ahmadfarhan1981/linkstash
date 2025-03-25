@@ -6,51 +6,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@site
 import { ScrollArea } from "@site/src/components/shadcn/scroll-area"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@site/src/components/shadcn/select"
 import {useColorMode} from '@docusaurus/theme-common';
+import {changelog, ChangelogEntry, ChangeType } from "./data"
 
-type ChangeType = "new" | "improved" | "fixed" | "deprecated"
 
-interface ChangelogEntry {
-  type: ChangeType
-  description: string
-  version: string
-}
 
-interface VersionChangelog {
-  version: string
-  date: string
-  changes: Omit<ChangelogEntry, "version">[]
-}
-
-// Sample changelog data
-const changelog: VersionChangelog[] = [
-  {
-    version: "2.0.0",
-    date: "2024-01-15",
-    changes: [
-      { type: "new", description: "Introduced dark mode across the entire application" },
-      { type: "improved", description: "Enhanced performance of data loading by 50%" },
-      { type: "fixed", description: "Resolved issue with user profile picture uploads" },
-      { type: "deprecated", description: "Removed support for legacy API endpoints" },
-    ],
-  },
-  {
-    version: "1.9.0",
-    date: "2023-12-01",
-    changes: [
-      { type: "new", description: "Added multi-language support" },
-      { type: "improved", description: "Redesigned dashboard for better user experience" },
-      { type: "fixed", description: "Fixed a bug in the search functionality" },
-    ],
-  },
-  {
-    version: "1.8.5",
-    date: "2023-11-15",
-    changes: [
-      { type: "fixed", description: "Patched security vulnerability in user authentication" },
-      { type: "improved", description: "Optimized database queries for faster response times" },
-    ],
-  },
-]
 
 function getChangeTypeColor(type: ChangeType): string {
   switch (type) {
@@ -78,13 +37,17 @@ export default function Changelog() {
     setIsDarkMode(colorMode === "dark");
   }, [colorMode]);
   const [startVersion, setStartVersion] = useState(changelog[changelog.length - 1].version)
-  const [endVersion, setEndVersion] = useState(changelog[0].version)
+  const [endVersion, setEndVersion] = useState(changelog[changelog.length - 1].version)
 
   const filteredChanges = useMemo(() => {
-    const startIndex = changelog.findIndex((v) => v.version === startVersion)
-    const endIndex = changelog.findIndex((v) => v.version === endVersion)
+    const start = startVersion< endVersion ? startVersion : endVersion;
+    const end = startVersion < endVersion ? endVersion : startVersion;
+
+
+    const startIndex = changelog.findIndex((v) => v.version === start)
+    const endIndex = changelog.findIndex((v) => v.version === end)
     return changelog
-      .slice(endIndex, startIndex + 1)
+      .slice(startIndex, endIndex + 1)
       .flatMap((v) => v.changes.map((c) => ({ ...c, version: v.version })))
   }, [startVersion, endVersion])
 
@@ -162,7 +125,7 @@ export default function Changelog() {
         <Card className={`shadow-none border-0 ${isDarkMode ? "bg-gray-800 text-gray-100" : "bg-white text-gray-900"}`}>
           <CardHeader>
             <CardTitle className={`text-2xl font-bold ${isDarkMode ? "text-gray-100" : "text-gray-800"}`}>
-              Changes from {startVersion} to {endVersion}
+              Changes from {startVersion<endVersion?startVersion:endVersion} to {startVersion<endVersion?endVersion:startVersion}
             </CardTitle>
             <CardDescription className={isDarkMode ? "text-gray-400" : "text-gray-600"}>
               Showing changes between selected versions

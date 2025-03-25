@@ -5,7 +5,9 @@
     "baseUrl": ".",
     "paths": {
       "@site/*": ["./*"]
-    }
+    },
+    "target": "ES2023",
+    "lib": ["ES2023", "DOM"]
   },
   "exclude": [".docusaurus", "build"]
 }
