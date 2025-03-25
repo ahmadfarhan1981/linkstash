@@ -124,31 +124,31 @@ Style guide
        mariadbdata:
      ```
    - LinkStash has been tested exclusively with MariaDB. While it should work with other RDBMS, they are not officially supported or guaranteed to function correctly at this time.
+   
+> With the release of V1.1 there is experimental sqlite support. Not all functionalities work with sqlite but you can use that if you need a minimal development environment.
 
 2. **Set Up Environment Configurations:**
-   - `.env.local` can be created by copying the `.env.example` files in their respective folders.
-   - Backend: Inside the `linkstash-backend` folder:
-     - Create `.env.local` and configure database connection settings.
+   - `.env` can be created by copying the `.env.example` files in their respective folders.
+     - backend : `./apps/linkstash-backend/.env`
+       - nextjs supports having environment specific env file e.g `env.local` for local development.
+     - frontend : `./apps/linkstash-frontened/.env`
+   - Backend:
      - Run migrations:
        ```bash
-       cd linkstash-backend
-       nvm use
-       npm run migrate
+       npm -w=apps/linkstash-backend run migrate
        ```
      - Start the backend:
        ```bash
-       npm run dev
+       npm -w=apps/linkstash-backend run dev
        ```
       - Alternatively, run the backend without debugging for slightly faster startup time:
         ```bash
-        npm start
+        npm -w=apps/linkstash-backend start
         ```
-   - Frontend: Inside the `linkstash-frontend` folder:
-     - Create `.env.local` and configure the connection to the backend.
+   - Frontend:
      - Start the frontend:
        ```bash
-       nvm use
-       npm run dev
+       npm -w=apps/linkstash-frontend run dev
        ```
 
 ## Community Standards

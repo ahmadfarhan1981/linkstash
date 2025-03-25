@@ -8,11 +8,10 @@ import {
   useEffect,
   useState,
 } from "react";
-import { debounce, uniq } from "lodash-es";
+import { debounce } from "lodash-es";
 import { BiRefresh } from "react-icons/bi";
 import Link from "next/link";
 import axios from "axios";
-import { useListData } from "react-stately";
 
 import { TagListItem } from "@/types";
 import { DEFAULT_FETCH_TAGS_OPTIONS, handleFormChange } from "@/scripts";
@@ -44,10 +43,6 @@ export function BookmarkForm({
   setFormData,
   submitButtonText,
 }: BookmarkFormConfig) {
-  const tagList = useListData({
-    initialItems: [],
-    getKey: (item: TagListItem) => item.name,
-  });
   const [lastUrlFetched, setLastUrlFetched] = useState("");
   const [isURLFetching, setIsURLFetching] = useState(false);
 
@@ -86,16 +81,6 @@ export function BookmarkForm({
   }
 
   useEffect(() => {
-    if (formData.tagList) {
-      const keys = tagList.items.map((t) => t.name);
-      keys.forEach((key) => tagList.remove(key));
-      formData.tagList.forEach((tag: string) => {
-        tagList.append({ id: tag, name: tag });
-      });
-    }
-  }, [formData.tagList]);
-
-  useEffect(() => {
     if (formData.url) {
       handleURLChangeURL(formData.url);
     }
@@ -115,7 +100,7 @@ export function BookmarkForm({
       url: form.get("url")?.toString(),
       title: form.get("title")?.toString(),
       description: form.get("description")?.toString(),
-      tagList: uniq(tagList.items.map((tag: TagListItem) => tag.name)),
+      tagList: tags,
     };
 
     setFormData(postData);

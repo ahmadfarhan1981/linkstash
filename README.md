@@ -62,9 +62,10 @@ password: password
 ```
 
 ## Persistent Data
-Persistent data created by LinkStash is located in two places:
+Persistent data created by LinkStash is located in a few places:
 - MySQL data files are stored in the `linkstash-data` Docker volume.
 - The `./archive` folder contains downloaded assets for offline use.
+- the `./config` folder contains files to track the status of the db migration.
 
 ## More info 
 Visit the [website](http://linkstashapp.com) for the user guide
@@ -92,23 +93,24 @@ For detailed contribution guidelines, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ### MVP release
 
-**MVP feature set:**
-- :white_check_mark: Bookmarking
-- :white_check_mark: Tagging / filtering
-- :white_check_mark: Archiving
-- :white_check_mark: Docker deployment
-- :white_check_mark: Import
-
-The project is still in progress. 
-
+With the addition of the bulk management features in V1.1 I consider this as MVP complete.
 
 ### For the Future
 
 *These plans may evolve based on feedback.*
 
-Post-MVP, the focus areas will include:
+Some functionalities that are planned for the future are:
+
+**Near future:**
+- **Client library**
 - **Management Features**
+  - Advanced query
   - Semantic search
+- **Integrations**
+  - archiving options for non article-like contents
+
+**Further out:**
+- **Management Features**
   - Grouping by domains
   - Link duplication checks
   - Change detection / link rot checking
