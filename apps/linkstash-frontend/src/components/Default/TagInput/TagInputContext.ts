@@ -25,7 +25,7 @@ export type TagInputContextProps = {
 
 
 
-const TagInputContext = createContext<TagInputContextProps|null>(null)
+export const TagInputContext = createContext<TagInputContextProps|null>(null)
 
 export function useTagInputContext (): TagInputContextProps {
   const context  = useContext(TagInputContext);
@@ -37,4 +37,3 @@ export function useTagInputContext (): TagInputContextProps {
   return context;
 }
 
-export default TagInputContext;

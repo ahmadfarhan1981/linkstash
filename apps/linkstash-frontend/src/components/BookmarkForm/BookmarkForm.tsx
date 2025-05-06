@@ -1,6 +1,5 @@
-/* eslint-disable github/a11y-no-title-attribute */
 "use client";
-
+/* eslint-disable github/a11y-no-title-attribute */
 import {
   ChangeEvent,
   Dispatch,
@@ -8,22 +7,23 @@ import {
   useEffect,
   useState,
 } from "react";
-import { debounce } from "lodash-es";
 import { BiRefresh } from "react-icons/bi";
 import Link from "next/link";
 import axios from "axios";
+import { debounce } from "lodash-es";
 
-import { TagListItem } from "@/types";
+
+
+import { InputComponent, Loader } from "@/components";
 import { DEFAULT_FETCH_TAGS_OPTIONS, handleFormChange } from "@/scripts";
-import { AuthenticatedSection, InputComponent, Loader } from "@/components";
-import { useTags } from "@/hooks";
+import { useAuthentication, useTags } from "@/hooks";
 import { TagInput } from "@/components/Default/TagInput/TagInput";
 
 import styles from "./styles.module.css";
 
+
 export type BookmarkFormConfig = {
-  allTags: TagListItem[];
-  isLoading: boolean;
+  title: string;
   handleSubmit: (__bookmarkData: BookmarkFormData) => Promise<void>;
   formData: BookmarkFormData;
   setFormData: Dispatch<SetStateAction<BookmarkFormData>>;
@@ -38,6 +38,7 @@ export type BookmarkFormData = {
 };
 
 export function BookmarkForm({
+  title,
   handleSubmit,
   formData,
   setFormData,
@@ -80,17 +81,13 @@ export function BookmarkForm({
       });
   }
 
-  useEffect(() => {
-    if (formData.url) {
-      handleURLChangeURL(formData.url);
-    }
-  }, [formData.url]);
+ 
 
   const { simpleTags, isLoading, fetchTags } = useTags();
-
+  const {AuthenticationState} =  useAuthentication();
   useEffect(() => {
     fetchTags(DEFAULT_FETCH_TAGS_OPTIONS);
-  }, []);
+  },[AuthenticationState.isLoggedIn, fetchTags]);
 
   async function handleSubmitWrapper(form: FormData) {
     //TODO bookmarklet layout
@@ -118,14 +115,23 @@ export function BookmarkForm({
     debounce(handleURLChangeEvent, 1000)(e);
   };
 
-  const [tags, setTags] = useState<string[]>([]);
+  const [tags, setTags] = useState<string[]>(formData?.tagList || []);
+
+  useEffect(() => {
+    if (formData.url) {
+      handleURLChangeURL(formData.url);
+    }
+  }, [formData.url]);
+
+  useEffect(() => {
+   setTags(formData.tagList || []);
+  }, [formData.tagList]);
+
   return (
     <div className="w-[90%]">
-      <AuthenticatedSection
-        loginPrefixComponent={<>Please login to continue</>}
-      >
+    
         <Loader isLoading={isLoading}>
-          <h2>Adding a new bookmark</h2>
+          <h2>{title}</h2>
           <div className="bg-card-background shadow p-3 mt-3 min-w-[280px] w-full">
             <form action={handleSubmitWrapper}>
               <div>
@@ -215,7 +221,6 @@ export function BookmarkForm({
             </form>
           </div>
         </Loader>
-      </AuthenticatedSection>
     </div>
   );
 }

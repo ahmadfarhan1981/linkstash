@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "npm run lint:errors && next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "lint:errors": "next lint . --quiet"
   },
   "dependencies": {
     "@mozilla/readability": "^0.5.0",

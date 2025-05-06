@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import { ApiCallOptions, FetchTagsOptions, TagListItem } from "@/types";
 import { makeApiCall } from "@/scripts";
@@ -25,7 +25,7 @@ export function useTags(): useTagsReturnValue {
   const { AuthenticationState } = useAuthentication();
   const [isLoading, setIsLoading] = useState(false);
 
-  const fetchTags = (fetchOptions: FetchTagsOptions) => {
+  const fetchTags = useCallback((fetchOptions: FetchTagsOptions) => {
     if (!AuthenticationState.isLoggedIn) return;
     const params = generateRequestParams(fetchOptions);
     const apiOptions: ApiCallOptions = {
@@ -51,7 +51,7 @@ export function useTags(): useTagsReturnValue {
     };
     setIsLoading(true);
     makeApiCall(apiOptions, true);
-  };
+  }, [AuthenticationState.isLoggedIn, AuthenticationState.token]);
 
   return {
     tags,
