@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-import { ApiCallOptions, TagListItem } from "@/types";
+import { ApiCallOptions } from "@/types";
 import {
+  AuthenticatedSection,
   BookmarkForm,
   BookmarkFormData
 } from "@/components";
@@ -20,31 +21,9 @@ export default function Home() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { AuthenticationState } = useAuthentication();
-  const { isLoggedIn, token } = AuthenticationState;
+  const { token } = AuthenticationState;
 
-  const [allTags, setAllTags] = useState<TagListItem[]>([]);
-  const [isTagFetched, setIsTagFetched] = useState(false);
   
-  useEffect(() => {
-    if (!isLoggedIn || isTagFetched) return;
-    const success = async (response: any) => {
-      const result = response.data.map((element: TagListItem) => {
-        return { id: String(element.id), name: element.name } as TagListItem;
-      });
-      setAllTags(result);
-      setIsTagFetched(true);
-    };
-    const options: ApiCallOptions = {
-      endpoint: "/tags",
-      method: "GET",
-      headers: {
-        Authorization: "Bearer ".concat(token),
-      },
-      successCallback: success,
-    };
-    makeApiCall(options, false, true);
-  }, [isLoggedIn, token, isTagFetched]);
-
   const addBookmark = async (data: BookmarkFormData): Promise<void> =>  {
     const success = async (_response: any) => {
       if(url){//if called by bookmarklet
@@ -71,7 +50,9 @@ export default function Home() {
   const [formData, setFormData] = useState<BookmarkFormData>(url?{url:url}:{});    
   return (
     <>
-      <BookmarkForm submitButtonText="Add bookmark" formData={formData} isLoading={!isTagFetched} handleSubmit={addBookmark} setFormData={setFormData} allTags={allTags}></BookmarkForm>      
+        <AuthenticatedSection className="inline w-full" loginPrefixComponent={<>Please login to continue</>} >
+          <BookmarkForm title="Add a bookmark" submitButtonText="Add bookmark" formData={formData}  handleSubmit={addBookmark} setFormData={setFormData} ></BookmarkForm>      
+      </AuthenticatedSection>
     </>
   );
 }

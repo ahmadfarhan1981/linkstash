@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
-import { ApiCallOptions, Bookmark, TagListItem } from "@/types";
+import { ApiCallOptions, Bookmark } from "@/types";
 import {
+  AuthenticatedSection,
   BookmarkForm,
   BookmarkFormData,
 } from "@/components";
@@ -12,26 +13,25 @@ import { makeApiCall } from "@/scripts";
 import { useAuthentication } from "@/hooks";
 
 
-export default function Home({ params }: { params: { id: number } }) {
+export default function Home() {
+  const params = useParams();
+  const id = Number.parseInt((params as { id: string }).id) ;
   const router = useRouter()
   const { AuthenticationState } = useAuthentication();
   const {isLoggedIn, token} = AuthenticationState;
-  const [allTags, setAllTags] = useState<TagListItem[]>([]);
-  const [isTagFetched, setIsTagFetched] = useState(false);
   const [isBookmarkFetched, setIsBookmarkFetched] = useState(false);
   const [bookmark, setBookmark] = useState<Bookmark>();
 
   useEffect(() => {
     {
       if (!isLoggedIn) return;
-
       const success = (response: any) => {
         setBookmark(response.data);
         setIsBookmarkFetched(true);
       };
 
       const option: ApiCallOptions = {
-        endpoint: `/bookmarks/${params.id}`,
+        endpoint: `/bookmarks/${id}`,
         method: "GET",
         headers: {
           Authorization: "Bearer ".concat(token),
@@ -40,7 +40,7 @@ export default function Home({ params }: { params: { id: number } }) {
       };
       makeApiCall(option);
     }
-  }, [isLoggedIn, token, params.id]);
+  }, [isLoggedIn, token, id]);
 
   useEffect(() => {
     if (!isBookmarkFetched) return;
@@ -53,32 +53,12 @@ export default function Home({ params }: { params: { id: number } }) {
     });
   }, [bookmark, isBookmarkFetched]);
 
-  useEffect(() => {
-    if (!isLoggedIn || isTagFetched) return;
-    const success = async (response: any) => {
-      const result = response.data.map((element: TagListItem) => {
-        return { id: String(element.id), name: element.name } as TagListItem;
-      });
-      setAllTags(result);
-      setIsTagFetched(true);
-    };
-    const options: ApiCallOptions = {
-      endpoint: "/tags",
-      method: "GET",
-      headers: {
-        Authorization: "Bearer ".concat(token),
-      },
-      successCallback: success,
-    };
-    makeApiCall(options, false, true);
-  }, [isLoggedIn, token, isTagFetched]);
-
   async function editBookmark(form: BookmarkFormData) {
     const success = async (_response: any) => {
       router.push("/bookmarks");
     };
     const options: ApiCallOptions = {
-      endpoint: `/bookmarks/${params.id}`,
+      endpoint: `/bookmarks/${id}`,
       method: "PATCH",
       headers: {
         Authorization: "Bearer ".concat(token),
@@ -88,21 +68,19 @@ export default function Home({ params }: { params: { id: number } }) {
     };
     await makeApiCall(options);
   }
-
   const [formData, setFormData] = useState<BookmarkFormData>({});
-
-  
 
   return (
     <>
+      <AuthenticatedSection className="inline w-full" loginPrefixComponent={<>Please login to continue</>}>
       <BookmarkForm
+        title="Edit a bookmark"
         formData={formData}
-        isLoading={!isTagFetched || !isBookmarkFetched}
         handleSubmit={editBookmark}
         setFormData={setFormData}
-        allTags={allTags}
         submitButtonText="Edit bookmark"
-      ></BookmarkForm>
+      />
+      </AuthenticatedSection>
     </>
   );
 }

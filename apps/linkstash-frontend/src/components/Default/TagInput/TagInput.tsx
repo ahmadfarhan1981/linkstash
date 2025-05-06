@@ -2,13 +2,11 @@
 
 import React, {ReactNode, useRef, useState} from 'react';
 
-import {TagInputContextProps} from '@/components';
-
 import {TagInputAutoCompleteContext} from './subcomponents/TagInputAutocompleteContext';
 import {TagInputAutoCompleteTextbox} from './subcomponents/TagInputAutoCompleteTextbox';
 import {TagInputAutocompleteDropDown} from './subcomponents/TagInputAutocompleteDropDown';
 import {TagInputSelectedTags} from './subcomponents/TagInputSelectedTags';
-import TagInputContext from './TagInputContext';
+import {TagInputContextProps, TagInputContext} from './TagInputContext';
 
 export interface TagInputProps extends TagInputContextProps {
   children?: ReactNode;
@@ -72,8 +70,11 @@ TagInput.SelectedTags = TagInputSelectedTags;
 
 const defaultTagInputComponent = (
   <>
-    <TagInput.Textbox />
-    <TagInput.AutoCompleteSuggestion />
+    <div className='relative inline-block'>
+      <TagInput.Textbox />
+      <TagInput.AutoCompleteSuggestion />
+    </div>
+
     <TagInput.SelectedTags />
   </>
 );
