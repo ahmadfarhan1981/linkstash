@@ -5,6 +5,14 @@ import type * as Preset from '@docusaurus/preset-classic';
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
+  scripts: [
+    {
+      src: 'https://umami.ahmadfarhan.com/script.js',
+      defer: true,
+      async: true,
+      'data-website-id': 'b0d52e5c-9028-4262-8fdd-bf5a4b5c85d3',
+    },
+  ],
   title: 'Linkstash',
   tagline: 'Stash your links, revisit anytime',
   /***
