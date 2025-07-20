@@ -97,30 +97,11 @@ With the addition of the bulk management features in V1.1 I consider this as MVP
 
 ### For the Future
 
-*These plans may evolve based on feedback.*
+There is a blog post on [the future of LinkStash](https://blog.ahmadfarhan.com/posts/linkstash-future/) on my blog.
 
-Some functionalities that are planned for the future are:
+Development will be slow and steady.
 
-**Near future:**
-- **Client library**
-- **Management Features**
-  - Advanced query
-  - Semantic search
-- **Integrations**
-  - archiving options for non article-like contents
-
-**Further out:**
-- **Management Features**
-  - Grouping by domains
-  - Link duplication checks
-  - Change detection / link rot checking
-  - Statistics
-- **UI Improvements**
-  - Responsive mobile layout
-  - General UX enhancements
-- **Integrations**
-  - Integration with services like paperless-ngx, archivebox, and internet archive
-- **Archiving Improvements**
-  - Support for various formats
-  - Archive versioning
-
+These are the focus.
+- Archive formatting
+- mobile 
+- other selfhosted tools integration.
