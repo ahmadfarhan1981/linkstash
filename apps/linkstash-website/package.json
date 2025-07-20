@@ -15,8 +15,8 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@docusaurus/core": "3.7.0-canary-6250",
-    "@docusaurus/preset-classic": "3.7.0-canary-6250",
+    "@docusaurus/core": "3.8.1-canary-6367",
+    "@docusaurus/preset-classic": "3.8.1-canary-6367",
     "@mdx-js/react": "^3.0.0",
     "@radix-ui/react-scroll-area": "^1.2.3",
     "@radix-ui/react-select": "^2.1.6",
