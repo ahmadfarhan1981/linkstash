@@ -77,13 +77,19 @@ export function BookmarksToolbar() {
     getKey: (item) => item.id,
   });
 
-  const onPageSizeSelectionChange = (key: Key) => {
-    updateQuery("perPage", Number.parseInt(key.toString()));
+  const onPageSizeSelectionChange = (key: Key | null) => {
+    if(key){
+      updateQuery("perPage", Number.parseInt(key.toString()));
+    }
+    
   };
 
-  const onSelectionChange = (key: Key) => {
-    updateQuery("sortBy", list.getItem(key)!.sortBy);
-    updateQuery("sortDirection", list.getItem(key)!.sortDirection);
+  const onSelectionChange = (key: Key | null) => {
+    if (key){
+      updateQuery("sortBy", list.getItem(key)!.sortBy);
+      updateQuery("sortDirection", list.getItem(key)!.sortDirection);
+    }
+    
   };
 
   const handleFilterChange = (e: ChangeEvent<HTMLInputElement>) => {
