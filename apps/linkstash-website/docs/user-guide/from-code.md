@@ -18,16 +18,24 @@ You can also run LinkStash from the code.
       - nextjs supports having environment specific env file e.g `env.local` for local development.
    - frontend : `./apps/linkstash-frontened/.env`
 2. **Start the backend**
-   1. Initialize databse
+   1. Make sure you are in the backend directory (assuming you are in repo root)
       ```bash
-      npm -w=apps/linkstash-backend run migrate
+      cd apps/linkstash-backend
       ```
-   2. Start the application
+   2. Initialize databse
+      ```bash
+      npm run migrate
+      ```
+   3. Start the application
       ```bash
       npm -w=apps/linkstash-backend start
       ```
 3. **Start the frontend**
-   1. Start the application
+   1. Make sure you are in the frontend directory (assuming you are in repo root)
+      ```bash
+      cd apps/linkstash-frontend
+      ```
+   2. Start the application
       ```bash
       npm start
       ```
