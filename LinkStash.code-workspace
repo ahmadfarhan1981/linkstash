@@ -4,13 +4,13 @@
 			"path": "."
 		},
 		{
-			"path": "linkstash-backend"
+			"path": "apps/linkstash-backend"
 		},
 		{
-			"path": "linkstash-frontend"
+			"path": "apps/linkstash-frontend"
 		},
 		{
-			"path": "linkstash-website"
+			"path": "apps/linkstash-website"
 		}
 	],
 	"settings": {
