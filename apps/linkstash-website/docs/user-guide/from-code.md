@@ -28,7 +28,7 @@ You can also run LinkStash from the code.
       ```
    3. Start the application
       ```bash
-      npm -w=apps/linkstash-backend start
+      npm start
       ```
 3. **Start the frontend**
    1. Make sure you are in the frontend directory (assuming you are in repo root)
