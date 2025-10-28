@@ -132,24 +132,42 @@ Style guide
      - backend : `./apps/linkstash-backend/.env`
        - nextjs supports having environment specific env file e.g `env.local` for local development.
      - frontend : `./apps/linkstash-frontened/.env`
-   - Backend:
-     - Run migrations:
-       ```bash
-       npm -w=apps/linkstash-backend run migrate
-       ```
-     - Start the backend:
-       ```bash
-       npm -w=apps/linkstash-backend run dev
-       ```
-      - Alternatively, run the backend without debugging for slightly faster startup time:
-        ```bash
-        npm -w=apps/linkstash-backend start
-        ```
-   - Frontend:
-     - Start the frontend:
-       ```bash
-       npm -w=apps/linkstash-frontend run dev
-       ```
+   - Each application (backend and frontend) is an independent npm project, so run npm commands from within the respective dire
+ctory.
+3. **Start the backend**
+   1. Change into the backend project from the repository root:
+      ```bash
+      cd apps/linkstash-backend
+      ```
+   2. Install dependencies:
+      ```bash
+      npm install
+      ```
+   3. Initialize the database schema:
+      ```bash
+      npm run migrate
+      ```
+   4. Start the backend in watch mode:
+      ```bash
+      npm run dev
+      ```
+   5. Alternatively, run the backend without debugging for slightly faster startup time:
+      ```bash
+      npm start
+      ```
+4. **Start the frontend**
+   1. Change into the frontend project from the repository root:
+      ```bash
+      cd apps/linkstash-frontend
+      ```
+   2. Install dependencies:
+      ```bash
+      npm install
+      ```
+   3. Start the frontend:
+      ```bash
+      npm run dev
+      ```
 
 ## Community Standards
 - Don’t be a dick.
