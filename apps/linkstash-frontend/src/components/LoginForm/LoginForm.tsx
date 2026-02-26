@@ -51,7 +51,7 @@ export function LoginForm() {
         </div>
         <form>
 
-          <InputComponent className={"block"} id="email" type="text" name="email" placeholder="Username" label="Username" autocomplete="username" disabled={isPending} handleChange={handleChange} />
+          <InputComponent autoFocus className={"block"} id="email" type="text" name="email" placeholder="Username" label="Username" autocomplete="username" disabled={isPending} handleChange={handleChange} />
           <InputComponent className={"block"} id="password" type="password" name="password" placeholder="Password" label="Password" autocomplete="new-password" disabled={isPending} handleChange={handleChange} />
           <div className="mt-3">
             <input
