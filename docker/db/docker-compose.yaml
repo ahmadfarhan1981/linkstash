@@ -9,11 +9,18 @@ services:
       - MYSQL_DATABASE=${DB_NAME:-linkstash-backend}
       - MYSQL_USER=${DB_USER:-linkstash}
       - MYSQL_PASSWORD=${DB_PASSWORD:-password}
+    ports:
+      - ${DB_PORT:-3306}:3306
     volumes:
       - linkstash-data:/config
     healthcheck:
       test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
       timeout: 5s
-      retries: 30  
+      retries: 30
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080  
 volumes:
   linkstash-data:

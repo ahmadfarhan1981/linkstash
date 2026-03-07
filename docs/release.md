@@ -7,7 +7,7 @@ to release tag commits.
 When tagged with linkstash-backend_vxxx or linkstash-frontend_vxxx , github actions will build the docker image and push to dockerhub to:
 
 - `paan1981/linkstash-frontend`
-- `paan1981/linkstash-backedend`
+- `paan1981/linkstash-backend`
 
 The version string supports up to 3 segments of numeric version and a version suffix
 Valid Tags:
