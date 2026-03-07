@@ -22,14 +22,6 @@ export function BookmarksPage() {
   } = useBookmarks();
   const [maxPage, setMaxPage] = useState<number>(1);
   const { isLoggedIn, token } = AuthenticationState;
-  const allFilterTags = useListData({
-    initialItems: [],
-    getKey: (item: TagListItem) => item.name,
-  });
-  const anyFilterTags = useListData({
-    initialItems: [],
-    getKey: (item: TagListItem) => item.name,
-  });
 
   const queryState = useQueryState();
   const updateQuery = useUpdateQuery();
@@ -51,7 +43,7 @@ export function BookmarksPage() {
       if (!isLoggedIn) return;
       refetchData();
     }
-  }, [isLoggedIn, token, anyFilterTags.items, allFilterTags.items, queryState]);
+  }, [isLoggedIn, token, queryState.allTags, queryState.anyTags, queryState.page, queryState.perPage, queryState.filter, queryState.sortBy, queryState.sortDirection]);
 
   const { fetchTags, tags, simpleTags } = useTags();
 
@@ -72,9 +64,7 @@ export function BookmarksPage() {
     isLoggedIn,
     token,
     fetchTagsOption.sortBy,
-    fetchTagsOption.sortDirection,
-    fetchTagsOption,
-    bookmarks,
+    fetchTagsOption.sortDirection
   ]);
 
   useEffect(() => {
