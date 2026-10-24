@@ -4,16 +4,22 @@ on:
   schedule:
     # Run every day at midnight UTC
     - cron: '0 0 * * *'
-  workflow_dispatch: # Allows manual triggering of the workflow
+  workflow_dispatch:
+    inputs:
+      source_maps:
+        description: "Build only the frontend with source maps (always rebuild)"
+        type: boolean
+        default: false
 
 jobs:
   nightly-build-and-push:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        project:
-          - linkstash-backend
-          - linkstash-frontend
+        project: ${{ fromJSON(github.event_name == 'workflow_dispatch' && inputs.source_maps && '["linkstash-frontend"]' || '["linkstash-backend","linkstash-frontend"]') }}
+    env:
+      SOURCE_MAPS: ${{ github.event_name == 'workflow_dispatch' && inputs.source_maps && matrix.project == 'linkstash-frontend' && 'true' || 'false' }}
+      SKIP_BUILD: 'false'
 
     steps:
     # Step 1: Checkout the repository
@@ -27,17 +33,26 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    # Step 3: Get the current date
-    - name: Get today's date
+    # Step 3: Prepare image metadata and select the image variant
+    - name: Prepare image metadata
       id: date
       run: |
-        echo "DATE=$(date +'%Y%m%d')" >> $GITHUB_ENV
-        echo "TIMESTAMP=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_ENV
-        echo "REVISION=$(git rev-parse HEAD)" >> $GITHUB_ENV
+        DATE=$(date -u +'%Y%m%d')
+        SUFFIX=""
+        if [ "$SOURCE_MAPS" = "true" ]; then
+          SUFFIX="-sourcemaps"
+          echo "Source maps requested. Building the frontend without a revision check."
+        fi
+
+        echo "IMAGE_TAG=nightly-${DATE}${SUFFIX}" >> "$GITHUB_ENV"
+        echo "LATEST_TAG=latest${SUFFIX}" >> "$GITHUB_ENV"
+        echo "TIMESTAMP=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> "$GITHUB_ENV"
+        echo "REVISION=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
 
     # Step 4: Pull latest Docker image and inspect labels
     - name: Pull latest Docker image
       id: check-latest-image
+      if: env.SOURCE_MAPS != 'true'
       run: |
         IMAGE=${{ secrets.DOCKER_USERNAME }}/${{ matrix.project }}-nightly:latest
 
@@ -60,20 +75,26 @@ jobs:
     - name: Build Docker image
       if: env.SKIP_BUILD != 'true'
       run: |
+        BUILD_ARGS=()
+        if [ "${{ matrix.project }}" = "linkstash-frontend" ]; then
+          BUILD_ARGS+=(--build-arg "LINKSTASH_SOURCE_MAPS=$SOURCE_MAPS")
+        fi
+
         docker build \
                 ./apps/${{ matrix.project }} \
-                -t ${{ secrets.DOCKER_USERNAME }}/${{ matrix.project }}-nightly:nightly-${{ env.DATE }} \
-                -t ${{ secrets.DOCKER_USERNAME }}/${{ matrix.project }}-nightly:latest \
+                "${BUILD_ARGS[@]}" \
+                -t "${{ secrets.DOCKER_USERNAME }}/${{ matrix.project }}-nightly:$IMAGE_TAG" \
+                -t "${{ secrets.DOCKER_USERNAME }}/${{ matrix.project }}-nightly:$LATEST_TAG" \
                 --label "org.opencontainers.image.created=${{ env.TIMESTAMP }}" \
-                --label "org.opencontainers.image.version=nightly-${{ env.DATE }}" \
+                --label "org.opencontainers.image.version=$IMAGE_TAG" \
                 --label "org.opencontainers.image.revision=${{ env.REVISION }}"
 
     # Step 6: Push the Docker image (conditionally)
     - name: Push Docker image
       if: env.SKIP_BUILD != 'true'
       run: |
-        docker push ${{ secrets.DOCKER_USERNAME }}/${{ matrix.project }}-nightly:nightly-${{ env.DATE }}
-        docker push ${{ secrets.DOCKER_USERNAME }}/${{ matrix.project }}-nightly:latest
+        docker push "${{ secrets.DOCKER_USERNAME }}/${{ matrix.project }}-nightly:$IMAGE_TAG"
+        docker push "${{ secrets.DOCKER_USERNAME }}/${{ matrix.project }}-nightly:$LATEST_TAG"
 
     # Step 7: Log skipping build and push (optional for debugging)
     - name: Skipping build and push
