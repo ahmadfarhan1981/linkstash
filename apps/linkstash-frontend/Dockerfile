@@ -34,6 +34,7 @@ COPY . .
 #  else echo "Lockfile not found." && exit 1; \
 #  fi
 
+ARG LINKSTASH_SOURCE_MAPS=false
 RUN npm run build
 
 # Production image, copy all the files and run next
