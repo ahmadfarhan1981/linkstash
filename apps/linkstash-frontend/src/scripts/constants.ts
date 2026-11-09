@@ -19,8 +19,8 @@ export const DEFAULT_HEADERS =  {
 
 export const DEFAULT_TIMEOUT_IN_MILISECONDS = 3000
 
-export const DEFAULT_TOKEN_COOKIE_NAME = "linkstash-token"
-export const DEFAULT_USERID_COOKIE_NAME = "linkstash-userid"
+export const TOKEN_COOKIE_NAME = "linkstash-token";
+export const USERID_COOKIE_NAME = "linkstash-userid";
 
 export const DEFAULT_FETCH_TAGS_OPTIONS: FetchTagsOptions  = {
   sortBy : "name",

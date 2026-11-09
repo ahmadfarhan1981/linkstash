@@ -39,8 +39,6 @@ services:
     image: paan1981/linkstash-frontend:latest
     restart: unless-stopped
     environment:
-      TOKEN_COOKIE_NAME: ${TOKEN_COOKIE_NAME:-linkstash-token}
-      USERID_COOKIE_NAME: ${USERID_COOKIE_NAME:-linkstash-userid}
       BACKEND_URL: ${BACKEND_URL:-http://localhost}:${BACKEND_PORT:-3030}
       IMPORT_TIMEOUT: ${IMPORT_TIMEOUT:-120000}
     ports:
