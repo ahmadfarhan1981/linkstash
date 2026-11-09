@@ -8,7 +8,7 @@ import {
 import Cookies from "universal-cookie";
 
 import { ApiCallOptions, AuthenticationState } from "@/types";
-import { getTokenCookieName, getUserIdCookieName, makeApiCall } from "@/scripts";
+import { makeApiCall, TOKEN_COOKIE_NAME, USERID_COOKIE_NAME } from "@/scripts";
 import { Authentication } from "@/hooks";
 
 
@@ -52,8 +52,8 @@ export function AuthenticationProvider({
       setToken(token);
       setUserId(userId);
       const cookies = new Cookies();
-      cookies.set(getTokenCookieName(), token);
-      cookies.set(getUserIdCookieName(), userId);
+      cookies.set(TOKEN_COOKIE_NAME, token);
+      cookies.set(USERID_COOKIE_NAME, userId);
       if(postLoginSuccessCallbackRef.current){
         postLoginSuccessCallbackRef.current();
       }
@@ -87,15 +87,12 @@ export function AuthenticationProvider({
   };
   const verifyLogin = async () => {
     const cookies = new Cookies();
-    //TODO figure out server actions and setting via env var
     if (isLoggedIn) return;
-    const tokenCookieName = getTokenCookieName();
-    const userIdCookieName = getUserIdCookieName();
     setIsPending(true);
-    if (cookies.get(tokenCookieName) && cookies.get(userIdCookieName) ) {
+    if (cookies.get(TOKEN_COOKIE_NAME) && cookies.get(USERID_COOKIE_NAME) ) {
       
-      const cookieToken = cookies.get(getTokenCookieName());
-      const cookieUserId = cookies.get(getUserIdCookieName());
+      const cookieToken = cookies.get(TOKEN_COOKIE_NAME);
+      const cookieUserId = cookies.get(USERID_COOKIE_NAME);
       makeApiCall({
         method: "GET",
         endpoint: "/whoAmI",
@@ -125,14 +122,12 @@ export function AuthenticationProvider({
     setToken("");
     setUserId("");
     const cookies = new Cookies();
-    const tokenCookieName = getTokenCookieName();
-    const userIdCookieName = getUserIdCookieName();
     
-    if (cookies.get(tokenCookieName)) {
-      cookies.remove(tokenCookieName);
+    if (cookies.get(TOKEN_COOKIE_NAME)) {
+      cookies.remove(TOKEN_COOKIE_NAME);
     }
-    if (cookies.get(userIdCookieName)) {
-      cookies.remove(userIdCookieName);
+    if (cookies.get(USERID_COOKIE_NAME)) {
+      cookies.remove(USERID_COOKIE_NAME);
     }
   };
 
