@@ -63,7 +63,7 @@ export default function Home() {
           setIsNewUserModalOpen(false);
           fetchUsers({});
         }
-      }
+      }, AuthenticationState.backendUrl
     )
 
   }
@@ -96,7 +96,7 @@ export default function Home() {
           fetchUsers(apiOptions);
         }
       }
-      makeApiCall(apiOptions)
+      makeApiCall(apiOptions, AuthenticationState.backendUrl)
 
 
       
@@ -258,7 +258,7 @@ export default function Home() {
         headers: {
           Authorization: "Bearer ".concat(token),
         },
-      }
+      }, AuthenticationState.backendUrl
     )        
   }
 
@@ -275,7 +275,7 @@ export default function Home() {
                  Authorization: "Bearer ".concat(token),
                },
         successCallback: ()=>{ setIsChangePasswordModalOpen(false)}
-      }
+      }, AuthenticationState.backendUrl
     )
   }
   

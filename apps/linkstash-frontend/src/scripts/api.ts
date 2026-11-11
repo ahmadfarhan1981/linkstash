@@ -9,19 +9,17 @@ import {
   DEFAULT_TIMEOUT_IN_MILISECONDS,
   EMPTY_BODY,
   EMPTY_PARAM,
-  getBackendURL,
 } from ".";
 
 
-// TODO refactor. this is a mess, move everything that can be done client side together, then only send everything to the server side, 
-//      only process the endpoints client side, then pass to server to get the backend url
 export async function makeApiCall(
   options: ApiCallOptions,
+  backendUrl: string,
   async: boolean = false,
   printRequests: boolean = false
-) {
+): Promise<void> {
   const processedEndpoint = options.endpoint;
-  const url = (await getBackendURL()).concat(processedEndpoint);
+  const url = backendUrl.concat(processedEndpoint);
   const config: AxiosRequestConfig = {
     method: options.method,
     url: url,

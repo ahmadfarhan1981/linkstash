@@ -42,7 +42,7 @@ export default function Home({ params }: { params: { id: number } }) {
       },
       successCallback: success,
     };
-    makeApiCall(getBookmarksOption);
+    makeApiCall(getBookmarksOption, AuthenticationState.backendUrl);
 
     const getArchiveSuccess = async (response: any) => {
       const { Content } = response.data;
@@ -62,8 +62,8 @@ export default function Home({ params }: { params: { id: number } }) {
         setIsLoading(false);
       },
     };
-    makeApiCall(getArchiveOptions);
-  }, [isLoggedIn, token, params.id]);
+    makeApiCall(getArchiveOptions, AuthenticationState.backendUrl);
+  }, [isLoggedIn, token, params.id, AuthenticationState.backendUrl]);
 
   const { deleteBookmark, deleteArchive } = useBookmarks();
   const router = useRouter();

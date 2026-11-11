@@ -80,7 +80,7 @@ export default function FileUploadForm() {
         setIsUploading(false)
       },
     };    
-    makeApiCall(apiOptions, true);    
+    makeApiCall(apiOptions, AuthenticationState.backendUrl, true);
   };
 
   return (

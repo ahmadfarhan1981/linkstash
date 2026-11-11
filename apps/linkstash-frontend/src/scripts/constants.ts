@@ -21,6 +21,7 @@ export const DEFAULT_TIMEOUT_IN_MILISECONDS = 3000
 
 export const TOKEN_COOKIE_NAME = "linkstash-token";
 export const USERID_COOKIE_NAME = "linkstash-userid";
+export const BACKEND_URL_COOKIE_NAME = "linkstash-backend-url";
 
 export const DEFAULT_FETCH_TAGS_OPTIONS: FetchTagsOptions  = {
   sortBy : "name",

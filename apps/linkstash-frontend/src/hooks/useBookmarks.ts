@@ -69,7 +69,7 @@ export function useBookmarks(): useBookmarksReturnValue {
       requestParams:params
     };
     setIsLoading(true);    
-    makeApiCall(apiOptions, true);
+    makeApiCall(apiOptions, AuthenticationState.backendUrl, true);
     setIsLoading(false);
   };
 
@@ -86,7 +86,7 @@ export function useBookmarks(): useBookmarksReturnValue {
     };
     // TODO loading states are not really reflected properly, makeApiCall is async so the loading status isn't reflected properly
     setIsLoading(true);
-    makeApiCall(apiOptions, false);
+    makeApiCall(apiOptions, AuthenticationState.backendUrl, false);
     setIsLoading(false);
   };
   
@@ -102,7 +102,7 @@ export function useBookmarks(): useBookmarksReturnValue {
     };
     // TODO loading states are not really reflected properly, makeApiCall is async so the loading status isn't reflected properly
     setIsLoading(true);
-    makeApiCall(apiOptions, false);
+    makeApiCall(apiOptions, AuthenticationState.backendUrl, false);
     setIsLoading(false);
   };
 
@@ -119,7 +119,7 @@ export function useBookmarks(): useBookmarksReturnValue {
     };
     // TODO loading states are not really reflected properly, makeApiCall is async so the loading status isn't reflected properly
     setIsLoading(true);
-    makeApiCall(apiOptions, false);
+    makeApiCall(apiOptions, AuthenticationState.backendUrl, false);
     setIsLoading(false);
   };
 
