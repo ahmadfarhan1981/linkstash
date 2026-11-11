@@ -59,7 +59,7 @@ export function useUsers(): useUsersReturnValue {
       requestParams:params
     };
     setIsLoading(true);    
-    makeApiCall(apiOptions, true);
+    makeApiCall(apiOptions, AuthenticationState.backendUrl, true);
     setIsLoading(false);
   };
   

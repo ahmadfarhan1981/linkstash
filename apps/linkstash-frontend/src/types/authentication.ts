@@ -11,4 +11,5 @@ export type useAuthenticationReturnValue = {
     isPending: boolean;
     token: string;
     userId: string;
+    backendUrl: string;
   };

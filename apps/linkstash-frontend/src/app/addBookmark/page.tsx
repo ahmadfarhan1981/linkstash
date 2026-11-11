@@ -42,7 +42,7 @@ export default function Home() {
       body: data,
       successCallback: success,
     };
-    await makeApiCall(options);
+    await makeApiCall(options, AuthenticationState.backendUrl);
   }
 
 

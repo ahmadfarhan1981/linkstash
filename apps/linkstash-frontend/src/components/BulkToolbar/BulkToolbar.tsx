@@ -66,7 +66,7 @@ export function BulkToolbar({bookmarks, refetchData, tags2 }: {bookmarks: Bookma
       body: {ids: selectedBookmarks.map(x => x.toString())},
       successCallback: refetchDataAndResetForm,
     };
-    makeApiCall(options, false);
+    makeApiCall(options, AuthenticationState.backendUrl, false);
   };
 
   const handleBulkArchive = () => {
@@ -79,7 +79,7 @@ export function BulkToolbar({bookmarks, refetchData, tags2 }: {bookmarks: Bookma
       body: {bookmarkIds: selectedBookmarks.map(x => x.toString())},
       successCallback: refetchDataAndResetForm,
     };
-    makeApiCall(options, false);
+    makeApiCall(options, AuthenticationState.backendUrl, false);
   };
 
   const handleBulkAddTags = () =>{
@@ -97,7 +97,7 @@ export function BulkToolbar({bookmarks, refetchData, tags2 }: {bookmarks: Bookma
     successCallback: refetchDataAndResetForm,
   };
 
-  makeApiCall(options, false);
+  makeApiCall(options, AuthenticationState.backendUrl, false);
   }
 
   const handleBulkRemoveTags = () =>{
@@ -114,7 +114,7 @@ export function BulkToolbar({bookmarks, refetchData, tags2 }: {bookmarks: Bookma
       successCallback: refetchDataAndResetForm,
     };
 
-    makeApiCall(options, false);
+    makeApiCall(options, AuthenticationState.backendUrl, false);
   }
 
   function selectAllBookmarks():void {

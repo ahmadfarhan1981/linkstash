@@ -38,9 +38,9 @@ export default function Home() {
         },
         successCallback: success,
       };
-      makeApiCall(option);
+      makeApiCall(option, AuthenticationState.backendUrl);
     }
-  }, [isLoggedIn, token, id]);
+  }, [isLoggedIn, token, id, AuthenticationState.backendUrl]);
 
   useEffect(() => {
     if (!isBookmarkFetched) return;
@@ -66,7 +66,7 @@ export default function Home() {
       body: form,
       successCallback: success,
     };
-    await makeApiCall(options);
+    await makeApiCall(options, AuthenticationState.backendUrl);
   }
   const [formData, setFormData] = useState<BookmarkFormData>({});
 

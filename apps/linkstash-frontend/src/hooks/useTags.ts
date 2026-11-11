@@ -50,8 +50,8 @@ export function useTags(): useTagsReturnValue {
       },
     };
     setIsLoading(true);
-    makeApiCall(apiOptions, true);
-  }, [AuthenticationState.isLoggedIn, AuthenticationState.token]);
+    makeApiCall(apiOptions, AuthenticationState.backendUrl, true);
+  }, [AuthenticationState.isLoggedIn, AuthenticationState.token, AuthenticationState.backendUrl]);
 
   return {
     tags,
