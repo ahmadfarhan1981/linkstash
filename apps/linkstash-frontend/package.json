@@ -12,7 +12,7 @@
   "dependencies": {
     "@mozilla/readability": "^0.5.0",
     "@types/lodash-es": "^4.17.12",
-    "axios": "^1.12.2",
+    "axios": "^1.20.0",
     "date-fns": "^3.6.0",
     "jsdom": "^24.0.0",
     "lodash-es": "^4.17.21",
@@ -60,5 +60,6 @@
   "bugs": {
     "url": "https://github.com/ahmadfarhan1981/linkstash/issues"
   },
-  "homepage": "https://github.com/ahmadfarhan1981/linkstash#readme"
+  "homepage": "https://github.com/ahmadfarhan1981/linkstash#readme",
+  "allowScripts": {}
 }
