@@ -53,6 +53,30 @@ function fileNameFromUrl(url: string): string {
   return '';
 }
 
+type ArchiveImage = {
+  src: string;
+  dataset: {src?: string};
+};
+
+export async function localizeArchiveImages(
+  images: Iterable<ArchiveImage>,
+  download: (url: string) => Promise<boolean>,
+  localUrl: (url: string) => string,
+): Promise<void> {
+  await Promise.all(
+    Array.from(images).map(async img => {
+      const imageSrc = img.src ? img.src : img.dataset.src;
+      if (!imageSrc) return;
+      const success = await download(imageSrc);
+      if (success) {
+        const localImagePath = localUrl(imageSrc);
+        img.src = localImagePath;
+        img.dataset.src = localImagePath;
+      }
+    }),
+  );
+}
+
 
 type LocalAssestLocations ={
   LocalPath: string
@@ -131,20 +155,13 @@ export class ArchiveService {
        * fetch the resource and points the archive copy to the local relative path
        *
        */
-      // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      images.forEach( async img => {
-        //some lazy loaded images uses the src data property to store the image source
-        const imageSrc: string = img.src ? img.src : (img.dataset.src as string);
-        const {success} = await downloadResource(imageSrc, downloadLocation);
-
-        if (success) {
-          //if downloaded the asset, then rewrite the path in the archive
-          // TODO consider using abosolute path for the assets
-          const localImagePath = `${assetLocations.AccessURL}${fileNameFromUrl(imageSrc as string)}`
-          img.src = localImagePath;
-          img.dataset.src = localImagePath;
-        }
-      });
+      // Lazy-loaded images keep the address in data-src. Wait until every
+      // download finishes, then serialize, or the saved page still points off-site.
+      await localizeArchiveImages(
+        images,
+        async imageSrc => (await downloadResource(imageSrc, downloadLocation)).success,
+        imageSrc => `${assetLocations.AccessURL}${fileNameFromUrl(imageSrc)}`,
+      );
 
       const contentToWrite = parsedDoc.serialize();
       const archiveToCreate:DataObject<Archive> = {
