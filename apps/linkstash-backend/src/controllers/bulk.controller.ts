@@ -134,26 +134,25 @@ export class BulkController {
     @service(ArchiveService) archiveService: ArchiveService
   ): Promise<BulkArchiveResult> {
     const results:BulkArchiveResult = {success: [], failure: []};
-    let bookmark :( (Bookmark & BookmarkRelations) | undefined );
 
-    for(const bookmarkId of bulkArchive.bookmarkIds){
-      try {
-
-        bookmark = await this.bookmarkRepository.findById(Number.parseInt(bookmarkId));
-      }catch (error) {
-
-          results.failure.push({success:false, status: Status.ERROR, message:"Cannot find bookmark ",  bookmarkId: bookmarkId } );
-
+    for (const bookmarkId of bulkArchive.bookmarkIds) {
+      const id = Number.parseInt(bookmarkId, 10);
+      const found = Number.isNaN(id)
+        ? []
+        : await this.bookmarkRepository.find({
+            where: {id, userId: currentUserProfile[securityId]},
+            limit: 1,
+          });
+      const bookmark: (Bookmark & BookmarkRelations) | undefined = found[0];
+      if (!bookmark) {
+        results.failure.push({success: false, status: Status.ERROR, message: 'Cannot find bookmark ', bookmarkId});
+        continue;
       }
-
-
-      if (bookmark) {
-        const result = await archiveService.archive(bookmark);
-        if(result.result.success) {
-          results.success.push({...result.result, bookmarkId});
-        }else{
-          results.failure.push({...result.result, bookmarkId});
-        }
+      const result = await archiveService.archive(bookmark);
+      if (result.result.success) {
+        results.success.push({...result.result, bookmarkId});
+      } else {
+        results.failure.push({...result.result, bookmarkId});
       }
     }
     return results;
